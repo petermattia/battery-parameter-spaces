@@ -243,7 +243,7 @@ def parse_args():
 	parser.add_argument('--prior_std', default=20, type=float,
 						help='standard deviation for the prior')
 	parser.add_argument('--likelihood_std', default=2.19, type=float,
-						help='standard deviation for the prior')
+						help='standard deviation for the likelihood std')
 	parser.add_argument('--beta', default=1, type=float,
 						help='exploration constant in Thm 1')
 	parser.add_argument('--epsilon', default=1, type=float,
