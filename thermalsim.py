@@ -46,7 +46,7 @@ def thermalsim(C1, C2, show_plot = False, variance = True):
         SOC1 = 80;
     else:
         SOC1 = 100 * ( chargetime - (60*0.8/C2) ) / (60/C1 - 60/C2)
-    print('SOC1 = ' + '{:.1%}'.format(SOC1/100))
+    # print('SOC1 = ' + '{:.1%}'.format(SOC1/100))
 
     # CONSTANT PARAMETERS
     R = 0.009              # [=] m, radius of 18650 cylindrical cell
@@ -165,7 +165,7 @@ def thermalsim(C1, C2, show_plot = False, variance = True):
     lifetime_true = int(1/deg_rates/1e9)
     lifetime_meas = int(random.gauss(lifetime_true, sigma))
     if lifetime_meas < 0: lifetime_meas = 1
-    print("Lifetime = " + str(lifetime_meas))
+    # print("Lifetime = " + str(lifetime_meas))
     return lifetime_meas
     
  ## Exmaple: C1 = 6, C2 = 3   
