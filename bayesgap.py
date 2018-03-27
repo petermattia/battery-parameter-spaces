@@ -93,7 +93,7 @@ class BayesGap(object):
 				candidate_arms.remove(a_t)
 
 			
-			print(batch_arms)
+			print('Policy indices', batch_arms)
 			rewards = self.observe_reward(batch_arms)
 			self.beta = self.beta * epsilon
 			X_t.append(X[batch_arms])
@@ -248,32 +248,6 @@ def parse_args():
 						help='exploration constant in Thm 1')
 	parser.add_argument('--epsilon', default=1, type=float,
 						help='decay constant for exploration')
-
-
-
-	parser.add_argument('--n', default=41, type=int,
-						help='Number of total arms')
-	
-	parser.add_argument('--delta', default=0.05, type=float,
-						help='Target confidence')
-	parser.add_argument('--k', default=1, type=int,
-						help='Number of top arms')
-	parser.add_argument('--d', default=1, type=int,
-						help='delay with each arm. 1 indicates delay is same as arm pull outcome')
-	
-	parser.add_argument('--std', default=15, type=float,
-						help='standard deviation')
-	parser.add_argument('--pstd', default=0.01, type=float,
-						help='standard deviation associated with partial feedbacks')
-	parser.add_argument('--feedback', nargs='?', default='df',
-						help='df, pa, pu, pb')
-	parser.add_argument('--num_tries', default=10, type=int,
-						help='Number of tries')
-	
-	parser.add_argument('--resultdir', nargs='?', default='results/',
-						help='Directory for saving results')
-	parser.add_argument('--resultfile', nargs='?', default='log.txt',
-						help='Filefor saving results')
 
 	return parser.parse_args()
 
