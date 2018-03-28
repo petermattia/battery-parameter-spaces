@@ -234,7 +234,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 	parser.add_argument('--seed', default=0, type=int,
 						help='Seed for random number generators')
-	parser.add_argument('--budget', default=100, type=int,
+	parser.add_argument('--budget', default=10, type=int,
 						help='Time budget')
 	parser.add_argument('--bsize', default=4, type=int,
 						help='batch size')
