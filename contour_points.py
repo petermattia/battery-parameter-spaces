@@ -11,43 +11,42 @@ Created on Tue Feb 20 07:29:14 2018
 import numpy as np
 import matplotlib.pyplot as plt
 
-LOWER_CRATE_LIM = 1.6 # C rate
-UPPER_CRATE_LIM = 8   # C rate
-chargetime = 10       # [=] minutes
-
-# Import policies
-policies = np.genfromtxt('policies.csv', delimiter=',')
-
-margin = 0.8 # plotting margin
-
-# Calculate Q1(CC1, CC2) values for contour lines
-CC1 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
-CC2 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
-[X,Y] = np.meshgrid(CC1,CC2)
-Q1 = (100)*(chargetime - ((60*0.8)/Y))/((60/X)-(60/Y))
-Q1[np.where(Q1<0)]  = float('NaN')
-Q1[np.where(Q1>80)] = float('NaN')
-Q1_values = np.arange(5,76,10)
-
-## Create contour plot
-## Initialize plot 1: color = SOC1
-plt.figure() # x = CC1, y = CC2, contours = Q1
-plt.set_cmap('viridis')
-C = plt.contour(X,Y,Q1,zorder=1)
-plt.clabel(C, fontsize=10,fmt='%1.0f')
-plt.title('Time to 80% = ' + str(chargetime) + ' minutes',fontsize=16)
-plt.xlabel('CC1',fontsize=16)
-plt.ylabel('CC2',fontsize=16)
-plt.axis('square')
-plt.xlim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
-plt.ylim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
-
-# Make full screen
-manager = plt.get_current_fig_manager()
-manager.window.showMaximized()
-
-## PLOT POLICIES
-plt.scatter(4.8,4.8,c='k',marker='s',zorder=3) ## BASELINE
-plt.scatter(policies[:,0],policies[:,1],c='k',zorder=2)
-
-plt.savefig('contour_justpoints.png', bbox_inches='tight')
+def plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, numpol):
+    
+    # Import policies
+    policies = np.genfromtxt('policies.csv', delimiter=',')
+    
+    margin = 0.8 # plotting margin
+    
+    # Calculate Q1(CC1, CC2) values for contour lines
+    CC1 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
+    CC2 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
+    [X,Y] = np.meshgrid(CC1,CC2)
+    Q1 = (100)*(chargetime - ((60*0.8)/Y))/((60/X)-(60/Y))
+    Q1[np.where(Q1<0)]  = float('NaN')
+    Q1[np.where(Q1>80)] = float('NaN')
+    #Q1_values = np.arange(5,76,10)
+    
+    ## Create contour plot
+    ## Initialize plot 1: color = SOC1
+    plt.figure() # x = CC1, y = CC2, contours = Q1
+    plt.set_cmap('viridis')
+    C = plt.contour(X,Y,Q1,zorder=1)
+    plt.clabel(C, fontsize=10,fmt='%1.0f')
+    plt.title('Time to 80% = ' + str(chargetime) + ' minutes; ' + str(numpol) + ' policies',fontsize=16)
+    plt.xlabel('CC1',fontsize=16)
+    plt.ylabel('CC2',fontsize=16)
+    plt.axis('square')
+    plt.xlim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
+    plt.ylim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
+    
+    # Make full screen
+    manager = plt.get_current_fig_manager()
+    manager.window.showMaximized()
+    
+    ## PLOT POLICIES
+    one_step = 60*0.8/chargetime;
+    plt.scatter(one_step,one_step,c='k',marker='s',zorder=3) ## BASELINE
+    plt.scatter(policies[:,0],policies[:,1],c='k',zorder=2)
+        
+    plt.savefig('contour_justpoints.png', bbox_inches='tight')
