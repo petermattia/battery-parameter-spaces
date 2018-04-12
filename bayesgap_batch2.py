@@ -1,6 +1,5 @@
 import numpy as np
 import argparse
-from thermalsim import thermalsim
 from batch2sim import batch2sim
 
 class BayesGap(object):
@@ -192,8 +191,8 @@ class BayesGap(object):
 
 	def get_parameter_space(self):
 
-		policies = np.genfromtxt('policies.csv',
-				delimiter=',', skip_header=0)
+		policies = np.genfromtxt('batch2policies.csv',
+				delimiter=',', skip_header=1)
 
 		return policies
 
@@ -204,10 +203,9 @@ class BayesGap(object):
 
 		for arm in selected_arms:
 			params = X[arm]
-			reward = thermalsim(params[0], params[1])
+			reward = batch2sim(params[0], params[1],variance=False)
 			rewards.append(reward)
 			print(params, reward)
-
 		rewards = np.array(rewards).reshape((-1,1))
 		return rewards
 
@@ -225,13 +223,13 @@ def parse_args():
 						help='batch size')
 	parser.add_argument('--datadir', nargs='?', default='data/',
 						help='Directory for cycling data')
-	parser.add_argument('--prior_std', default=20, type=float,
+	parser.add_argument('--prior_std', default=1, type=float,
 						help='standard deviation for the prior')
-	parser.add_argument('--likelihood_std', default=2.19, type=float,
+	parser.add_argument('--likelihood_std', default=2, type=float,
 						help='standard deviation for the likelihood std')
-	parser.add_argument('--beta', default=1, type=float,
+	parser.add_argument('--beta', default=2000, type=float,
 						help='exploration constant in Thm 1')
-	parser.add_argument('--epsilon', default=1, type=float,
+	parser.add_argument('--epsilon', default=0.9, type=float,
 						help='decay constant for exploration')
 
 	return parser.parse_args()
@@ -249,7 +247,7 @@ def main():
 	agent = BayesGap(args)
 	best_arm_params = agent.run()
 	print('Best arm:', best_arm_params)
-	print('Lifetime:', thermalsim(best_arm_params[0], best_arm_params[1]))
+	batch2sim(best_arm_params[0], best_arm_params[1], variance=False)
 
 
 if __name__ == '__main__':
