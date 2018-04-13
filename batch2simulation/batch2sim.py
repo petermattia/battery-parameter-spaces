@@ -18,7 +18,7 @@ def batch2sim(C1, C2, variance = True):
         sigma = 0;
         
     # LOAD BATCH2
-    policies = np.genfromtxt('batch2.csv',
+    policies = np.genfromtxt('batch2mod.csv',
 				delimiter=',', skip_header=1)
     
     # FIND LIFETIME FROM TABLE

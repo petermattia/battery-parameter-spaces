@@ -33,7 +33,7 @@ Q1_values = np.arange(5,76,10)
 ## Initialize plot 1: color = SOC1
 fig = plt.figure() # x = CC1, y = CC2, contours = Q1
 ax = fig.add_subplot(111)
-plt.set_cmap('jet') # winter_r
+plt.set_cmap('viridis') # winter_r
 C = plt.contour(X,Y,Q1,colors='k',zorder=1)
 plt.clabel(C, fontsize=10,fmt='%1.0f')
 plt.title('Time to 80% = ' + str(chargetime) + ' minutes',fontsize=16)

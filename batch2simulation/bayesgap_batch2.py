@@ -1,7 +1,8 @@
 import numpy as np
 import argparse
-from batch2sim import batch2sim
 import os
+from batch2sim import batch2sim
+import contour_batch2_animate
 
 class BayesGap(object):
 
@@ -232,13 +233,13 @@ def parse_args():
 						help='batch size')
 	parser.add_argument('--datadir', nargs='?', default='data/',
 						help='Directory for cycling data')
-	parser.add_argument('--prior_std', default=1, type=float,
+	parser.add_argument('--prior_std', default=20, type=float,
     						help='standard deviation for the prior')
-	parser.add_argument('--likelihood_std', default=2, type=float,
+	parser.add_argument('--likelihood_std', default=2.19, type=float,
 						help='standard deviation for the likelihood std')
-	parser.add_argument('--beta', default=2000, type=float,
+	parser.add_argument('--beta', default=1e5, type=float,
 						help='exploration constant in Thm 1')
-	parser.add_argument('--epsilon', default=0.9, type=float,
+	parser.add_argument('--epsilon', default=1, type=float,
 						help='decay constant for exploration')
 
 	return parser.parse_args()
@@ -259,6 +260,7 @@ def main():
 	best_arm_params = agent.run()
 	print('Best arm:', best_arm_params)
 	batch2sim(best_arm_params[0], best_arm_params[1], variance=False)
+	contour_batch2_animate
 
 
 if __name__ == '__main__':
