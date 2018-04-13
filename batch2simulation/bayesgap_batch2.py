@@ -1,6 +1,7 @@
 import numpy as np
 import argparse
 from batch2sim import batch2sim
+import os
 
 class BayesGap(object):
 
@@ -203,10 +204,18 @@ class BayesGap(object):
 
 		for arm in selected_arms:
 			params = X[arm]
-			reward = batch2sim(params[0], params[1],variance=False)
+			reward = batch2sim(params[0], params[1],variance=True)
 			rewards.append(reward)
 			print(params, reward)
+			f=open('foo.csv','a')
+			np.savetxt(f,np.c_[params[0], params[1],reward],
+                  delimiter=',', fmt='%1.3f')
+			f.close()
 		rewards = np.array(rewards).reshape((-1,1))
+		f=open('foo.csv','a')
+		np.savetxt(f,np.c_[0,0,0],delimiter=',', fmt='%1.0f')
+		f.close()
+
 		return rewards
 
 def parse_args():
@@ -224,7 +233,7 @@ def parse_args():
 	parser.add_argument('--datadir', nargs='?', default='data/',
 						help='Directory for cycling data')
 	parser.add_argument('--prior_std', default=1, type=float,
-						help='standard deviation for the prior')
+    						help='standard deviation for the prior')
 	parser.add_argument('--likelihood_std', default=2, type=float,
 						help='standard deviation for the likelihood std')
 	parser.add_argument('--beta', default=2000, type=float,
@@ -240,6 +249,8 @@ def main():
 	args = parse_args()
 	# args_dict = vars(args)
 	# globals().update(args_dict)
+
+	os.remove('foo.csv')
 
 	np.random.seed(args.seed)
 	np.set_printoptions(threshold=np.inf)

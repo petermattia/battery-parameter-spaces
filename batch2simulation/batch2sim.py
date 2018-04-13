@@ -13,7 +13,7 @@ def batch2sim(C1, C2, variance = True):
     
     # STANDARD DEVIATION
     if variance:
-        sigma = np.std([495, 461, 471]); # batch2 baseline policy
+        sigma = 2*np.std([495, 461, 471]); # batch2 baseline policy
     else:
         sigma = 0;
         
