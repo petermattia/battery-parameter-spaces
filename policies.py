@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-policies.py generates 2-step polices based 
+policies.py is a script that generates all policies within a
+2-step policy space based on your specifications.
+It saves a file called policies.csv to the current directory,
+where each row is a charging policy
 
 Created on Tue Feb 20 16:04:53 2018
 
@@ -39,7 +42,7 @@ for i in np.arange(0,len(X2a)):
         C2 = Y2a[i,j]
         SOC1 = 100 * ( chargetime - (60*0.8/C2) ) / (60/C1 - 60/C2)
         # removes policies that are basically 1-step
-        if SOC1 < LOWER_SOC1_LIM or SOC1 > UPPER_SOC1_LIM: 
+        if SOC1 < LOWER_SOC1_LIM or SOC1 > UPPER_SOC1_LIM:
             X2a[i,j] = float('NaN')
             Y2a[i,j] = float('NaN')
 
