@@ -1,7 +1,6 @@
 import numpy as np
 import argparse
 from thermalsim import thermalsim
-from batch2sim import batch2sim
 
 class BayesGap(object):
 
@@ -91,7 +90,7 @@ class BayesGap(object):
 				batch_arms.append(a_t)
 				candidate_arms.remove(a_t)
 
-			
+
 			print('Policy indices', batch_arms)
 			rewards = self.observe_reward(batch_arms)
 			self.beta = self.beta * epsilon
@@ -120,7 +119,7 @@ class BayesGap(object):
 
 		posterior_covar = np.linalg.inv(np.dot(X_t.T, X_t) / (sigma * sigma) + np.identity(num_dims) / (eta * eta))
 		posterior_mean = np.linalg.multi_dot((posterior_covar, X_t.T, Y_t))/ (sigma * sigma)
-		
+
 		posterior_theta_params = (np.squeeze(posterior_mean), posterior_covar)
 		return posterior_theta_params
 
@@ -153,15 +152,15 @@ class BayesGap(object):
 		num_arms = self.num_arms
 
 		def get_beta(self):
-			
+
 			# Eq. (9) in paper
-	
+
 
 			def get_delta_k(self, k):
-		
+
 				# Heuristic after Theorem 1 in the paper
-	
-				
+
+
 				lower_reference = marginal_mean[k] - 3 * marginal_var[k]
 				delta_k = np.max(upper_references-lower_reference)
 
@@ -255,8 +254,3 @@ def main():
 if __name__ == '__main__':
 
 	main()
-
-	
-
-
-
