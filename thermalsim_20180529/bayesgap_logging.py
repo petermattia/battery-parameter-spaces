@@ -205,7 +205,7 @@ class BayesGap(object):
 
 		for arm in selected_arms:
 			params = X[arm]
-			reward = thermalsim(params[0], params[1],variance=True)
+			reward = thermalsim(params[0], params[1],variance=False)
 			rewards.append(reward)
 			print(params, reward)
 			f=open('bayesgap_log.csv','a')

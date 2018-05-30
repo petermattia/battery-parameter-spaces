@@ -4,6 +4,8 @@
 Created on Tue Feb 20 07:29:14 2018
 
 @author: peter
+
+NOTE: REQUIRES IMAGEMAGICK. https://www.imagemagick.org/script/download.php
 """
 
 import numpy as np
