@@ -1,6 +1,8 @@
 import numpy as np
 import argparse
+import os
 from thermalsim import thermalsim
+import contour_animate
 
 class BayesGap(object):
 
@@ -90,7 +92,7 @@ class BayesGap(object):
 				batch_arms.append(a_t)
 				candidate_arms.remove(a_t)
 
-
+			
 			print('Policy indices', batch_arms)
 			rewards = self.observe_reward(batch_arms)
 			self.beta = self.beta * epsilon
@@ -119,7 +121,7 @@ class BayesGap(object):
 
 		posterior_covar = np.linalg.inv(np.dot(X_t.T, X_t) / (sigma * sigma) + np.identity(num_dims) / (eta * eta))
 		posterior_mean = np.linalg.multi_dot((posterior_covar, X_t.T, Y_t))/ (sigma * sigma)
-
+		
 		posterior_theta_params = (np.squeeze(posterior_mean), posterior_covar)
 		return posterior_theta_params
 
@@ -152,15 +154,15 @@ class BayesGap(object):
 		num_arms = self.num_arms
 
 		def get_beta(self):
-
+			
 			# Eq. (9) in paper
-
+	
 
 			def get_delta_k(self, k):
-
+		
 				# Heuristic after Theorem 1 in the paper
-
-
+	
+				
 				lower_reference = marginal_mean[k] - 3 * marginal_var[k]
 				delta_k = np.max(upper_references-lower_reference)
 
@@ -192,7 +194,7 @@ class BayesGap(object):
 	def get_parameter_space(self):
 
 		policies = np.genfromtxt('policies.csv',
-				delimiter=',', skip_header=0)
+				delimiter=',', skip_header=1)
 
 		return policies
 
@@ -203,11 +205,18 @@ class BayesGap(object):
 
 		for arm in selected_arms:
 			params = X[arm]
-			reward = thermalsim(params[0], params[1],variance=False)
+			reward = thermalsim(params[0], params[1],variance=True)
 			rewards.append(reward)
 			print(params, reward)
-
+			f=open('bayesgap_log.csv','a')
+			np.savetxt(f,np.c_[params[0], params[1],reward],
+                  delimiter=',', fmt='%1.3f')
+			f.close()
 		rewards = np.array(rewards).reshape((-1,1))
+		f=open('bayesgap_log.csv','a')
+		np.savetxt(f,np.c_[0,0,0],delimiter=',', fmt='%1.0f')
+		f.close()
+
 		return rewards
 
 def parse_args():
@@ -220,17 +229,17 @@ def parse_args():
 						help='Seed for random number generators')
 	parser.add_argument('--budget', default=10, type=int,
 						help='Time budget')
-	parser.add_argument('--bsize', default=4, type=int,
+	parser.add_argument('--bsize', default=16, type=int,
 						help='batch size')
 	parser.add_argument('--datadir', nargs='?', default='data/',
 						help='Directory for cycling data')
 	parser.add_argument('--prior_std', default=20, type=float,
-						help='standard deviation for the prior')
+    						help='standard deviation for the prior')
 	parser.add_argument('--likelihood_std', default=2.19, type=float,
 						help='standard deviation for the likelihood std')
-	parser.add_argument('--beta', default=1, type=float,
+	parser.add_argument('--beta', default=5, type=float,
 						help='exploration constant in Thm 1')
-	parser.add_argument('--epsilon', default=1, type=float,
+	parser.add_argument('--epsilon', default=0.8, type=float,
 						help='decay constant for exploration')
 
 	return parser.parse_args()
@@ -241,6 +250,9 @@ def main():
 	args = parse_args()
 	# args_dict = vars(args)
 	# globals().update(args_dict)
+    
+	if os.path.isfile('bayesgap_log.csv'):
+	    os.remove('bayesgap_log.csv')
 
 	np.random.seed(args.seed)
 	np.set_printoptions(threshold=np.inf)
@@ -248,9 +260,15 @@ def main():
 	agent = BayesGap(args)
 	best_arm_params = agent.run()
 	print('Best arm:', best_arm_params)
-	print('Lifetime:', thermalsim(best_arm_params[0], best_arm_params[1]))
+	thermalsim(best_arm_params[0], best_arm_params[1], variance=False)
+	contour_animate
 
 
 if __name__ == '__main__':
 
 	main()
+
+	
+
+
+

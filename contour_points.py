@@ -48,5 +48,5 @@ def plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, numpol):
     one_step = 60*0.8/chargetime;
     plt.scatter(one_step,one_step,c='k',marker='s',zorder=3) ## BASELINE
     plt.scatter(policies[:,0],policies[:,1],c='k',zorder=2)
-        
+            
     plt.savefig('contour_justpoints.png', bbox_inches='tight')

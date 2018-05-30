@@ -33,7 +33,7 @@ Q1_values = np.arange(5,76,10)
 ## Create contour plot
 ## Initialize plot 1: color = SOC1
 plt.figure() # x = CC1, y = CC2, contours = Q1
-plt.set_cmap('winter_r')
+plt.set_cmap('jet_r')
 C = plt.contour(X,Y,Q1,colors='k',zorder=1)
 plt.clabel(C, fontsize=10,fmt='%1.0f')
 plt.title('Time to 80% = ' + str(chargetime) + ' minutes',fontsize=16)
@@ -47,6 +47,7 @@ plt.ylim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
 manager = plt.get_current_fig_manager()
 manager.window.showMaximized()
 
+"""
 ## CALCULATE POLICY LIFETIMES
 lifetime = np.zeros((len(policies),1))
 lifetimechange = np.zeros((len(policies),1))
@@ -59,10 +60,11 @@ for i in range(len(policies)):
     if i==0: baseline = np.asscalar(lifetime[0])
     lifetimechange[i] = 100*(lifetime[i]-baseline)/baseline
     print('Change rel. to 1-step = ' + '{:.1%}'.format(np.asscalar(lifetimechange[i])/100))
+"""
 
 ## PLOT POLICIES
-plt.scatter(policies[:,0],policies[:,1],c=lifetimechange.ravel(),zorder=2)
-plt.scatter(policies[0,0],policies[0,1],marker='s',c=0,zorder=3)
+plt.scatter(policies[1:,0],policies[1:,1],c=lifetimechange.ravel()[1:],zorder=2)
+#plt.scatter(policies[0,0],policies[0,1],marker='s',c=0,zorder=3)
 
 # Colorbar
 cbar = plt.colorbar()

@@ -21,9 +21,10 @@ LOWER_CRATE_LIM = 1.6 # C rate, lower cutoff
 UPPER_CRATE_LIM = 8   # C rate, upper cutoff
 LOWER_SOC1_LIM  = 10  # [%], lower SOC1 cutoff
 UPPER_SOC1_LIM  = 70  # [%], upper SOC1 cutoff
-DENSITY         = 11  # Points per line cut
+DENSITY         = 9   # Points per line cut
 STEP            = 0.2 # initial distance from baseline policy
 chargetime      = 10  # [=] minutes
+FINAL_CUTOFF    = 80  # SOC cutoff
 
 ##############################################################################
 
@@ -40,7 +41,7 @@ for i in np.arange(0,len(X2a)):
     for j in np.arange(0,len(Y2a)):
         C1 = X2a[i,j]
         C2 = Y2a[i,j]
-        SOC1 = 100 * ( chargetime - (60*0.8/C2) ) / (60/C1 - 60/C2)
+        SOC1 = 100 * ( chargetime - (60*FINAL_CUTOFF/100/C2) ) / (60/C1 - 60/C2)
         # removes policies that are basically 1-step
         if SOC1 < LOWER_SOC1_LIM or SOC1 > UPPER_SOC1_LIM:
             X2a[i,j] = float('NaN')
@@ -56,7 +57,7 @@ for i in np.arange(0,len(X2b)):
     for j in np.arange(0,len(Y2b)):
         C1 = X2b[i,j]
         C2 = Y2b[i,j]
-        SOC1 = 100 * ( chargetime - (60*0.8/C2) ) / (60/C1 - 60/C2)
+        SOC1 = 100 * ( chargetime - (60*FINAL_CUTOFF/100/C2) ) / (60/C1 - 60/C2)
         # removes policies that are basically 1-step
         if SOC1 < LOWER_SOC1_LIM or SOC1 > UPPER_SOC1_LIM:
             X2b[i,j] = float('NaN')
