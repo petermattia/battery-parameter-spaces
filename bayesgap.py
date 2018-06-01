@@ -24,13 +24,14 @@ class BayesGap(object):
 
 	def get_design_matrix(self, kernel_bandwidth):
 
-		from sklearn.kernel_approximation import (RBFSampler,
-                                          Nystroem)
+		from sklearn.kernel_approximation import (RBFSampler, Nystroem)
 		param_space = self.param_space
 		num_arms = self.num_arms
 
 		feature_map_nystroem = Nystroem(gamma=.2, n_components=num_arms, random_state=1)
 		X = feature_map_nystroem.fit_transform(param_space)
+		# print('start', X[:3])
+		# print('end', X[-3:])
 
 		"""
 		def Gaussian(x1,x2):
