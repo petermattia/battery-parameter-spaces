@@ -24,9 +24,15 @@ class BayesGap(object):
 
 	def get_design_matrix(self, kernel_bandwidth):
 
+		from sklearn.kernel_approximation import (RBFSampler,
+                                          Nystroem)
 		param_space = self.param_space
 		num_arms = self.num_arms
 
+		feature_map_nystroem = Nystroem(gamma=.2, n_components=num_arms, random_state=1)
+		X = feature_map_nystroem.fit_transform(param_space)
+
+		"""
 		def Gaussian(x1,x2):
 			return np.exp((-(np.linalg.norm(x1-x2)**2))/(2*kernel_bandwidth**2))
 			
@@ -38,16 +44,26 @@ class BayesGap(object):
 				kernel_matrix[i, j] = Gaussian(param_space[i], param_space[j])
 				kernel_matrix[j, i] = kernel_matrix[i, j]
 
+		
+
+
+		
+		# # bad approximation based on eigenvalues
 		from numpy import linalg as LA
 		w, v = LA.eigh(kernel_matrix)
-
-		X = np.zeros((num_arms, num_arms))
+		X = np.dot(v.T, np.diag(np.sqrt(w)))
 		for i in range(num_arms):
-			X[i] = np.sqrt(w[i]) * v[:, i]
+			X[i, :] = np.sqrt(w[i]) * v[:, i]
 
-		# alt that works well
+		print('start', X[:3])
+		print('end', X[-3:])
+		# # alt that works well
+		
 		from scipy.linalg import sqrtm
 		X = sqrtm(kernel_matrix)
+		print('start sqrt', X[:3])
+		print('end sqrt', X[-3:])
+		"""
 
 		return X
 
@@ -130,8 +146,8 @@ class BayesGap(object):
 					proposal_gaps.append(proposal_gap)
 				batch_arms.append(a_t)
 				candidate_arms.remove(a_t)
-				print('a:', a_t, 'J:', J_t, 'j:', j_t)
-				print('s_J:%.4f, s_j: %.4f' % (s_J_t, s_j_t))
+				# print('a:', a_t, 'J:', J_t, 'j:', j_t)
+				# print('s_J:%.4f, s_j: %.4f' % (s_J_t, s_j_t))
 
 
 			print('Policy indices', batch_arms)
@@ -249,14 +265,9 @@ class BayesGap(object):
 		rewards = []
 
 		for arm in selected_arms:
-<<<<<<< HEAD
 			params = param_space[arm]
-			reward = thermalsim(params[0], params[1])
+			reward = thermalsim(params[0], params[1], variance=False)
 			# reward = 1.
-=======
-			params = X[arm]
-			reward = thermalsim(params[0], params[1],variance=False)
->>>>>>> 321e7fb59aca035f582d853424c6c0c2ba054168
 			rewards.append(reward)
 			print(params, reward)
 
