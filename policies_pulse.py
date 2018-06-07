@@ -17,22 +17,26 @@ import contour_points
 ##############################################################################
 
 # PARAMETERS TO CREATE POLICY SPACE
-LOWER_CRATE_LIM = 3.1  # C rate, lower cutoff
-UPPER_CRATE_LIM = 6.3  # C rate, upper cutoff
-LOWER_SOC1_LIM  = 9   # [%], lower SOC1 cutoff
-UPPER_SOC1_LIM  = 71  # [%], upper SOC1 cutoff
-OFFSET          = 0.2 # initial distance from baseline policy
-chargetime      = 10  # [=] minutes
-FINAL_CUTOFF    = 80  # SOC cutoff
+LOWER_CRATE_LIM = 3  # C rate, lower cutoff
+UPPER_CRATE_LIM = 6  # C rate, upper cutoff
+LOWER_SOC1_LIM  = 10   # [%], lower SOC1 cutoff
+UPPER_SOC1_LIM  = 69   # [%], upper SOC1 cutoff
+OFFSET          = 0.2  # initial distance from baseline policy
+PULSE           = 8    # Pulse current
+PULSE_WIDTH     = 10   # Pulse width, in SOC
+chargetime      = 10-60/PULSE*(PULSE_WIDTH/100)  # [=] minutes
+FINAL_CUTOFF    = 70   # SOC cutoff
 
-SET_STEP        = True # Set either a step size or a density of points per line cut
-STEP_SIZE       = 0.3  # Step size, in units of C rate
-DENSITY         = 7    # Points per line cut
+SET_STEP        = True  # Set either a step size or a density of points per line cut
+STEP_SIZE       = 0.3;  # Step size, in units of C rate
+DENSITY         = 5     # Points per line cut
 
 ##############################################################################
 
-# Find 1-step C rate for given charge time
-one_step = 60*(FINAL_CUTOFF/100)/chargetime
+# Use standard conditions to keep C1 and C2 points consistent
+FINAL_CUTOFF    = 80  # SOC cutoff
+chargetime = 10
+one_step = 4.5 
 
 # C1 > C2
 if SET_STEP:
@@ -46,11 +50,15 @@ X2a, Y2a = np.meshgrid(C1grida, C2grida)
 # C1 < C2
 if SET_STEP:
     C1gridb = np.arange(one_step - OFFSET, LOWER_CRATE_LIM - 0.1, -STEP_SIZE)
-    C2gridb = np.arange(one_step + OFFSET, UPPER_CRATE_LIM, STEP_SIZE)
+    C2gridb = np.arange(one_step + OFFSET, UPPER_CRATE_LIM + 0.1, STEP_SIZE)
 else:
-    C1gridb = np.linspace(LOWER_CRATE_LIM,one_step - OFFSET,DENSITY)
-    C2gridb = np.linspace(one_step + OFFSET,UPPER_CRATE_LIM,DENSITY)
+    C1gridb = np.linspace(LOWER_CRATE_LIM, one_step - OFFSET, DENSITY)
+    C2gridb = np.linspace(one_step + OFFSET, UPPER_CRATE_LIM, DENSITY)
 X2b, Y2b = np.meshgrid(C1gridb, C2gridb)
+
+FINAL_CUTOFF    = 70  # SOC cutoff
+chargetime      = 10-60/PULSE*(PULSE_WIDTH/100)  # [=] minutes
+one_step = 60*(FINAL_CUTOFF/100)/chargetime
 
 # Remove bad policies: C1 > C2
 for i in np.arange(0,X2a.shape[0]):
@@ -58,6 +66,7 @@ for i in np.arange(0,X2a.shape[0]):
         C1 = X2a[i,j]
         C2 = Y2a[i,j]
         SOC1 = 100 * ( chargetime - (60*FINAL_CUTOFF/100/C2) ) / (60/C1 - 60/C2)
+        print(str(C1) + ', ' + str(C2) + ': ' + str(SOC1))
         # removes policies that are basically 1-step
         if SOC1 < LOWER_SOC1_LIM or SOC1 > UPPER_SOC1_LIM:
             X2a[i,j] = float('NaN')
@@ -85,6 +94,6 @@ Y2 = np.insert(Y2, 0, one_step)
 print(str(len(X2)) + " total policies")
 
 # Save policies
-np.savetxt('policies.csv',np.c_[X2,Y2],delimiter=',', fmt='%1.3f')
+np.savetxt('policies_withpulse.csv',np.c_[X2,Y2],delimiter=',', fmt='%1.3f')
 
-contour_points.plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, len(X2))
+contour_points.plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, len(X2), PULSE)
