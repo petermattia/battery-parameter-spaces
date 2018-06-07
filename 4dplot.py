@@ -29,6 +29,7 @@ Cp.append(C1)
 
 # Plot stuff
 fig = plt.figure()
+plt.rcParams.update({'font.size': 16})
 ax = fig.gca(projection='3d')
 minn, maxx = 0, 70
 norm = matplotlib.colors.Normalize(minn, maxx)
@@ -66,10 +67,10 @@ ax.view_init(elev=0, azim=0)
 # animation function. This is called sequentially
 def animate(i):
     azimuth = i*10
-    ax.view_init(elev=90, azim=azimuth)
+    ax.view_init(elev=0, azim=azimuth)
     return ax
 
 anim = animation.FuncAnimation(fig, animate, frames=36, 
                                interval=1000, blit=False)
 
-anim.save('4danimation.gif', writer='imagemagick', fps=1)
+anim.save('4danimation2.gif', writer='imagemagick', fps=1)
