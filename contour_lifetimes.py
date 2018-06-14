@@ -8,7 +8,7 @@ Created on Tue Feb 20 07:29:14 2018
 
 # REPLACE BELOW IMPORT TO TEST THERMAL SIMULATOR OF CHOICE
 
-from thermalsim_medgradient import thermalsim
+from thermalsim_lowgradient import thermalsim
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -66,4 +66,11 @@ cbar = plt.colorbar()
 plt.clim(min(lifetime),max(lifetime))
 cbar.set_label('Cycle life')
 
+# Save figure
 plt.savefig('contour_lifetimes.png', bbox_inches='tight')
+
+# Save csv with policies and lifetimes
+f=open('policies_lifetimes.csv','a')
+np.savetxt(f,np.c_[policies,lifetime],
+  delimiter=',', fmt='%1.3f')
+f.close()
