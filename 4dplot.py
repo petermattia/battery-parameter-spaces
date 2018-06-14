@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+h#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jun  5 11:34:46 2018
@@ -22,6 +22,7 @@ C1, C2 = np.meshgrid(x, y)    # 50x50
 
 # Cuts (Cp=pulse)
 list_cp = np.linspace(8,10,1)
+##list_cp = np.linspace(2,10,9)
 Cp = []
 for cp in list_cp:
     Cp.append(cp*np.ones((50,50)))
@@ -48,7 +49,7 @@ for k, cp in enumerate(Cp):
 
 # PLOT FORMATTING
 ax.scatter(4.8, 4.8, 4.8, c='k', s=50)
-ax.set_title('Q2 = Q1 + 10%')
+ax.set_title('Q1 = 10%')
 ax.set_xlabel('C1')
 ax.set_ylabel('C2')
 ax.set_zlabel('C_pulse')
@@ -61,16 +62,16 @@ manager = plt.get_current_fig_manager()
 manager.window.showMaximized()
 fig.canvas.show()
 
-ax.view_init(elev=0, azim=0)
-
+el = 45
+ax.view_init(elev=el, azim=0)
 
 # animation function. This is called sequentially
 def animate(i):
     azimuth = i*10
-    ax.view_init(elev=0, azim=azimuth)
+    ax.view_init(elev=el, azim=azimuth)
     return ax
 
-anim = animation.FuncAnimation(fig, animate, frames=36, 
+anim = animation.FuncAnimation(fig, animate, frames=36,
                                interval=1000, blit=False)
 
-anim.save('4danimation2.gif', writer='imagemagick', fps=1)
+anim.save('4danimation_layers_' + str(el) + '.gif', writer='imagemagick', fps=1)

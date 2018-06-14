@@ -6,7 +6,9 @@ Created on Tue Feb 20 07:29:14 2018
 @author: peter
 """
 
-from thermalsim import thermalsim
+# REPLACE BELOW IMPORT TO TEST THERMAL SIMULATOR OF CHOICE
+
+from thermalsim_medgradient import thermalsim
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -61,7 +63,7 @@ plt.scatter(policies[0,0],policies[0,1],marker='s',c=np.asscalar(lifetime[0]),zo
 
 # Colorbar
 cbar = plt.colorbar()
-plt.clim(0,600)
+plt.clim(min(lifetime),max(lifetime))
 cbar.set_label('Cycle life')
 
 plt.savefig('contour_lifetimes.png', bbox_inches='tight')

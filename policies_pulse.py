@@ -17,15 +17,16 @@ import contour_points
 ##############################################################################
 
 # PARAMETERS TO CREATE POLICY SPACE
-LOWER_CRATE_LIM = 3  # C rate, lower cutoff
-UPPER_CRATE_LIM = 6  # C rate, upper cutoff
+LOWER_CRATE_LIM = 3.1  # C rate, lower cutoff
+UPPER_CRATE_LIM = 6.0  # C rate, upper cutoff
 LOWER_SOC1_LIM  = 10   # [%], lower SOC1 cutoff
 UPPER_SOC1_LIM  = 69   # [%], upper SOC1 cutoff
 OFFSET          = 0.2  # initial distance from baseline policy
 PULSE           = 8    # Pulse current
-PULSE_WIDTH     = 10   # Pulse width, in SOC
+PULSE_WIDTH     = 20   # Pulse width, in SOC
 chargetime      = 10-60/PULSE*(PULSE_WIDTH/100)  # [=] minutes
-FINAL_CUTOFF    = 70   # SOC cutoff
+FINAL_CUTOFF    = 80-PULSE_WIDTH   # SOC cutoff
+one_step = 60*(FINAL_CUTOFF/100)/chargetime
 
 SET_STEP        = True  # Set either a step size or a density of points per line cut
 STEP_SIZE       = 0.3;  # Step size, in units of C rate
@@ -34,9 +35,9 @@ DENSITY         = 5     # Points per line cut
 ##############################################################################
 
 # Use standard conditions to keep C1 and C2 points consistent
-FINAL_CUTOFF    = 80  # SOC cutoff
-chargetime = 10
-one_step = 4.5 
+#FINAL_CUTOFF    = 80  # SOC cutoff
+#chargetime = 10
+#one_step = 4.5 
 
 # C1 > C2
 if SET_STEP:
@@ -56,7 +57,7 @@ else:
     C2gridb = np.linspace(one_step + OFFSET, UPPER_CRATE_LIM, DENSITY)
 X2b, Y2b = np.meshgrid(C1gridb, C2gridb)
 
-FINAL_CUTOFF    = 70  # SOC cutoff
+FINAL_CUTOFF    = 80-PULSE_WIDTH  # SOC cutoff
 chargetime      = 10-60/PULSE*(PULSE_WIDTH/100)  # [=] minutes
 one_step = 60*(FINAL_CUTOFF/100)/chargetime
 
@@ -90,10 +91,13 @@ X2 = X2[~np.isnan(X2)]
 Y2 = Y2[~np.isnan(Y2)]
 X2 = np.insert(X2, 0, one_step)
 Y2 = np.insert(Y2, 0, one_step)
+pulse = PULSE*np.ones((len(X2),1))
+Q_pulse = PULSE_WIDTH*np.ones((len(X2),1))
 
 print(str(len(X2)) + " total policies")
 
 # Save policies
-np.savetxt('policies_withpulse.csv',np.c_[X2,Y2],delimiter=',', fmt='%1.3f')
+np.savetxt('policies_withpulse'+ str(PULSE) + 'C_' + str(80-FINAL_CUTOFF) + \
+           'per_pulse.csv',np.c_[pulse,Q_pulse,X2,Y2],delimiter=',', fmt='%1.3f')
 
 contour_points.plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, len(X2), PULSE)

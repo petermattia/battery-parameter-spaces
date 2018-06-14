@@ -15,19 +15,30 @@ def plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, num
     
     # Import policies
     if PULSE:
-        policies = np.genfromtxt('policies_withpulse.csv', delimiter=',')
+        policies = np.genfromtxt('policies_withpulse'+ str(PULSE) + 'C_' + \
+                                 str(80-FINAL_CUTOFF) + 'per_pulse.csv', delimiter=',')
     else:
         policies = np.genfromtxt('policies.csv', delimiter=',')
     
-    margin = 0.2 # plotting margin
+    OVERRIDE_AX_LIM = False
+    
+    if OVERRIDE_AX_LIM:
+        LOWER_LIM = 2.1
+        UPPER_LIM = 6.5
+    else:
+        margin = 0.2 # plotting margin
     
     # Calculate Q1(CC1, CC2) values for contour lines
-    CC1 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
-    CC2 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
+    if OVERRIDE_AX_LIM:
+        CC1 = np.arange(LOWER_LIM,UPPER_LIM,0.01)
+        CC2 = np.arange(LOWER_LIM,UPPER_LIM,0.01)
+    else:
+        CC1 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
+        CC2 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
     [X,Y] = np.meshgrid(CC1,CC2)
     Q1 = (100)*(chargetime - ((60*(FINAL_CUTOFF/100))/Y))/((60/X)-(60/Y))
     Q1[np.where(Q1<0)]  = float('NaN')
-    Q1[np.where(Q1>80)] = float('NaN')
+    Q1[np.where(Q1>FINAL_CUTOFF)] = float('NaN')
     #Q1_values = np.arange(5,76,10)
     
     ## Create contour plot
@@ -36,18 +47,24 @@ def plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, num
     plt.rcParams.update({'font.size': 16})
     plt.set_cmap('viridis')
     levels = np.flipud(np.arange(FINAL_CUTOFF,-1,-10))
-    C = plt.contour(X,Y,Q1,c=levels,zorder=1)
-    plt.clabel(C, fontsize=10,fmt='%1.0f')
+    #levels[0] = 1
+    levels[-1] = levels[-1] - 1
+    C = plt.contour(X,Y,Q1,levels,zorder=1)
+    plt.clabel(C, fontsize=12,fmt='%1.0f')
     if PULSE:
-        plt.title('Pulse current = ' + str(PULSE) + 'C; ' + str(numpol) + ' policies',fontsize=16)
+        plt.title('Pulse = ' + str(PULSE) + 'C for ' + str(80-FINAL_CUTOFF) + '% SOC; ' + str(numpol) + ' policies',fontsize=16)
     else:
         plt.title('Time to ' + str(FINAL_CUTOFF) + '% = ' + str(chargetime) + ' minutes; ' + str(numpol) + ' policies',fontsize=16)
     plt.xlabel('C1')
     plt.ylabel('C2')
     plt.axis('square')
-    plt.xlim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
-    plt.ylim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
-    
+    if OVERRIDE_AX_LIM:
+        plt.xlim((LOWER_LIM,UPPER_LIM))
+        plt.ylim((LOWER_LIM,UPPER_LIM))
+    else:
+        plt.xlim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
+        plt.ylim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
+
     # Make full screen
     manager = plt.get_current_fig_manager()
     manager.window.showMaximized()
@@ -55,9 +72,13 @@ def plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, num
     ## PLOT POLICIES
     one_step = 60*(FINAL_CUTOFF/100)/chargetime;
     plt.scatter(one_step,one_step,c='k',marker='s',zorder=3) ## BASELINE
-    plt.scatter(policies[:,0],policies[:,1],c='k',zorder=2)
-    
     if PULSE:
-        plt.savefig('contour_justpoints_pulse.png', bbox_inches='tight')
+        plt.scatter(policies[:,2],policies[:,3],c='k',zorder=2)
+    else:
+        plt.scatter(policies[:,0],policies[:,1],c='k',zorder=2)
+    
+    ## SAVE FIGURE
+    if PULSE:
+        plt.savefig('contour_justpoints_' + str(PULSE) + 'C_' + str(80-FINAL_CUTOFF) + 'per_pulse.png', bbox_inches='tight')
     else:
         plt.savefig('contour_justpoints.png', bbox_inches='tight')
