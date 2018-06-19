@@ -9,76 +9,72 @@ Created on Tue Feb 20 07:29:14 2018
 """
 
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 
-def plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, numpol, PULSE=0):
+def plot_contour(C1, C2, C3, C4_LIMITS):
     
     # Import policies
-    if PULSE:
-        policies = np.genfromtxt('policies_withpulse'+ str(PULSE) + 'C_' + \
-                                 str(80-FINAL_CUTOFF) + 'per_pulse.csv', delimiter=',')
-    else:
-        policies = np.genfromtxt('policies.csv', delimiter=',')
+    policies = np.genfromtxt('policies.csv', delimiter=',')
     
-    OVERRIDE_AX_LIM = False
+    one_step = 4.8
+    margin = 0.2 # plotting margin
     
-    if OVERRIDE_AX_LIM:
-        LOWER_LIM = 2.1
-        UPPER_LIM = 6.5
-    else:
-        margin = 0.2 # plotting margin
+    # Calculate C4(CC1, CC2) values for contour lines
+    C1_grid = np.arange(min(C1)-margin,max(C1) + margin,0.01)
+    C2_grid = np.arange(min(C2)-margin,max(C2) + margin,0.01)
+    [X,Y] = np.meshgrid(C1_grid,C2_grid)
     
-    # Calculate Q1(CC1, CC2) values for contour lines
-    if OVERRIDE_AX_LIM:
-        CC1 = np.arange(LOWER_LIM,UPPER_LIM,0.01)
-        CC2 = np.arange(LOWER_LIM,UPPER_LIM,0.01)
-    else:
-        CC1 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
-        CC2 = np.arange(LOWER_CRATE_LIM-margin,UPPER_CRATE_LIM + margin,0.01)
-    [X,Y] = np.meshgrid(CC1,CC2)
-    Q1 = (100)*(chargetime - ((60*(FINAL_CUTOFF/100))/Y))/((60/X)-(60/Y))
-    Q1[np.where(Q1<0)]  = float('NaN')
-    Q1[np.where(Q1>FINAL_CUTOFF)] = float('NaN')
-    #Q1_values = np.arange(5,76,10)
-    
-    ## Create contour plot
-    ## Initialize plot 1: color = SOC1
-    plt.figure() # x = CC1, y = CC2, contours = Q1
-    plt.rcParams.update({'font.size': 16})
+    ## CREATE CONTOUR PLOT
+    fig = plt.figure() # x = C1, y = C2, cuts = C3, contours = C4
+    plt.style.use('classic')
+    plt.rcParams.update({'font.size': 14})
     plt.set_cmap('viridis')
-    levels = np.flipud(np.arange(FINAL_CUTOFF,-1,-10))
-    #levels[0] = 1
-    levels[-1] = levels[-1] - 1
-    C = plt.contour(X,Y,Q1,levels,zorder=1)
-    plt.clabel(C, fontsize=12,fmt='%1.0f')
-    if PULSE:
-        plt.title('Pulse = ' + str(PULSE) + 'C for ' + str(80-FINAL_CUTOFF) + '% SOC; ' + str(numpol) + ' policies',fontsize=16)
-    else:
-        plt.title('Time to ' + str(FINAL_CUTOFF) + '% = ' + str(chargetime) + ' minutes; ' + str(numpol) + ' policies',fontsize=16)
-    plt.xlabel('C1')
-    plt.ylabel('C2')
-    plt.axis('square')
-    if OVERRIDE_AX_LIM:
-        plt.xlim((LOWER_LIM,UPPER_LIM))
-        plt.ylim((LOWER_LIM,UPPER_LIM))
-    else:
-        plt.xlim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
-        plt.ylim((LOWER_CRATE_LIM-margin, UPPER_CRATE_LIM+margin))
-
-    # Make full screen
-    manager = plt.get_current_fig_manager()
+    manager = plt.get_current_fig_manager() # Make full screen
     manager.window.showMaximized()
     
-    ## PLOT POLICIES
-    one_step = 60*(FINAL_CUTOFF/100)/chargetime;
-    plt.scatter(one_step,one_step,c='k',marker='s',zorder=3) ## BASELINE
-    if PULSE:
-        plt.scatter(policies[:,2],policies[:,3],c='k',zorder=2)
-    else:
-        plt.scatter(policies[:,0],policies[:,1],c='k',zorder=2)
+    
+    ## MAKE PLOT
+    for k, c3 in enumerate(C3):
+        plt.subplot(2,3,k+1)
+        plt.axis('square')
+        
+        C4 = 4.8*4 - (X + Y + c3)
+        C4[np.where(C4<C4_LIMITS[0])]  = float('NaN')
+        C4[np.where(C4>C4_LIMITS[1])] = float('NaN')
+        
+        ## PLOT CONTOURS
+        levels = [C4_LIMITS[0]+0.01,1,2,3,4,C4_LIMITS[1]-0.02]
+        C = plt.contour(X,Y,C4,levels,zorder=1,vmin=min(C4_LIMITS),vmax=max(C4_LIMITS))
+        plt.clabel(C,fmt='%1.1f')
+        
+        ## PLOT POLICIES
+        if c3 == 4.8:
+            plt.scatter(one_step,one_step,c='k',marker='s',zorder=3) ## BASELINE
+        
+        idx_subset = np.where(policies[:,2]==c3)
+        policy_subset = policies[idx_subset,:][0]
+        plt.scatter(policy_subset[:,0],policy_subset[:,1],c='k',zorder=2)
+        
+        plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=14)
+        plt.xlabel('C1')
+        plt.ylabel('C2')
+        plt.xlim((min(C1)-margin, max(C1)+margin))
+        plt.ylim((min(C2)-margin, max(C2)+margin))
+    
+    plt.tight_layout()
+    
+    # Add colorbar
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    minn, maxx = 0, 4.8
+    norm = matplotlib.colors.Normalize(minn, maxx)
+    m = plt.cm.ScalarMappable(norm=norm, cmap='viridis')
+    m.set_array([])
+    cbar = plt.colorbar(m, cax=cbar_ax)
+    #fig.colorbar(m, cax=cbar_ax)
+    plt.clim(min(C4_LIMITS),max(C4_LIMITS))
+    cbar.ax.set_title('C4')
     
     ## SAVE FIGURE
-    if PULSE:
-        plt.savefig('contour_justpoints_' + str(PULSE) + 'C_' + str(80-FINAL_CUTOFF) + 'per_pulse.png', bbox_inches='tight')
-    else:
-        plt.savefig('contour_justpoints.png', bbox_inches='tight')
+    plt.savefig('contour_justpoints.png', bbox_inches='tight')

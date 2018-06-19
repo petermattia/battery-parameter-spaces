@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+NEW 4-STEP STRUCTURE
 policies.py is a script that generates all policies within a
-2-step policy space based on your specifications.
+4-step policy space based on your specifications.
+Each step has a width of 20% SOC. C1, C2, and C3 are free,
+and C4 is constrained.
 It saves a file called policies.csv to the current directory,
 where each row is a charging policy
 
-Created on Tue Feb 20 16:04:53 2018
+Created on Mon Jun 18 16:04:53 2018
 
 @author: peter
 """
@@ -17,74 +20,42 @@ import contour_points
 ##############################################################################
 
 # PARAMETERS TO CREATE POLICY SPACE
-LOWER_CRATE_LIM = 3.1  # C rate, lower cutoff
-UPPER_CRATE_LIM = 6.3  # C rate, upper cutoff
-LOWER_SOC1_LIM  = 9   # [%], lower SOC1 cutoff
-UPPER_SOC1_LIM  = 71  # [%], upper SOC1 cutoff
-OFFSET          = 0.2 # initial distance from baseline policy
-chargetime      = 10  # [=] minutes
-FINAL_CUTOFF    = 80  # SOC cutoff
+C1 = [3, 3.6, 4.2, 4.8, 5.2, 5.6, 6, 8]
+C2 = [3, 3.6, 4.2, 4.8, 5.2, 5.6, 6, 8]
+C3 = [3, 3.6, 4.2, 4.8, 5.2, 5.6]
 
-SET_STEP        = True # Set either a step size or a density of points per line cut
-STEP_SIZE       = 0.3  # Step size, in units of C rate
-DENSITY         = 7    # Points per line cut
+C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 
 ##############################################################################
 
-# Find 1-step C rate for given charge time
-one_step = 60*(FINAL_CUTOFF/100)/chargetime
+# Pre-initialize arrays and counters
+policies = -1.*np.ones((1000,4));
+valid_policies = -1.*np.ones((1000,4));
 
-# C1 > C2
-if SET_STEP:
-    C1grida = np.arange(one_step + OFFSET,UPPER_CRATE_LIM,STEP_SIZE)
-    C2grida = np.arange(one_step - OFFSET,LOWER_CRATE_LIM - 0.1,-STEP_SIZE)
-else:
-    C1grida = np.linspace(one_step + OFFSET,UPPER_CRATE_LIM,DENSITY)
-    C2grida = np.linspace(LOWER_CRATE_LIM,one_step - OFFSET,DENSITY)
-X2a, Y2a = np.meshgrid(C1grida, C2grida)
+count = valid_count = 0
 
-# C1 < C2
-if SET_STEP:
-    C1gridb = np.arange(one_step - OFFSET, LOWER_CRATE_LIM - 0.1, -STEP_SIZE)
-    C2gridb = np.arange(one_step + OFFSET, UPPER_CRATE_LIM, STEP_SIZE)
-else:
-    C1gridb = np.linspace(LOWER_CRATE_LIM,one_step - OFFSET,DENSITY)
-    C2gridb = np.linspace(one_step + OFFSET,UPPER_CRATE_LIM,DENSITY)
-X2b, Y2b = np.meshgrid(C1gridb, C2gridb)
+# Generate policies
+for c1, c2, c3 in [(c1,c2,c3) for c1 in C1 for c2 in C2 for c3 in C3]:
+    c4 = 4.8*4 - (c1 + c2 + c3)
+    policies[count,:] = [c1, c2, c3, c4]
+    count += 1
+    
+    if c4 >= C4_LIMITS[0] and c4 <= C4_LIMITS[1]:
+        if c1 == 4.8 and c2 == 4.8 and c3 == 4.8:
+            print('baseline') # Exclude baseline
+        else:
+            valid_policies[valid_count,:] = [c1, c2, c3, c4]
+            valid_count += 1
 
-# Remove bad policies: C1 > C2
-for i in np.arange(0,X2a.shape[0]):
-    for j in np.arange(0,X2a.shape[1]):
-        C1 = X2a[i,j]
-        C2 = Y2a[i,j]
-        SOC1 = 100 * ( chargetime - (60*FINAL_CUTOFF/100/C2) ) / (60/C1 - 60/C2)
-        # removes policies that are basically 1-step
-        if SOC1 < LOWER_SOC1_LIM or SOC1 > UPPER_SOC1_LIM:
-            X2a[i,j] = float('NaN')
-            Y2a[i,j] = float('NaN')
+# Remove trailing zeros
+policies = policies[0:count]
+valid_policies = valid_policies[0:valid_count]
 
-# Remove bad policies: C1 < C2
-for i in np.arange(0,X2b.shape[0]):
-    for j in np.arange(0,X2b.shape[1]):
-        C1 = X2b[i,j]
-        C2 = Y2b[i,j]
-        SOC1 = 100 * ( chargetime - (60*FINAL_CUTOFF/100/C2) ) / (60/C1 - 60/C2)
-        # removes policies that are basically 1-step
-        if SOC1 < LOWER_SOC1_LIM or SOC1 > UPPER_SOC1_LIM:
-            X2b[i,j] = float('NaN')
-            Y2b[i,j] = float('NaN')
+# Update user
+print('Count = ' + str(count))
+print('Valid count = ' + str(valid_count))
 
-## Unravel, merge, clean, and add baseline policy
-X2 = np.concatenate((X2a.ravel(), X2b.ravel()))
-Y2 = np.concatenate((Y2a.ravel(), Y2b.ravel()))
-X2 = X2[~np.isnan(X2)]
-Y2 = Y2[~np.isnan(Y2)]
-X2 = np.insert(X2, 0, one_step)
-Y2 = np.insert(Y2, 0, one_step)
+## Save policies
+np.savetxt('policies.csv',valid_policies,delimiter=',', fmt='%1.3f')
 
-print(str(len(X2)) + " total policies")
-
-# Save policies
-np.savetxt('policies.csv',np.c_[X2,Y2],delimiter=',', fmt='%1.3f')
-
-contour_points.plot_contour(LOWER_CRATE_LIM, UPPER_CRATE_LIM, chargetime, FINAL_CUTOFF, len(X2))
+contour_points.plot_contour(C1, C2, C3, C4_LIMITS)

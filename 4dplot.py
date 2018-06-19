@@ -1,4 +1,4 @@
-h#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jun  5 11:34:46 2018
@@ -14,48 +14,49 @@ from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 
 # x-y limits
-x = np.linspace(3,6,50) # [1,8,50]
-y = np.linspace(3,6,50) # [6, 9]
+x = np.linspace(3,8,64) # C1
+y = np.linspace(3,8,64) # C2
+
+list_c3 = np.array([3, 3.6, 4.2, 4.8, 5.2, 5.6])
 
 # convert to 2d matrices
 C1, C2 = np.meshgrid(x, y)    # 50x50
 
-# Cuts (Cp=pulse)
-list_cp = np.linspace(8,10,1)
+# Cuts 
 ##list_cp = np.linspace(2,10,9)
-Cp = []
-for cp in list_cp:
-    Cp.append(cp*np.ones((50,50)))
-Cp.append(C1)
+C3 = []
+for c3 in list_c3:
+    C3.append(c3*np.ones((64,64)))
+#C3.append(C1)
 
 # Plot stuff
 fig = plt.figure()
 plt.rcParams.update({'font.size': 16})
 ax = fig.gca(projection='3d')
-minn, maxx = 0, 70
+minn, maxx = 0, 4.8
 norm = matplotlib.colors.Normalize(minn, maxx)
-m = plt.cm.ScalarMappable(norm=norm, cmap='winter')
+m = plt.cm.ScalarMappable(norm=norm, cmap='viridis')
 m.set_array([])
 
 # fourth dimention - colormap
-for k, cp in enumerate(Cp):
+for k, c3 in enumerate(C3):
     # type this into wolfram alpha:
     # solve for x: 50/3 = x/C_1 + (10)/C_5 + (70-x)/C_2
-    color = (10*C1*(C2*(3-5*cp) + 21*cp))/(3*(C1-C2)*cp)
-    cp[color < 0] = float('NaN')
-    cp[color > 70] = float('NaN')
-    fcolor = m.to_rgba(color)
-    ax.plot_surface(C1,C2,cp, rstride=1, cstride=1, facecolors=fcolor, vmin=minn, vmax=maxx, shade=False)
+    c4 = 4*4.8 - C1 - C2 - c3
+    c3[c4 < 0] = float('NaN')
+    c3[c4 > 4.8] = float('NaN')
+    fcolor = m.to_rgba(c4)
+    ax.plot_surface(C1,C2,c3, rstride=1, cstride=1, facecolors=fcolor, vmin=minn, vmax=maxx, shade=False)
 
 # PLOT FORMATTING
-ax.scatter(4.8, 4.8, 4.8, c='k', s=50)
-ax.set_title('Q1 = 10%')
+ax.scatter(4.8, 4.8, 4.8, c='k', marker='s', s=50)
+ax.set_title('SOC width = 20%, C4 constrained')
 ax.set_xlabel('C1')
 ax.set_ylabel('C2')
-ax.set_zlabel('C_pulse')
-ax.set_zlim(0, 10)
+ax.set_zlabel('C3')
+ax.set_zlim(2.5, 6.5)
 cbar = plt.colorbar(m)
-cbar.ax.set_ylabel('Q1')
+cbar.ax.set_title('C4')
 
 # Make full screen
 manager = plt.get_current_fig_manager()
