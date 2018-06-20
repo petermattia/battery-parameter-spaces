@@ -12,10 +12,10 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
-def plot_contour(C1, C2, C3, C4_LIMITS):
+def plot_contour(C1, C2, C3, C4_LIMITS, filename):
     
     # Import policies
-    policies = np.genfromtxt('policies.csv', delimiter=',')
+    policies = np.genfromtxt('policies_' + filename + '.csv', delimiter=',')
     
     one_step = 4.8
     margin = 0.2 # plotting margin
@@ -54,6 +54,7 @@ def plot_contour(C1, C2, C3, C4_LIMITS):
         
         idx_subset = np.where(policies[:,2]==c3)
         policy_subset = policies[idx_subset,:][0]
+        print(policy_subset)
         plt.scatter(policy_subset[:,0],policy_subset[:,1],c='k',zorder=2)
         
         plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=14)
@@ -77,4 +78,4 @@ def plot_contour(C1, C2, C3, C4_LIMITS):
     cbar.ax.set_title('C4')
     
     ## SAVE FIGURE
-    plt.savefig('contour_justpoints.png', bbox_inches='tight')
+    plt.savefig('contour_' + filename + '.png', bbox_inches='tight')

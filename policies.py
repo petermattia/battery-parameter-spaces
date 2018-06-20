@@ -26,6 +26,9 @@ C3 = [3, 3.6, 4.2, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 
+RANDOM_SUBSET = True
+FILENAME = 'subset'
+
 ##############################################################################
 
 # Pre-initialize arrays and counters
@@ -56,6 +59,12 @@ print('Count = ' + str(count))
 print('Valid count = ' + str(valid_count))
 
 ## Save policies
-np.savetxt('policies.csv',valid_policies,delimiter=',', fmt='%1.3f')
+np.savetxt('policies_' + FILENAME + '.csv',valid_policies,delimiter=',', fmt='%1.3f')
 
-contour_points.plot_contour(C1, C2, C3, C4_LIMITS)
+## Subset
+if RANDOM_SUBSET:
+    np.random.shuffle(valid_policies)
+    subset = valid_policies[0:48]
+    np.savetxt('policies_' + FILENAME + '.csv',subset,delimiter=',', fmt='%1.3f')
+
+contour_points.plot_contour(C1, C2, C3, C4_LIMITS, FILENAME)
