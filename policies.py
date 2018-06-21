@@ -9,9 +9,8 @@ and C4 is constrained.
 It saves a file called policies.csv to the current directory,
 where each row is a charging policy
 
-Created on Mon Jun 18 16:04:53 2018
-
-@author: peter
+Peter Attia
+Last modified June 21, 2018
 """
 
 import numpy as np
@@ -26,8 +25,8 @@ C3 = [3, 3.6, 4.2, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 
-RANDOM_SUBSET = True
-FILENAME = 'subset'
+RANDOM_SUBSET = False
+FILENAME = 'all'
 
 ##############################################################################
 
