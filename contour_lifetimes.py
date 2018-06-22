@@ -15,12 +15,12 @@ import matplotlib.pyplot as plt
 ##############################################################################
 
 # PARAMETERS TO CREATE POLICY SPACE
-C1list = [3, 3.6, 4.2, 4.8, 5.2, 5.6, 6, 8]
-C2list = [3, 3.6, 4.2, 4.8, 5.2, 5.6, 6, 8]
-C3list = [3, 3.6, 4.2, 4.8, 5.2, 5.6]
+C1list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 8]
+C2list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 7]
+C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
-FILENAME = 'lo'
+FILENAME = 'hi'
 
 ############################################################################## 
 plt.close('all')
@@ -38,7 +38,7 @@ for i in range(len(policies)):
     C1 = policies[i,0]
     C2 = policies[i,1]
     C3 = policies[i,2]
-    C4 = 4.8*4 - (C1 + C2 + C3)
+    C4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/C3))
     lifetime[i] = sim(C1,C2,C3,FILENAME,variance=False)
 
 # Save csv with policies and lifetimes
@@ -49,7 +49,7 @@ f.close()
 ## CREATE CONTOUR PLOT
 # Calculate C4(CC1, CC2) values for contour lines
 C1_grid = np.arange(min(C1list)-margin,max(C1list) + margin,0.01)
-C2_grid = np.arange(min(C2list)-margin,max(C2list) + margin,0.01)
+C2_grid = np.arange(min(C1list)-margin,max(C1list) + margin,0.01)
 [X,Y] = np.meshgrid(C1_grid,C2_grid)
 
 # Initialize plot
@@ -66,12 +66,12 @@ for k, c3 in enumerate(C3list):
     plt.subplot(2,3,k+1)
     plt.axis('square')
     
-    C4 = 4.8*4 - (X + Y + c3)
+    C4 = 0.2/(1/6 - (0.2/X + 0.2/Y + 0.2/c3))
     C4[np.where(C4<C4_LIMITS[0])]  = float('NaN')
     C4[np.where(C4>C4_LIMITS[1])] = float('NaN')
     
     ## PLOT CONTOURS
-    levels = [C4_LIMITS[0]+0.01,1,2,3,4,C4_LIMITS[1]-0.02]
+    levels = np.arange(2.5,4.8,0.25)
     C = plt.contour(X,Y,C4,levels,zorder=1,colors='k')
     plt.clabel(C,fmt='%1.1f')
     
@@ -92,7 +92,7 @@ for k, c3 in enumerate(C3list):
     plt.xlabel('C1')
     plt.ylabel('C2')
     plt.xlim((min(C1list)-margin, max(C1list)+margin))
-    plt.ylim((min(C2list)-margin, max(C2list)+margin))
+    plt.ylim((min(C1list)-margin, max(C1list)+margin))
 
 plt.tight_layout()
 

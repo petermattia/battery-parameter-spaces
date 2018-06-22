@@ -14,10 +14,10 @@ from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 
 # x-y limits
-x = np.linspace(3,8,64) # C1
-y = np.linspace(3,8,64) # C2
+x = np.linspace(3.6,8,64) # C1
+y = np.linspace(3.6,8,64) # C2
 
-list_c3 = np.array([3, 3.6, 4.2, 4.8, 5.2, 5.6])
+list_c3 = np.array([3.6, 4.0, 4.4, 4.8, 5.2, 5.6])
 
 # convert to 2d matrices
 C1, C2 = np.meshgrid(x, y)    # 50x50
@@ -33,7 +33,7 @@ for c3 in list_c3:
 fig = plt.figure()
 plt.rcParams.update({'font.size': 16})
 ax = fig.gca(projection='3d')
-minn, maxx = 0, 4.8
+minn, maxx = 2.5, 4.8
 norm = matplotlib.colors.Normalize(minn, maxx)
 m = plt.cm.ScalarMappable(norm=norm, cmap='viridis')
 m.set_array([])
@@ -42,7 +42,7 @@ m.set_array([])
 for k, c3 in enumerate(C3):
     # type this into wolfram alpha:
     # solve for x: 50/3 = x/C_1 + (10)/C_5 + (70-x)/C_2
-    c4 = 4*4.8 - C1 - C2 - c3
+    c4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/c3))
     c3[c4 < 0] = float('NaN')
     c3[c4 > 4.8] = float('NaN')
     fcolor = m.to_rgba(c4)

@@ -17,12 +17,14 @@ def plot_contour(C1, C2, C3, C4_LIMITS, filename):
     # Import policies
     policies = np.genfromtxt('policies_' + filename + '.csv', delimiter=',')
     
+    COLOR_LIM = [2.5,4.8]
+    
     one_step = 4.8
     margin = 0.2 # plotting margin
     
     # Calculate C4(CC1, CC2) values for contour lines
     C1_grid = np.arange(min(C1)-margin,max(C1) + margin,0.01)
-    C2_grid = np.arange(min(C2)-margin,max(C2) + margin,0.01)
+    C2_grid = np.arange(min(C1)-margin,max(C1) + margin,0.01)
     [X,Y] = np.meshgrid(C1_grid,C2_grid)
     
     ## CREATE CONTOUR PLOT
@@ -39,13 +41,13 @@ def plot_contour(C1, C2, C3, C4_LIMITS, filename):
         plt.subplot(2,3,k+1)
         plt.axis('square')
         
-        C4 = 4.8*4 - (X + Y + c3)
+        C4 = 0.2/(1/6 - (0.2/X + 0.2/Y + 0.2/c3))
         C4[np.where(C4<C4_LIMITS[0])]  = float('NaN')
         C4[np.where(C4>C4_LIMITS[1])] = float('NaN')
         
         ## PLOT CONTOURS
-        levels = [C4_LIMITS[0]+0.01,1,2,3,4,C4_LIMITS[1]-0.02]
-        C = plt.contour(X,Y,C4,levels,zorder=1,vmin=min(C4_LIMITS),vmax=max(C4_LIMITS))
+        levels = np.arange(2.5,4.8,0.25)
+        C = plt.contour(X,Y,C4,levels,zorder=1,vmin=COLOR_LIM[0],vmax=COLOR_LIM[1])
         plt.clabel(C,fmt='%1.1f')
         
         ## PLOT POLICIES
@@ -54,21 +56,20 @@ def plot_contour(C1, C2, C3, C4_LIMITS, filename):
         
         idx_subset = np.where(policies[:,2]==c3)
         policy_subset = policies[idx_subset,:][0]
-        print(policy_subset)
         plt.scatter(policy_subset[:,0],policy_subset[:,1],c='k',zorder=2,s=50)
         
         plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
         plt.xlabel('C1')
         plt.ylabel('C2')
         plt.xlim((min(C1)-margin, max(C1)+margin))
-        plt.ylim((min(C2)-margin, max(C2)+margin))
+        plt.ylim((min(C1)-margin, max(C1)+margin))
     
     plt.tight_layout()
     
     # Add colorbar
     fig.subplots_adjust(right=0.8)
     cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
-    minn, maxx = 0, 4.8
+    minn, maxx = COLOR_LIM[0], COLOR_LIM[1]
     norm = matplotlib.colors.Normalize(minn, maxx)
     m = plt.cm.ScalarMappable(norm=norm, cmap='viridis')
     m.set_array([])

@@ -19,9 +19,9 @@ import contour_points
 ##############################################################################
 
 # PARAMETERS TO CREATE POLICY SPACE
-C1 = [3, 3.6, 4.2, 4.8, 5.2, 5.6, 6, 8]
-C2 = [3, 3.6, 4.2, 4.8, 5.2, 5.6, 6, 8]
-C3 = [3, 3.6, 4.2, 4.8, 5.2, 5.6]
+C1 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 8]
+C2 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 7]
+C3 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 
@@ -38,7 +38,7 @@ count = valid_count = 0
 
 # Generate policies
 for c1, c2, c3 in [(c1,c2,c3) for c1 in C1 for c2 in C2 for c3 in C3]:
-    c4 = 4.8*4 - (c1 + c2 + c3)
+    c4 = 0.2/(1/6 - (0.2/c1 + 0.2/c2 + 0.2/c3))
     policies[count,:] = [c1, c2, c3, c4]
     count += 1
     

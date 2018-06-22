@@ -26,7 +26,7 @@ def sim(C1, C2, C3, mode, variance = True):
         sigma = 0
 
     # DETERMINE C4
-    C4 = 4.8*4 - (C1 + C2 + C3)
+    C4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/C3))
     
     # CONSTANT PARAMETERS
     R = 0.009              # [=] m, radius of 18650 cylindrical cell
