@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-from thermalsim import thermalsim
+from thermalsim_20180614_highgradient.thermalsim_highgradient import thermalsim 
 
 class BayesGap(object):
 
@@ -28,7 +28,7 @@ class BayesGap(object):
 		param_space = self.param_space
 		num_arms = self.num_arms
 
-		feature_map_nystroem = Nystroem(gamma=.2, n_components=num_arms, random_state=1)
+		feature_map_nystroem = Nystroem(gamma=kernel_bandwidth, n_components=num_arms, random_state=1)
 		X = feature_map_nystroem.fit_transform(param_space)
 		# print('start', X[:3])
 		# print('end', X[-3:])
@@ -255,10 +255,10 @@ class BayesGap(object):
 
 	def get_parameter_space(self):
 
-		policies = np.genfromtxt('policies.csv',
+		policies = np.genfromtxt('data/policies_all.csv',
 				delimiter=',', skip_header=0)
-
-		return policies
+		print(policies.shape)
+		return policies[:, :3]
 
 	def observe_reward(self, selected_arms):
 
@@ -291,7 +291,7 @@ def parse_args():
 						help='Directory for cycling data')
 	parser.add_argument('--prior_std', default=20, type=float,
 						help='standard deviation for the prior')
-	parser.add_argument('--kernel_bandwidth', default=1., type=float,
+	parser.add_argument('--kernel_bandwidth', default=0.2, type=float,
 						help='kernel bandwidth for Gaussian kernel')
 	parser.add_argument('--likelihood_std', default=2.19, type=float,
 						help='standard deviation for the likelihood std')
