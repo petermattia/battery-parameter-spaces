@@ -117,16 +117,24 @@ class BayesGap(object):
 			early_pred = np.genfromtxt(self.prev_early_pred_file,
 				delimiter=',', skip_header=0)
 
+			with open(prev_early_pred_file, 'r', encoding='utf-8-sig') as infile:
+				reader = csv.reader(infile, delimiter=',')
+				early_pred = np.asarray([list(map(float, row)) for row in reader])
+			print(early_pred)
+
 			# batch_rewards = self.observe_reward(batch_arms) # no longer using simulator
 
 			batch_policies = early_pred[:, :3]
 			batch_arms = [param_space.tolist().index(policy) for policy in batch_policies.tolist()]
 			X_t.append(X[batch_arms])
 
-			batch_rewards = early_pred[:, 4] # this corresponds to 5th column coz we are supposed to ignore the 4th column
+			batch_rewards = early_pred[:, 4].reshape(-1, 1) # this corresponds to 5th column coz we are supposed to ignore the 4th column
 			Y_t.append(batch_rewards)
 
-			upper_bounds, lower_bounds = self.get_posterior_bounds(beta, np.vstack(X_t), np.vstack(Y_t))
+			np_X_t = np.vstack(X_t)
+			np_Y_t = np.vstack(Y_t)
+			print(np_X_t.shape, np_Y_t.shape)
+			upper_bounds, lower_bounds = self.get_posterior_bounds(beta, np_X_t, np_Y_t)
 
 
 		print('Round', round_idx)
@@ -286,7 +294,7 @@ def main():
 	agent = BayesGap(args)
 	best_arm_params = agent.run()
 	print('Current best arm:', best_arm_params)
-	print('Lifetime as per thermal simulator:', thermalsim(best_arm_params[0], best_arm_params[1], variance=False))
+	print('Lifetime of current best arm as per thermal simulator:', thermalsim(best_arm_params[0], best_arm_params[1], variance=False))
 
 
 if __name__ == '__main__':
