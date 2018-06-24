@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-from thermalsim_20180614_highgradient.thermalsim_highgradient import thermalsim 
+from sim4step import sim
 import pickle
 import os
 import csv
@@ -114,8 +114,6 @@ class BayesGap(object):
 			beta = beta * epsilon
 
 			# get armidx of batch policies and early predictions for previous round in pred/<round_idx-1>.csv
-			early_pred = np.genfromtxt(self.prev_early_pred_file,
-				delimiter=',', skip_header=0)
 
 			with open(prev_early_pred_file, 'r', encoding='utf-8-sig') as infile:
 				reader = csv.reader(infile, delimiter=',')
@@ -164,7 +162,6 @@ class BayesGap(object):
 		with open(next_batch_file, 'w') as outfile:
 			writer = csv.writer(outfile)
 			writer.writerows(batch_policies)
-		# np.savetxt(next_batch_file, np.asarray(batch_policies), delimiter=',')
 
 		best_arm = proposal_arms[np.argmin(np.array(proposal_gaps))]
 		return param_space[best_arm]
@@ -230,20 +227,6 @@ class BayesGap(object):
 
 		return policies[:, :3]
 
-	def observe_reward(self, selected_arms):
-
-		param_space = self.param_space
-		rewards = []
-
-		for arm in selected_arms:
-			params = param_space[arm]
-			reward = thermalsim(params[0], params[1])
-			rewards.append(reward)
-			print(params, reward)
-
-		rewards = np.array(rewards).reshape((-1,1))
-		return rewards
-
 def parse_args():
 	"""
 	Specifies command line arguments for the program.
@@ -277,6 +260,8 @@ def parse_args():
 	parser.add_argument('--epsilon', default=1, type=float,
 						help='decay constant for exploration')
 
+	parser.add_argument('--sim_mode', nargs='?', default='lo/hi/med')
+
 	return parser.parse_args()
 
 
@@ -294,7 +279,7 @@ def main():
 	agent = BayesGap(args)
 	best_arm_params = agent.run()
 	print('Current best arm:', best_arm_params)
-	print('Lifetime of current best arm as per thermal simulator:', thermalsim(best_arm_params[0], best_arm_params[1], variance=False))
+	print('Lifetime of current best arm as per thermal simulator:', sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False))
 
 
 if __name__ == '__main__':
