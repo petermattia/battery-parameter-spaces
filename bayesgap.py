@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-from thermalsim_20180614_highgradient.thermalsim_highgradient import thermalsim 
+from sim4step import sim
 
 class BayesGap(object):
 
@@ -11,6 +11,7 @@ class BayesGap(object):
 
 		self.X = self.get_design_matrix(args.kernel_bandwidth)
 
+		self.sim_mode = args.sim_mode
 		self.num_dims = self.X.shape[1]
 		self.batch_size = args.bsize
 		self.budget = args.budget # T in Alg. 1
@@ -136,19 +137,21 @@ class BayesGap(object):
 			batch_arms = []
 			candidate_arms = list(range(num_arms)) # an extension of Alg 1 to batch setting, don't select the arm again in same batch
 			for batch_elem in range(batch_size):
-				J_t, proposal_gap = find_J_t(candidate_arms)
+				J_t, _ = find_J_t(candidate_arms)
 				j_t = find_j_t(candidate_arms, J_t)
 				s_J_t = get_confidence_diameter(J_t)
 				s_j_t = get_confidence_diameter(j_t)
 				a_t = J_t if s_J_t >= s_j_t else j_t
 
+				# print('a:', a_t, 'J:', J_t, 'j:', j_t, 'bool', s_J_t >= s_j_t)
+				# print('s_J:%f, s_j: %f' % (s_J_t, s_j_t))
+
 				if batch_elem == 0:
 					proposal_arms.append(J_t)
-					proposal_gaps.append(proposal_gap)
+					# proposal_gaps.append(proposal_gap)
 				batch_arms.append(a_t)
 				candidate_arms.remove(a_t)
-				# print('a:', a_t, 'J:', J_t, 'j:', j_t)
-				# print('s_J:%.4f, s_j: %.4f' % (s_J_t, s_j_t))
+				
 
 
 			print('Policy indices', batch_arms)
@@ -157,8 +160,14 @@ class BayesGap(object):
 			X_t.append(X[batch_arms])
 			Y_t.append(rewards)
 			upper_bounds, lower_bounds = self.get_posterior_bounds(np.vstack(X_t), np.vstack(Y_t))
+
+			temp_upper_bounds = np.delete(upper_bounds, proposal_arms[round_idx])
+			B_k_t = np.amax(temp_upper_bounds) - lower_bounds[proposal_arms[round_idx]]
+			proposal_gaps.append(B_k_t)
 			print()
 
+		print(proposal_arms)
+		print(proposal_gaps)
 		best_arm = proposal_arms[np.argmin(np.array(proposal_gaps))]
 		return self.param_space[best_arm]
 
@@ -267,8 +276,7 @@ class BayesGap(object):
 
 		for arm in selected_arms:
 			params = param_space[arm]
-			reward = thermalsim(params[0], params[1], variance=False)
-			# reward = 1.
+			reward = sim(params[0], params[1], params[2], mode=self.sim_mode, variance=True)
 			rewards.append(reward)
 			print(params, reward)
 
@@ -285,11 +293,11 @@ def parse_args():
 						help='Seed for random number generators')
 	parser.add_argument('--budget', default=10, type=int,
 						help='Time budget')
-	parser.add_argument('--bsize', default=4, type=int,
+	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
 	parser.add_argument('--datadir', nargs='?', default='data/',
 						help='Directory for cycling data')
-	parser.add_argument('--prior_std', default=20, type=float,
+	parser.add_argument('--prior_std', default=100, type=float,
 						help='standard deviation for the prior')
 	parser.add_argument('--kernel_bandwidth', default=0.2, type=float,
 						help='kernel bandwidth for Gaussian kernel')
@@ -299,6 +307,8 @@ def parse_args():
 						help='exploration constant in Thm 1')
 	parser.add_argument('--epsilon', default=1, type=float,
 						help='decay constant for exploration')
+
+	parser.add_argument('--sim_mode', nargs='?', default='lo')
 
 	return parser.parse_args()
 
@@ -315,7 +325,7 @@ def main():
 	agent = BayesGap(args)
 	best_arm_params = agent.run()
 	print('Best arm:', best_arm_params)
-	print('Lifetime:', thermalsim(best_arm_params[0], best_arm_params[1]))
+	print('Lifetime:', sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False))
 
 
 if __name__ == '__main__':

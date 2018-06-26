@@ -103,7 +103,7 @@ class BayesGap(object):
 			proposal_gaps = []
 			beta = self.beta
 			upper_bounds, lower_bounds = self.get_posterior_bounds(beta)
-
+			best_arm_params = None
 		else:
 
 			# load proposal_arms, proposal_gaps, X_t, Y_t, beta for previous round in bounds/<round_idx-1>.pkl
@@ -120,8 +120,6 @@ class BayesGap(object):
 				early_pred = np.asarray([list(map(float, row)) for row in reader])
 			print(early_pred)
 
-			# batch_rewards = self.observe_reward(batch_arms) # no longer using simulator
-
 			batch_policies = early_pred[:, :3]
 			batch_arms = [param_space.tolist().index(policy) for policy in batch_policies.tolist()]
 			X_t.append(X[batch_arms])
@@ -134,12 +132,18 @@ class BayesGap(object):
 			print(np_X_t.shape, np_Y_t.shape)
 			upper_bounds, lower_bounds = self.get_posterior_bounds(beta, np_X_t, np_Y_t)
 
+			J_prev_round = proposal_arms[round_idx-1]
+			temp_upper_bounds = np.delete(upper_bounds, J_prev_round)
+			B_k_t = np.amax(temp_upper_bounds) - lower_bounds[J_prev_round]
+			proposal_gaps.append(B_k_t)
+			best_arm = proposal_arms[np.argmin(np.array(proposal_gaps))]
+			best_arm_params = param_space[best_arm]
 
 		print('Round', round_idx)
 		batch_arms = []
 		candidate_arms = list(range(num_arms)) # an extension of Alg 1 to batch setting, don't select the arm again in same batch
 		for batch_elem in range(batch_size):
-			J_t, proposal_gap = find_J_t(candidate_arms)
+			J_t, _ = find_J_t(candidate_arms)
 			j_t = find_j_t(candidate_arms, J_t)
 			s_J_t = get_confidence_diameter(J_t)
 			s_j_t = get_confidence_diameter(j_t)
@@ -147,7 +151,6 @@ class BayesGap(object):
 
 			if batch_elem == 0:
 				proposal_arms.append(J_t)
-				proposal_gaps.append(proposal_gap)
 			batch_arms.append(a_t)
 			candidate_arms.remove(a_t)
 
@@ -163,8 +166,7 @@ class BayesGap(object):
 			writer = csv.writer(outfile)
 			writer.writerows(batch_policies)
 
-		best_arm = proposal_arms[np.argmin(np.array(proposal_gaps))]
-		return param_space[best_arm]
+		return best_arm_params
 
 	def posterior_theta(self, X_t, Y_t):
 
@@ -249,7 +251,7 @@ def parse_args():
 						help='batch size')
 	parser.add_argument('--datadir', nargs='?', default='data/',
 						help='Directory for cycling data')
-	parser.add_argument('--eta', default=20, type=float,
+	parser.add_argument('--eta', default=100, type=float,
 						help='standard deviation for the prior')
 	parser.add_argument('--gamma', default=0.2, type=float,
 						help='kernel bandwidth for Gaussian kernel')
@@ -260,7 +262,7 @@ def parse_args():
 	parser.add_argument('--epsilon', default=1, type=float,
 						help='decay constant for exploration')
 
-	parser.add_argument('--sim_mode', nargs='?', default='lo/hi/med')
+	parser.add_argument('--sim_mode', nargs='?', default='lo')
 
 	return parser.parse_args()
 
@@ -278,9 +280,10 @@ def main():
 
 	agent = BayesGap(args)
 	best_arm_params = agent.run()
-	print('Current best arm:', best_arm_params)
-	print('Lifetime of current best arm as per thermal simulator:', sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False))
 
+	if args.round_idx != 0:
+		print('Best arm until round', args.round_idx-1, 'is', best_arm_params)
+		print('Lifetime of current best arm as per thermal simulator:', sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False))
 
 if __name__ == '__main__':
 
