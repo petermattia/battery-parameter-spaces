@@ -237,7 +237,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 
 	parser.add_argument('--policy_file', nargs='?', default='policies_all.csv')
-	parser.add_argument('--data_dir', nargs='?', default='data/')
+	parser.add_argument('--data_dir', nargs='?', default='data2/')
 	parser.add_argument('--arm_bounds_dir', nargs='?', default='bounds/')
 	parser.add_argument('--early_pred_dir', nargs='?', default='pred/')
 	parser.add_argument('--next_batch_dir', nargs='?', default='batch/')
@@ -255,7 +255,7 @@ def parse_args():
 						help='standard deviation for the prior')
 	parser.add_argument('--gamma', default=0.2, type=float,
 						help='kernel bandwidth for Gaussian kernel')
-	parser.add_argument('--likelihood_std', default=2.19, type=float,
+	parser.add_argument('--likelihood_std', default=200, type=float,
 						help='standard deviation for the likelihood std')
 	parser.add_argument('--beta', default=1, type=float,
 						help='initial exploration constant in Thm 1')
@@ -270,6 +270,7 @@ def parse_args():
 def main():
 
 	args = parse_args()
+	print(args)
 
 	np.random.seed(args.seed)
 	np.set_printoptions(threshold=np.inf)
@@ -283,7 +284,15 @@ def main():
 
 	if args.round_idx != 0:
 		print('Best arm until round', args.round_idx-1, 'is', best_arm_params)
-		print('Lifetime of current best arm as per thermal simulator:', sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False))
+		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
+		print('Lifetime of current best arm as per thermal simulator:', lifetime_best_arm)
+        
+	if args.round_idx == 9:
+		log_path = os.path.join(args.data_dir, 'log.csv')
+		with open(log_path, "a") as myfile:
+         		myfile.write(',\n' + args.sim_mode + ',' + str(args.gamma) + ',' + str(args.epsilon) +
+                        ',' + str(args.beta) + ',' + str(args.seed) + ',' + str(lifetime_best_arm))
+
 
 if __name__ == '__main__':
 
