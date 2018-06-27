@@ -53,7 +53,6 @@ class BayesGap(object):
 		next_batch_file = self.next_batch_file
 
 		num_arms = self.num_arms
-		budget = self.budget
 		batch_size = self.batch_size
 		epsilon = self.epsilon
 		X = self.X
@@ -284,7 +283,7 @@ def main():
 		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
 		print('Lifetime of current best arm as per thermal simulator:', lifetime_best_arm)
         
-	if args.round_idx == 9:
+	if args.round_idx == args.budget:
 		log_path = os.path.join(args.data_dir, 'log.csv')
 		with open(log_path, "a") as myfile:
          		myfile.write(',\n' + args.sim_mode + ',' + str(args.gamma) + ',' + str(args.epsilon) +
