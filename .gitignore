@@ -1,3 +1,6 @@
 *.DS\_Store
 *.pyc
 data/DS\_Store
+data2/batch/*.csv
+data2/pred/*.csv
+data2/bounds/*.pkl
