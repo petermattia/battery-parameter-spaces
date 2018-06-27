@@ -249,8 +249,6 @@ def parse_args():
 						help='Time budget')
 	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
-	parser.add_argument('--datadir', nargs='?', default='data/',
-						help='Directory for cycling data')
 	parser.add_argument('--eta', default=100, type=float,
 						help='standard deviation for the prior')
 	parser.add_argument('--gamma', default=0.2, type=float,
