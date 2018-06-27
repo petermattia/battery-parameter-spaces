@@ -5,7 +5,6 @@ Created on Wed Jun 27 10:01:38 2018
 
 @author: peter
 """
-import numpy as np
 import subprocess
 
 ################################################
@@ -21,23 +20,26 @@ epsilon_list = [0.7,0.8]
 seed_list = [1]
 ################################################
 
+# Load bash script template
 f = open('closed_loop_shell_script_template.sh','r')
 text = f.read()
 f.close()
-    
+
+# Loop through all combinations of hyperparameters,
+# then generate, save and run new bash script
 for sim_mode, gamma, epsilon,seed in [(sim_mode,
                                        gamma, 
                                        epsilon,
                                        seed) for sim_mode in sim_mode_list for gamma in gamma_list for epsilon in epsilon_list for seed in seed_list]:
     print('Now running: ', sim_mode, gamma, epsilon, seed)
     
-    # Generate new shell script
+    # Generate new bash script
     new_text = text.replace('sim_mode=lo','sim_mode=' + sim_mode)
     new_text = new_text.replace('gamma=1','gamma=' + str(gamma))
     new_text = new_text.replace('epsilon=0.8','epsilon=' + str(epsilon))
     new_text = new_text.replace('seed=0','seed=' + str(seed))
     
-    # Save and run new shell script
+    # Save and run new bash script
     text_file = open('closed_loop_shell_script.sh', 'w')
     text_file.write(new_text)
     text_file.close()

@@ -41,6 +41,13 @@ class GetRewards(object):
              C4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/C3))
              lifetime = sim(C1, C2, C3, sim_mode,seed=seed)
              pol_w_lifetimes[k,:]= [C1,C2,C3,C4,lifetime]
+             
+         # Remove one or two policies
+         if np.random.random()>0.5:
+             pol_w_lifetimes = np.delete(pol_w_lifetimes, (-1), axis=0)
+             
+         if np.random.random()>0.5:
+             pol_w_lifetimes = np.delete(pol_w_lifetimes, (-1), axis=0)
          
          # Save predictions to pred/<round_idx>.csv
          np.savetxt(pred_file,pol_w_lifetimes,delimiter=',', fmt='%1.3f')

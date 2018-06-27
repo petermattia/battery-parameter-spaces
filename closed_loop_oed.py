@@ -270,7 +270,6 @@ def parse_args():
 def main():
 
 	args = parse_args()
-	print(args)
 
 	np.random.seed(args.seed)
 	np.set_printoptions(threshold=np.inf)
