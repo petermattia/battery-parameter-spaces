@@ -3,7 +3,7 @@
 """
 4-step policy simulator
 Peter Attia
-Last modified June 21, 2018
+Last modified June 27, 2018
 
 INPUTS:
     -C1, C2, C3: C rate parameters (C4 is calculated)

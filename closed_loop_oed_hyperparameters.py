@@ -4,7 +4,9 @@
 Created on Wed Jun 27 10:01:38 2018
 
 @author: peter
+This script performs hyperparamater optimization with closed_loop_oed.py
 """
+
 import subprocess
 
 ################################################
@@ -16,7 +18,7 @@ seed_list = [0,1,2,3,4,5,6,7,8,9]
 """
 sim_mode_list = ['lo']
 gamma_list = [0.01]
-epsilon_list = [0.7,0.8]
+epsilon_list = [0.8]
 seed_list = [1]
 ################################################
 
