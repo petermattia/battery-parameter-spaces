@@ -40,7 +40,7 @@ class GetRewards(object):
              C2 = policy[1]
              C3 = policy[2]
              C4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/C3))
-             lifetime = sim(C1, C2, C3, sim_mode,seed=seed*round_idx)
+             lifetime = sim(C1, C2, C3, sim_mode,seed=seed+10*round_idx)
              pol_w_lifetimes[k,:]= [C1,C2,C3,C4,lifetime]
              
          # Remove one or two policies

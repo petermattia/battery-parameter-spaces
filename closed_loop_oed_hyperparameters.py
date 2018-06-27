@@ -17,10 +17,14 @@ epsilon_list = [0.7,0.75,0.8,0.85,0.9]
 seed_list = [0,1,2,3,4,5,6,7,8,9]
 """
 sim_mode_list = ['lo']
-gamma_list = [0.01]
-epsilon_list = [0.8]
-seed_list = [1]
+gamma_list = [0.01,0.1,0.2,0.5,1.0]
+epsilon_list = [0.7,0.75,0.8,0.85,0.9]
+seed_list = [1,2,3,4,5,6,7,8,9]
 ################################################
+
+# Calculate total simulations
+total_sims = len(sim_mode_list) * len(gamma_list) * len(epsilon_list) * len(seed_list)
+count = 1
 
 # Load bash script template
 f = open('closed_loop_shell_script_template.sh','r')
@@ -33,7 +37,10 @@ for sim_mode, gamma, epsilon,seed in [(sim_mode,
                                        gamma, 
                                        epsilon,
                                        seed) for sim_mode in sim_mode_list for gamma in gamma_list for epsilon in epsilon_list for seed in seed_list]:
-    print('Now running: ', sim_mode, gamma, epsilon, seed)
+    
+    print('Starting simulation ' + str(count) + ' of ' + str(total_sims))
+    print('  sim_mode =', sim_mode, ', gamma =', gamma, ', eps =', epsilon, ', seed =',seed)
+    count += 1
     
     # Generate new bash script
     new_text = text.replace('sim_mode=lo','sim_mode=' + sim_mode)

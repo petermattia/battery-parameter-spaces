@@ -19,7 +19,7 @@ import numpy as np
 
 def sim(C1, C2, C3, mode, variance=True, seed=0):
     
-    random.seed(seed+C1*10+C2*100+C3*1000) # deterministic for the same seed
+    random.seed(seed*1000+C1*10+C2*20+C3*30) # deterministic for the same seed
 
     # STANDARD DEVIATION
     if variance:

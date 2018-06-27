@@ -1,4 +1,1 @@
-﻿sim mode,gamma,epsilon,beta,seed,mean lifetime,
-lo,0.01,0.7,3.54107,1,926,
-lo,0.01,0.8,0.93135,1,926,
-lo,0.01,0.8,0.93135,1,926
+﻿sim mode,gamma,epsilon,beta,seed,mean lifetime
