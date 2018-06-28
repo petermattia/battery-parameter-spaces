@@ -3,9 +3,9 @@ echo *******NEW SIMULATION******
 # Set hyperparamaters
 sim_mode=lo
 gamma=0.01
-epsilon=0.8
+epsilon=0.7
 beta=$(bc <<< "scale=5; 0.1/$epsilon^10")
-seed=9
+seed=3
 
 # Display hyperparameters
 echo sim_mode=$sim_mode gamma=$(echo "$gamma"|bc) epsilon=$(echo "$epsilon"|bc) beta=$(echo "$beta"|bc) seed=$seed
@@ -16,3 +16,6 @@ do
     python closed_loop_oed.py --round_idx=$i --sim_mode=$sim_mode --gamma=$gamma --epsilon=$epsilon --beta=$beta --seed=$seed
     python generate_predictions.py --round_idx=$i --sim_mode=$sim_mode --seed=$seed
 done
+
+# One more round
+python closed_loop_oed.py --round_idx=10 --sim_mode=$sim_mode --gamma=$gamma --epsilon=$epsilon --beta=$beta --seed=$seed

@@ -16,3 +16,6 @@ do
     python closed_loop_oed.py --round_idx=$i --sim_mode=$sim_mode --gamma=$gamma --epsilon=$epsilon --beta=$beta --seed=$seed
     python generate_predictions.py --round_idx=$i --sim_mode=$sim_mode --seed=$seed
 done
+
+# One more round
+python closed_loop_oed.py --round_idx=10 --sim_mode=$sim_mode --gamma=$gamma --epsilon=$epsilon --beta=$beta --seed=$seed
