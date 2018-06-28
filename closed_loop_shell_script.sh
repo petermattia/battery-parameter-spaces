@@ -1,11 +1,11 @@
 #!/bin/sh
 echo *******NEW SIMULATION******
 # Set hyperparamaters
-sim_mode=lo
-gamma=0.01
-epsilon=0.7
+sim_mode=hi
+gamma=20.0
+epsilon=0.9
 beta=$(bc <<< "scale=5; 0.1/$epsilon^10")
-seed=0
+seed=9
 
 # Display hyperparameters
 echo sim_mode=$sim_mode gamma=$(echo "$gamma"|bc) epsilon=$(echo "$epsilon"|bc) beta=$(echo "$beta"|bc) seed=$seed
