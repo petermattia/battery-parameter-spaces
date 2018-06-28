@@ -5,7 +5,7 @@ sim_mode=lo
 gamma=0.01
 epsilon=0.7
 beta=$(bc <<< "scale=5; 0.1/$epsilon^10")
-seed=3
+seed=0
 
 # Display hyperparameters
 echo sim_mode=$sim_mode gamma=$(echo "$gamma"|bc) epsilon=$(echo "$epsilon"|bc) beta=$(echo "$beta"|bc) seed=$seed

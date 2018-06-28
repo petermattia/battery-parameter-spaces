@@ -10,16 +10,10 @@ This script performs hyperparamater optimization with closed_loop_oed.py
 import subprocess
 
 ################################################
-"""
 sim_mode_list = ['lo','med','hi']
-gamma_list = [0.01,0.1,0.2,0.5,1.0]
+gamma_list = [0.01,0.1,0.2,0.5,1.0,10.0,20.0]
 epsilon_list = [0.7,0.75,0.8,0.85,0.9]
 seed_list = [0,1,2,3,4,5,6,7,8,9]
-"""
-sim_mode_list = ['lo']
-gamma_list = [0.01]
-epsilon_list = [0.7]
-seed_list = [1,2,3,4,5,6,7,8,9]
 ################################################
 
 # Calculate total simulations

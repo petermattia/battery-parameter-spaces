@@ -283,10 +283,11 @@ def main():
 		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
 		print('Lifetime of current best arm as per thermal simulator:', lifetime_best_arm)
         
+	# Log the best arm at the end of the experiment
 	if args.round_idx == args.budget:
 		log_path = os.path.join(args.data_dir, 'log.csv')
-		with open(log_path, "a") as myfile:
-         		myfile.write(',\n' + args.sim_mode + ',' + str(args.gamma) + ',' + str(args.epsilon) +
+		with open(log_path, "a") as log_file:
+         		log_file.write(',\n' + args.sim_mode + ',' + str(args.gamma) + ',' + str(args.epsilon) +
                         ',' + str(args.beta) + ',' + str(args.seed) + ',' + str(lifetime_best_arm))
 
 
