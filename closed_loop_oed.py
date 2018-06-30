@@ -252,7 +252,7 @@ def parse_args():
 						help='standard deviation for the prior')
 	parser.add_argument('--gamma', default=0.2, type=float,
 						help='kernel bandwidth for Gaussian kernel')
-	parser.add_argument('--likelihood_std', default=102, type=float,
+	parser.add_argument('--likelihood_std', default=98, type=float,
 						help='standard deviation for the likelihood std')
 	parser.add_argument('--beta', default=1, type=float,
 						help='initial exploration constant in Thm 1')
