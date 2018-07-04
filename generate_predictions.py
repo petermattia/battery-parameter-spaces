@@ -77,7 +77,7 @@ def main():
 
 	args = parse_args()
 
-	np.random.seed(args.seed)
+	np.random.seed(args.seed+10*args.round_idx)
 	np.set_printoptions(threshold=np.inf)
 
 	assert (os.path.exists(os.path.join(args.data_dir, args.pred_dir)))

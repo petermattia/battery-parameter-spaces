@@ -287,8 +287,13 @@ def main():
 	if args.round_idx == args.budget:
 		log_path = os.path.join(args.data_dir, 'log.csv')
 		with open(log_path, "a") as log_file:
-         		log_file.write(',\n' + args.sim_mode + ',' + str(args.gamma) + ',' + str(args.epsilon) +
-                        ',' + str(args.beta) + ',' + str(args.seed) + ',' + str(lifetime_best_arm))
+         		log_file.write(',\n' + args.sim_mode + ',' +
+                          str(args.gamma) + ',' + 
+                          str(args.epsilon) + ',' +
+                          str(args.beta) + ',' + 
+                          str(args.likelihood_std) + ',' + 
+                          str(args.seed) + ',' + 
+                          str(lifetime_best_arm))
 
 
 if __name__ == '__main__':
