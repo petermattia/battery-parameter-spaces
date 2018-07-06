@@ -1,9 +1,9 @@
 #!/bin/sh
 echo *******NEW SIMULATION******
 # Set hyperparamaters
-sim_mode=lo
-gamma=1
-epsilon=0.8
+sim_mode=hi
+gamma=20
+epsilon=0.9
 beta=$(bc <<< "scale=5; 0.1/$epsilon^10")
 seed=0
 likelihood_std=98
