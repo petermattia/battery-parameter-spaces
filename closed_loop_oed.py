@@ -139,6 +139,7 @@ class BayesGap(object):
 			best_arm_params = param_space[best_arm]
 
 		print('Round', round_idx)
+		print('Current beta', beta)
 		batch_arms = []
 		candidate_arms = list(range(num_arms)) # an extension of Alg 1 to batch setting, don't select the arm again in same batch
 		for batch_elem in range(batch_size):
