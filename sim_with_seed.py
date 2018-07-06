@@ -133,7 +133,7 @@ def sim(C1, C2, C3, mode, variance=True, seed=0):
         mat[N+1,N-1] = k/(2*dr)
         rhs[N+1] = -h*Tinf
 
-        return np.linalg.lstsq(mat,rhs,rcond=None)[0] # T(r)
+        return np.linalg.lstsq(mat,rhs)[0] # T(r)
 
     ## C1 step
     while time < t1:
