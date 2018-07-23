@@ -251,13 +251,13 @@ def parse_args():
 						help='batch size')
 	parser.add_argument('--eta', default=100, type=float,
 						help='standard deviation for the prior')
-	parser.add_argument('--gamma', default=0.2, type=float,
+	parser.add_argument('--gamma', default=20, type=float,
 						help='kernel bandwidth for Gaussian kernel')
 	parser.add_argument('--likelihood_std', default=98, type=float,
 						help='standard deviation for the likelihood std')
-	parser.add_argument('--beta', default=1, type=float,
+	parser.add_argument('--beta', default=0.2868, type=float,
 						help='initial exploration constant in Thm 1')
-	parser.add_argument('--epsilon', default=1, type=float,
+	parser.add_argument('--epsilon', default=0.9, type=float,
 						help='decay constant for exploration')
 
 	parser.add_argument('--sim_mode', nargs='?', default='lo')
