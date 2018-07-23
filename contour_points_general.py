@@ -22,8 +22,8 @@ def plot_contour():
     C4_LIMITS = [0.1, 4.81]
     
     # Import policies
-    filename = '1' # saving
-    file_path = '/Users/peter/Documents/GitHub/battery-parameter-spaces/data/batch/1.csv';
+    filename = '2' # saving
+    file_path = '/Users/peter/Documents/GitHub/battery-parameter-spaces/data/batch/2.csv';
     policies = np.genfromtxt(file_path, delimiter=',')
     
     COLOR_LIM = [2.5,4.8]
