@@ -22,7 +22,7 @@ def plot_contour():
     C4_LIMITS = [0.1, 4.81]
     
     # Import policies
-    filename = '3' # saving
+    filename = '4' # saving
     file_path = '/Users/peter/Documents/GitHub/battery-parameter-spaces/data/batch/'+filename+'.csv';
     policies = np.genfromtxt(file_path, delimiter=',')
     
