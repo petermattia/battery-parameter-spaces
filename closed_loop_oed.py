@@ -30,9 +30,9 @@ class BayesGap(object):
 		self.epsilon = args.epsilon
 
 		self.standardization_mean = args.standardization_mean
-		self.standardization_variance = args.standardization_variance
+		self.standardization_std = args.standardization_std
 
-		self.eta = np.sqrt(self.standardization_variance) / self.beta
+		self.eta = self.standardization_std / self.beta
 
 		pass
 
@@ -260,8 +260,7 @@ def parse_args():
 						help='Time budget')
 	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
-	# parser.add_argument('--eta', default=100, type=float,
-	# 					help='standard deviation for the prior')
+
 	parser.add_argument('--gamma', default=20, type=float,
 						help='kernel bandwidth for Gaussian kernel')
 	parser.add_argument('--likelihood_std', default=98, type=float,
@@ -273,7 +272,7 @@ def parse_args():
 
 	parser.add_argument('--standardization_mean', default=947.0, type=float,
 						help='mean lifetime from batch8')
-	parser.add_argument('--standardization_variance', default=18867, type=float,
+	parser.add_argument('--standardization_std', default=137.35, type=float,
 						help='mean lifetime from batch8')
 
 	parser.add_argument('--sim_mode', nargs='?', default='lo')
