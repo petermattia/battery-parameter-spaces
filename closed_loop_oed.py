@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-from sim4step import sim
+from data_sim import data_sim as sim
 import pickle
 import os
 import csv
@@ -25,10 +25,14 @@ class BayesGap(object):
 		self.budget = args.budget # T in Alg. 1
 		self.round_idx = args.round_idx
 
-		self.eta = args.eta
 		self.sigma = args.likelihood_std
-		self.beta = args.beta
+		self.beta = args.init_beta
 		self.epsilon = args.epsilon
+
+		self.standardization_mean = args.standardization_mean
+		self.standardization_variance = args.standardization_variance
+
+		self.eta = np.sqrt(self.standardization_variance) / self.beta
 
 		pass
 
@@ -117,7 +121,13 @@ class BayesGap(object):
 			with open(prev_early_pred_file, 'r', encoding='utf-8-sig') as infile:
 				reader = csv.reader(infile, delimiter=',')
 				early_pred = np.asarray([list(map(float, row)) for row in reader])
+			print('Early predictions')
 			print(early_pred)
+			print()
+			print('Standardized early predictions')
+			early_pred[:, -1] = early_pred[:, -1] - self.standardization_mean
+			print(early_pred)
+			print()
 
 			batch_policies = early_pred[:, :3]
 			batch_arms = [param_space.tolist().index(policy) for policy in batch_policies.tolist()]
@@ -128,15 +138,17 @@ class BayesGap(object):
 
 			np_X_t = np.vstack(X_t)
 			np_Y_t = np.vstack(Y_t)
-			print(np_X_t.shape, np_Y_t.shape)
 			upper_bounds, lower_bounds = self.get_posterior_bounds(beta, np_X_t, np_Y_t)
-
 			J_prev_round = proposal_arms[round_idx-1]
 			temp_upper_bounds = np.delete(upper_bounds, J_prev_round)
 			B_k_t = np.amax(temp_upper_bounds) - lower_bounds[J_prev_round]
 			proposal_gaps.append(B_k_t)
 			best_arm = proposal_arms[np.argmin(np.array(proposal_gaps))]
 			best_arm_params = param_space[best_arm]
+
+		print('Arms with (non-standardized) upper bounds, lower bounds, and mean (upper+lower)/2lifetimes')
+		print(*list(zip(enumerate(param_space), upper_bounds+self.standardization_mean, lower_bounds+self.standardization_mean, self.standardization_mean+(upper_bounds+lower_bounds)/2)), sep='\n')
+		print()
 
 		print('Round', round_idx)
 		print('Current beta', beta)
@@ -202,7 +214,6 @@ class BayesGap(object):
 
 		marginal_mean = np.dot(X, posterior_mean) # dimensions num_arms x num_dims
 		marginal_var = np.sum(np.multiply(np.dot(X, posterior_covar), X), 1)
-
 		marginal_mu_params = (marginal_mean, marginal_var)
 
 		return marginal_mu_params
@@ -216,8 +227,8 @@ class BayesGap(object):
 		marginal_mu_params = self.marginal_mu(posterior_theta_params)
 		marginal_mean, marginal_var = marginal_mu_params
 
-		upper_bounds = marginal_mean + beta * marginal_var
-		lower_bounds = marginal_mean - beta * marginal_var
+		upper_bounds = marginal_mean + beta * np.sqrt(marginal_var)
+		lower_bounds = marginal_mean - beta * np.sqrt(marginal_var)
 
 		return (upper_bounds, lower_bounds)
 
@@ -249,16 +260,21 @@ def parse_args():
 						help='Time budget')
 	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
-	parser.add_argument('--eta', default=100, type=float,
-						help='standard deviation for the prior')
+	# parser.add_argument('--eta', default=100, type=float,
+	# 					help='standard deviation for the prior')
 	parser.add_argument('--gamma', default=20, type=float,
 						help='kernel bandwidth for Gaussian kernel')
 	parser.add_argument('--likelihood_std', default=98, type=float,
 						help='standard deviation for the likelihood std')
-	parser.add_argument('--beta', default=0.2868, type=float,
+	parser.add_argument('--init_beta', default=0.2868, type=float,
 						help='initial exploration constant in Thm 1')
 	parser.add_argument('--epsilon', default=0.9, type=float,
 						help='decay constant for exploration')
+
+	parser.add_argument('--standardization_mean', default=947.0, type=float,
+						help='mean lifetime from batch8')
+	parser.add_argument('--standardization_variance', default=18867, type=float,
+						help='mean lifetime from batch8')
 
 	parser.add_argument('--sim_mode', nargs='?', default='lo')
 
@@ -281,7 +297,8 @@ def main():
 
 	if args.round_idx != 0:
 		print('Best arm until round', args.round_idx-1, 'is', best_arm_params)
-		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
+		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], variance=False)
+		# lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
 		print('Lifetime of current best arm as per thermal simulator:', lifetime_best_arm)
         
 	# Log the best arm at the end of the experiment
