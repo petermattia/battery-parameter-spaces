@@ -32,7 +32,7 @@ class BayesGap(object):
 		self.standardization_mean = args.standardization_mean
 		self.standardization_std = args.standardization_std
 
-		self.eta = self.standardization_std / self.beta
+		self.eta = self.standardization_std
 
 		pass
 
@@ -69,7 +69,7 @@ class BayesGap(object):
 			for k in range(num_arms):
 				if k in carms:
 					temp_upper_bounds = np.delete(upper_bounds, k)
-					B_k_t = np.amax(temp_upper_bounds) 
+					B_k_t = np.amax(temp_upper_bounds)
 					B_k_ts.append(B_k_t)
 				else:
 					B_k_ts.append(np.inf)
@@ -98,7 +98,7 @@ class BayesGap(object):
 
 			return upper_bounds[k] - lower_bounds[k]
 
-	
+
 		if round_idx == 0:
 			X_t = []
 			Y_t = []
@@ -112,7 +112,7 @@ class BayesGap(object):
 			# load proposal_arms, proposal_gaps, X_t, Y_t, beta for previous round in bounds/<round_idx-1>.pkl
 			with open(prev_arm_bounds_file, 'rb') as infile:
 				proposal_arms, proposal_gaps, X_t, Y_t, beta = pickle.load(infile)
-			
+
 			# update beta for this round
 			beta = beta * epsilon
 
@@ -197,7 +197,7 @@ class BayesGap(object):
 			return prior_theta_params
 
 		posterior_covar = np.linalg.inv(np.dot(X_t.T, X_t) / (sigma * sigma) + np.identity(num_dims) / (eta * eta))
-		posterior_mean = np.linalg.multi_dot((posterior_covar, X_t.T, Y_t))/ (sigma * sigma) 
+		posterior_mean = np.linalg.multi_dot((posterior_covar, X_t.T, Y_t))/ (sigma * sigma)
 
 		posterior_theta_params = (np.squeeze(posterior_mean), posterior_covar)
 		return posterior_theta_params
@@ -299,17 +299,17 @@ def main():
 		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], variance=False)
 		# lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
 		print('Lifetime of current best arm as per thermal simulator:', lifetime_best_arm)
-        
+
 	# Log the best arm at the end of the experiment
 	if args.round_idx == args.budget:
 		log_path = os.path.join(args.data_dir, 'log.csv')
 		with open(log_path, "a") as log_file:
          		log_file.write(',\n' + args.sim_mode + ',' +
-                          str(args.gamma) + ',' + 
+                          str(args.gamma) + ',' +
                           str(args.epsilon) + ',' +
-                          str(args.beta) + ',' + 
-                          str(args.likelihood_std) + ',' + 
-                          str(args.seed) + ',' + 
+                          str(args.beta) + ',' +
+                          str(args.likelihood_std) + ',' +
+                          str(args.seed) + ',' +
                           str(lifetime_best_arm))
 
 
