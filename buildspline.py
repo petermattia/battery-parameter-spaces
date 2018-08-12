@@ -22,7 +22,8 @@ C1list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 8]
 C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
-FILENAME = 'real'
+
+hp = 1 # Smoothing parameter
 
 ##############################################################################
 
@@ -39,7 +40,6 @@ minn = min_lifetime = np.min(data[:,4])
 maxx = max_lifetime = np.max(data[:,4])
 
 # CREATE RBF
-hp = 0.03
 rbf = Rbf(data[:,0], data[:,1], data[:,2], data[:,4],function='thin_plate',smooth=hp)
 
 ## INITIALIZE CONTOUR PLOT
