@@ -17,7 +17,7 @@ import math
 import random
 import numpy as np
 
-def sim(C1, C2, C3, mode, variance=True, seed=0):
+def sim(C1, C2, C3, mode='hi', variance=True, seed=0):
     
     random.seed(seed*1000+C1*10+C2*20+C3*30) # deterministic for the same seed
 

@@ -1,6 +1,6 @@
 import numpy as np
 import argparse
-from data_sim import data_sim as sim
+from sim_with_seed import sim
 import pickle
 import os
 import csv
@@ -248,7 +248,8 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 
 	parser.add_argument('--policy_file', nargs='?', default='policies_all.csv')
-	parser.add_argument('--data_dir', nargs='?', default='data/')
+	parser.add_argument('--data_dir', nargs='?', default='data3/')
+	parser.add_argument('--log_file', nargs='?', default='log.csv')
 	parser.add_argument('--arm_bounds_dir', nargs='?', default='bounds/')
 	parser.add_argument('--early_pred_dir', nargs='?', default='pred/')
 	parser.add_argument('--next_batch_dir', nargs='?', default='batch/')
@@ -256,14 +257,14 @@ def parse_args():
 
 	parser.add_argument('--seed', default=0, type=int,
 						help='Seed for random number generators')
-	parser.add_argument('--budget', default=10, type=int,
+	parser.add_argument('--budget', default=4, type=int,
 						help='Time budget')
 	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
 
 	parser.add_argument('--gamma', default=20, type=float,
 						help='kernel bandwidth for Gaussian kernel')
-	parser.add_argument('--likelihood_std', default=98, type=float,
+	parser.add_argument('--likelihood_std', default=152, type=float,
 						help='standard deviation for the likelihood std')
 	parser.add_argument('--init_beta', default=0.2868, type=float,
 						help='initial exploration constant in Thm 1')
@@ -272,10 +273,10 @@ def parse_args():
 
 	parser.add_argument('--standardization_mean', default=947.0, type=float,
 						help='mean lifetime from batch8')
-	parser.add_argument('--standardization_std', default=137.35, type=float,
-						help='mean lifetime from batch8')
+	parser.add_argument('--standardization_std', default=164, type=float,
+						help='std lifetime from batch8')
 
-	parser.add_argument('--sim_mode', nargs='?', default='lo')
+	#parser.add_argument('--sim_mode', nargs='?', default='lo')
 
 	return parser.parse_args()
 
@@ -298,17 +299,15 @@ def main():
 		print('Best arm until round', args.round_idx-1, 'is', best_arm_params)
 		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], variance=False)
 		# lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
-		print('Lifetime of current best arm as per thermal simulator:', lifetime_best_arm)
+		print('Lifetime of current best arm as per data simulator:', lifetime_best_arm)
 
 	# Log the best arm at the end of the experiment
 	if args.round_idx == args.budget:
-		log_path = os.path.join(args.data_dir, 'log.csv')
+		log_path = os.path.join(args.data_dir, args.log_file)
 		with open(log_path, "a") as log_file:
-         		log_file.write(',\n' + args.sim_mode + ',' +
+         		log_file.write(',\n' + str(args.init_beta) + ',' +
                           str(args.gamma) + ',' +
                           str(args.epsilon) + ',' +
-                          str(args.beta) + ',' +
-                          str(args.likelihood_std) + ',' +
                           str(args.seed) + ',' +
                           str(lifetime_best_arm))
 

@@ -28,7 +28,7 @@ def data_sim(C1, C2, C3, variance = True, seed=0):
         sigma = 0
     
     cwd = os.getcwd()
-    rbf = pickle.load(open(cwd + '/mid_oed_tests/rbf.pkl', 'rb'))
+    rbf = pickle.load(open(cwd + '/rbf.pkl', 'rb'))
     
     lifetime_true = rbf(C1, C2, C3)
     

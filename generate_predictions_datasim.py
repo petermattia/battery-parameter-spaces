@@ -2,12 +2,12 @@
 Script to generate predictions from simulator for closed_loop_oed simulations
 
 Peter Attia
-Last updated June 26, 2018
+Last updated August 13, 2018
 """
 
 import numpy as np
 import argparse
-from sim_with_seed import sim
+from data_sim import data_sim as sim
 import os
 
 class GetRewards(object):
@@ -17,7 +17,6 @@ class GetRewards(object):
 		self.batch_file = os.path.join(args.data_dir, args.batch_dir, str(args.round_idx) + '.csv')
 		self.pred_file  = os.path.join(args.data_dir, args.pred_dir,  str(args.round_idx) + '.csv') # note this is for previous round
 
-		self.sim_mode = args.sim_mode
 		self.round_idx = args.round_idx
 		self.seed = args.seed
 
@@ -26,7 +25,6 @@ class GetRewards(object):
 	def run(self):
          batch_file = self.batch_file
          pred_file = self.pred_file
-         sim_mode = self.sim_mode
          round_idx = self.round_idx
          seed = self.seed
         
@@ -40,7 +38,7 @@ class GetRewards(object):
              C2 = policy[1]
              C3 = policy[2]
              C4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/C3))
-             lifetime = sim(C1, C2, C3, sim_mode,seed=seed+10*round_idx)
+             lifetime = sim(C1, C2, C3, seed=seed+10*round_idx)
              pol_w_lifetimes[k,:]= [C1,C2,C3,C4,lifetime]
              
          # Remove one or two policies
@@ -61,14 +59,13 @@ def parse_args():
 
 	parser = argparse.ArgumentParser(description='Generate predictions using thermal simulator')
 
-	parser.add_argument('--data_dir', nargs='?', default='data4/')
+	parser.add_argument('--data_dir', nargs='?', default='data3/')
 	parser.add_argument('--pred_dir', nargs='?', default='pred/')
 	parser.add_argument('--batch_dir', nargs='?', default='batch/')
 	parser.add_argument('--round_idx', default=0, type=int)
 
 	parser.add_argument('--seed', default=0, type=int,
 						help='Seed for random number generators')
-	parser.add_argument('--sim_mode', nargs='?', default='hi')
 
 	return parser.parse_args()
 
@@ -76,6 +73,9 @@ def parse_args():
 def main():
 
 	args = parse_args()
+    
+	if args.round_idx==0:
+		return
 
 	np.random.seed(args.seed+10*args.round_idx)
 	np.set_printoptions(threshold=np.inf)

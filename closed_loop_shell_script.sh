@@ -1,22 +1,23 @@
 #!/bin/sh
 echo *******NEW SIMULATION******
 # Set hyperparamaters
-sim_mode=hi
-gamma=20.0
-epsilon=0.8
-beta=$(bc <<< "scale=5; 0.1/$epsilon^10")
+#sim_mode=hi
+beta=5.0
+gamma=100.0
+epsilon=0.9
+#beta=$(bc <<< "scale=5; 0.1/$epsilon^10")
 seed=9
-likelihood_std=250
+#likelihood_std=98
 
 # Display hyperparameters
-echo sim_mode=$sim_mode gamma=$(echo "$gamma"|bc) epsilon=$(echo "$epsilon"|bc) beta=$(echo "$beta"|bc) seed=$seed likelihood_std=$likelihood_std
+echo beta=$(echo "$beta"|bc) gamma=$(echo "$gamma"|bc) epsilon=$(echo "$epsilon"|bc) seed=$seed
 
 # Loop through each round
-for i in 0 1 2 3 4 5 6 7 8 9
+for i in 0 1 2 3 4
 do
-    python closed_loop_oed.py --round_idx=$i --sim_mode=$sim_mode --gamma=$gamma --epsilon=$epsilon --beta=$beta --seed=$seed --likelihood_std=$likelihood_std
-    python generate_predictions.py --round_idx=$i --sim_mode=$sim_mode --seed=$seed
+    python closed_loop_oed.py --round_idx=$i --gamma=$gamma --epsilon=$epsilon --init_beta=$beta --seed=$seed
+    python generate_predictions_datasim.py --round_idx=$i --seed=$seed
 done
 
 # One more round
-python closed_loop_oed.py --round_idx=10 --sim_mode=$sim_mode --gamma=$gamma --epsilon=$epsilon --beta=$beta --seed=$seed --likelihood_std=$likelihood_std
+python closed_loop_oed.py --round_idx=5 --gamma=$gamma --epsilon=$epsilon --init_beta=$beta --seed=$seed
