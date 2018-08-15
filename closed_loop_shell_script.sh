@@ -16,7 +16,7 @@ echo beta=$(echo "$beta"|bc) gamma=$(echo "$gamma"|bc) epsilon=$(echo "$epsilon"
 for i in 0 1 2 3 4
 do
     python closed_loop_oed.py --round_idx=$i --gamma=$gamma --epsilon=$epsilon --init_beta=$beta --seed=$seed
-    python generate_predictions_datasim.py --round_idx=$i --seed=$seed
+    python generate_predictions.py --round_idx=$i --seed=$seed
 done
 
 # One more round

@@ -248,7 +248,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 
 	parser.add_argument('--policy_file', nargs='?', default='policies_all.csv')
-	parser.add_argument('--data_dir', nargs='?', default='data3/')
+	parser.add_argument('--data_dir', nargs='?', default='data4/')
 	parser.add_argument('--log_file', nargs='?', default='log.csv')
 	parser.add_argument('--arm_bounds_dir', nargs='?', default='bounds/')
 	parser.add_argument('--early_pred_dir', nargs='?', default='pred/')
