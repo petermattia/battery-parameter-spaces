@@ -38,6 +38,7 @@ for k, hp in enumerate(hp_list):
         y_train, y_test = data[train_index,4],   data[test_index,4]
 
         # CREATE RBF
+        # https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.Rbf.html
         rbf = Rbf(X_train[:,0], X_train[:,1], X_train[:,2],y_train,epsilon=hp)
 
         # EVALUATE RBF ON TRAIN DATA

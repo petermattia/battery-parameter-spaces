@@ -40,7 +40,8 @@ minn = min_lifetime = np.min(data[:,4])
 maxx = max_lifetime = np.max(data[:,4])
 
 # CREATE RBF
-rbf = Rbf(data[:,0], data[:,1], data[:,2], data[:,4],function='thin_plate')
+# https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.Rbf.html
+rbf = Rbf(data[:,0], data[:,1], data[:,2], data[:,4],epsilon=hp)
 
 ## INITIALIZE CONTOUR PLOT
 # SETTINGS
