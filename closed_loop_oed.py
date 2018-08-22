@@ -248,7 +248,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 
 	parser.add_argument('--policy_file', nargs='?', default='policies_all.csv')
-	parser.add_argument('--data_dir', nargs='?', default='data4/')
+	parser.add_argument('--data_dir', nargs='?', default='data_final/')
 	parser.add_argument('--log_file', nargs='?', default='log.csv')
 	parser.add_argument('--arm_bounds_dir', nargs='?', default='bounds/')
 	parser.add_argument('--early_pred_dir', nargs='?', default='pred/')
@@ -257,18 +257,17 @@ def parse_args():
 
 	parser.add_argument('--seed', default=0, type=int,
 						help='Seed for random number generators')
-	parser.add_argument('--budget', default=4, type=int,
 						help='Time budget')
 	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
 
-	parser.add_argument('--gamma', default=20, type=float,
+	parser.add_argument('--gamma', default=1, type=float,
 						help='kernel bandwidth for Gaussian kernel')
-	parser.add_argument('--likelihood_std', default=152, type=float,
+	parser.add_argument('--likelihood_std', default=136, type=float,
 						help='standard deviation for the likelihood std')
-	parser.add_argument('--init_beta', default=0.2868, type=float,
+	parser.add_argument('--init_beta', default=0.5, type=float,
 						help='initial exploration constant in Thm 1')
-	parser.add_argument('--epsilon', default=0.9, type=float,
+	parser.add_argument('--epsilon', default=0.7, type=float,
 						help='decay constant for exploration')
 
 	parser.add_argument('--standardization_mean', default=947.0, type=float,
@@ -305,6 +304,7 @@ def main():
 	if args.round_idx == args.budget:
 		log_path = os.path.join(args.data_dir, args.log_file)
 		with open(log_path, "a") as log_file:
+         		print('Experiment complete. Logging data...')
          		log_file.write(',\n' + str(args.init_beta) + ',' +
                           str(args.gamma) + ',' +
                           str(args.epsilon) + ',' +

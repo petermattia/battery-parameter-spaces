@@ -24,4 +24,7 @@ for k, pol in enumerate(policies):
             if (pol==row[0:4]).all():
                 isTested[k] += 1
 
-print(sum(isTested))
+print('Total tests:', sum(isTested)[0])
+
+for k in range(0,10):
+    print('Policies tested', k, 'time(s):', sum(isTested==k))

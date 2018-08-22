@@ -39,3 +39,4 @@ Channel,Barcode,Lifetime,Prediction,CI_Lo,CI_Hi,Policy,,,Policy-specific varianc
 ,Mean = ,947.1081081,,,,,,Mean var=,18867.33656,
 ,Median = ,935,,,,,,Median var=,18231.55357,sigma^2-pred sigma^2
 ,Variance = ,26925.43243,eta^2,,,,,,,
+,STDEV=,164.0897085,,,,,,,,

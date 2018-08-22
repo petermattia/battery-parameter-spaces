@@ -23,7 +23,7 @@ def sim(C1, C2, C3, mode='hi', variance=True, seed=0):
 
     # STANDARD DEVIATION
     if variance:
-        sigma = 98 # Sampling variation + prediction error. Estimated from batch8
+        sigma = 136 # Sampling variation + prediction error. Estimated from batch8
     else:
         sigma = 0
 
