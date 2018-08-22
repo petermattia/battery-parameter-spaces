@@ -257,6 +257,7 @@ def parse_args():
 
 	parser.add_argument('--seed', default=0, type=int,
 						help='Seed for random number generators')
+	parser.add_argument('--budget', default=5, type=int,
 						help='Time budget')
 	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
