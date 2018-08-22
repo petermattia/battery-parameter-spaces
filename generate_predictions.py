@@ -61,7 +61,7 @@ def parse_args():
 
 	parser = argparse.ArgumentParser(description='Generate predictions using thermal simulator')
 
-	parser.add_argument('--data_dir', nargs='?', default='data4/')
+	parser.add_argument('--data_dir', nargs='?', default='data_hpsims/')
 	parser.add_argument('--pred_dir', nargs='?', default='pred/')
 	parser.add_argument('--batch_dir', nargs='?', default='batch/')
 	parser.add_argument('--round_idx', default=0, type=int)
