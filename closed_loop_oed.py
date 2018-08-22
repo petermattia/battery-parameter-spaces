@@ -139,6 +139,7 @@ class BayesGap(object):
 			np_X_t = np.vstack(X_t)
 			np_Y_t = np.vstack(Y_t)
 			upper_bounds, lower_bounds = self.get_posterior_bounds(beta, np_X_t, np_Y_t)
+			print(upper_bounds)
 			J_prev_round = proposal_arms[round_idx-1]
 			temp_upper_bounds = np.delete(upper_bounds, J_prev_round)
 			B_k_t = np.amax(temp_upper_bounds) - lower_bounds[J_prev_round]
@@ -147,8 +148,10 @@ class BayesGap(object):
 			best_arm_params = param_space[best_arm]
 
 		print('Arms with (non-standardized) upper bounds, lower bounds, and mean (upper+lower)/2lifetimes')
-		print(*list(zip(enumerate(param_space), upper_bounds+self.standardization_mean, lower_bounds+self.standardization_mean, self.standardization_mean+(upper_bounds+lower_bounds)/2)), sep='\n')
-		print()
+		nonstd_upper_bounds = upper_bounds+self.standardization_mean
+		nonstd_lower_bounds = lower_bounds+self.standardization_mean
+		for ((policy_id, policy_param), ub, lb, mean) in zip(enumerate(param_space), nonstd_upper_bounds, nonstd_lower_bounds, (nonstd_upper_bounds+nonstd_lower_bounds)/2):
+			print(policy_id, policy_param, ub, lb, mean, sep='\t')
 
 		print('Round', round_idx)
 		print('Current beta', beta)
@@ -230,6 +233,9 @@ class BayesGap(object):
 		upper_bounds = marginal_mean + beta * np.sqrt(marginal_var)
 		lower_bounds = marginal_mean - beta * np.sqrt(marginal_var)
 
+		upper_bounds = np.around(upper_bounds, 4)
+		lower_bounds = np.around(lower_bounds, 4)
+
 		return (upper_bounds, lower_bounds)
 
 
@@ -248,7 +254,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 
 	parser.add_argument('--policy_file', nargs='?', default='policies_all.csv')
-	parser.add_argument('--data_dir', nargs='?', default='data_final/')
+	parser.add_argument('--data_dir', nargs='?', default='data_hpsims/')
 	parser.add_argument('--log_file', nargs='?', default='log.csv')
 	parser.add_argument('--arm_bounds_dir', nargs='?', default='bounds/')
 	parser.add_argument('--early_pred_dir', nargs='?', default='pred/')
