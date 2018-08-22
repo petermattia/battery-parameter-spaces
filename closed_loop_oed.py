@@ -114,7 +114,7 @@ class BayesGap(object):
 				proposal_arms, proposal_gaps, X_t, Y_t, beta = pickle.load(infile)
 
 			# update beta for this round
-			beta = beta * epsilon
+			beta = np.around(beta * epsilon, 4)
 
 			# get armidx of batch policies and early predictions for previous round in pred/<round_idx-1>.csv
 
