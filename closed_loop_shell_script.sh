@@ -1,8 +1,7 @@
 #!/bin/sh
 echo *******NEW SIMULATION******
 # Set hyperparamaters
-#sim_mode=hi
-beta=0.5
+beta=0.2
 gamma=1.0
 epsilon=0.7
 #beta=$(bc <<< "scale=5; 0.1/$epsilon^10")

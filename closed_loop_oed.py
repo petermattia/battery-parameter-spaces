@@ -151,6 +151,9 @@ class BayesGap(object):
 		nonstd_lower_bounds = lower_bounds+self.standardization_mean
 		for ((policy_id, policy_param), ub, lb, mean) in zip(enumerate(param_space), nonstd_upper_bounds, nonstd_lower_bounds, (nonstd_upper_bounds+nonstd_lower_bounds)/2):
 			print(policy_id, policy_param, ub, lb, mean, sep='\t')
+		# Save bounds 
+		with open(arm_bounds_file[:-4]+'_bounds.pkl', 'wb') as outfile:
+			pickle.dump([param_space, nonstd_upper_bounds, nonstd_lower_bounds, (nonstd_upper_bounds+nonstd_lower_bounds)/2], outfile)
 
 		print('Round', round_idx)
 		print('Current beta', beta)
