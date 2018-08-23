@@ -11,11 +11,8 @@ Last modified August 22, 2018
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-import tkinter as tk
-from tkinter import filedialog
 
-C1 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 8]
-#C2 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 7]
+min_policy_bound, max_policy_bound = 3.6, 8
 C3 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 C4_LIMITS = [0.1, 4.81]
 
@@ -30,8 +27,8 @@ one_step = 4.8
 margin = 0.2 # plotting margin
 
 # Calculate C4(CC1, CC2) values for contour lines
-C1_grid = np.arange(min(C1)-margin,max(C1) + margin,0.01)
-C2_grid = np.arange(min(C1)-margin,max(C1) + margin,0.01)
+C1_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
+C2_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
 [X,Y] = np.meshgrid(C1_grid,C2_grid)
 
 ## CREATE CONTOUR PLOT
@@ -68,8 +65,8 @@ for k, c3 in enumerate(C3):
     plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
     plt.xlabel('C1')
     plt.ylabel('C2')
-    plt.xlim((min(C1)-margin, max(C1)+margin))
-    plt.ylim((min(C1)-margin, max(C1)+margin))
+    plt.xlim((min_policy_bound-margin, max_policy_bound+margin))
+    plt.ylim((min_policy_bound-margin, max_policy_bound+margin))
 
 plt.tight_layout()
 

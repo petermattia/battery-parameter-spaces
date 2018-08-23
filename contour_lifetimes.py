@@ -7,7 +7,7 @@ Peter Attia
 Last modified June 21, 2018
 """
 
-from sim4step import sim
+from sim_with_seed import sim
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -15,12 +15,11 @@ import matplotlib.pyplot as plt
 ##############################################################################
 
 # PARAMETERS TO CREATE POLICY SPACE
-C1list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 8]
-C2list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 7]
+min_policy_bound, max_policy_bound = 3.6, 8
 C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
-FILENAME = 'hi'
+FILENAME = 'sim'
 
 ############################################################################## 
 plt.close('all')
@@ -39,7 +38,7 @@ for i in range(len(policies)):
     C2 = policies[i,1]
     C3 = policies[i,2]
     C4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/C3))
-    lifetime[i] = sim(C1,C2,C3,FILENAME,variance=False)
+    lifetime[i] = sim(C1,C2,C3,variance=False)
 
 # Save csv with policies and lifetimes
 f=open('policies_lifetimes'+FILENAME+'.csv','a')
@@ -48,8 +47,8 @@ f.close()
 
 ## CREATE CONTOUR PLOT
 # Calculate C4(CC1, CC2) values for contour lines
-C1_grid = np.arange(min(C1list)-margin,max(C1list) + margin,0.01)
-C2_grid = np.arange(min(C1list)-margin,max(C1list) + margin,0.01)
+C1_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
+C2_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
 [X,Y] = np.meshgrid(C1_grid,C2_grid)
 
 # Initialize plot
@@ -84,15 +83,15 @@ for k, c3 in enumerate(C3list):
     
     ## BASELINE
     if c3 == one_step:
-        lifetime_onestep = sim(one_step, one_step, one_step,FILENAME,variance=False)
+        lifetime_onestep = sim(one_step, one_step, one_step,variance=False)
         plt.scatter(one_step,one_step,c=lifetime_onestep,vmin=minn,vmax=maxx,
                     marker='s',zorder=3,s=100)
     
     plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
     plt.xlabel('C1')
     plt.ylabel('C2')
-    plt.xlim((min(C1list)-margin, max(C1list)+margin))
-    plt.ylim((min(C1list)-margin, max(C1list)+margin))
+    plt.xlim((min_policy_bound-margin, max_policy_bound+margin))
+    plt.ylim((min_policy_bound-margin, max_policy_bound+margin))
 
 plt.tight_layout()
 
