@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib import animation
 import glob
+import pickle
 
 plt.close('all')
 
@@ -31,14 +32,16 @@ colormap = 'plasma_r'
 
 # IMPORT RESULTS
 # Get folder path containing text files
-file_list = sorted(glob.glob('./pred/[0-9].csv'))
+file_list = sorted(glob.glob('./bounds/[0-9]_bounds.pkl'))
 data = []
 min_lifetime = 10000
 max_lifetime = -1
-for k,file_path in enumerate(file_list):
-    data.append(np.genfromtxt(file_path, delimiter=','))
-    min_lifetime = min(np.min(data[k][:,4]),min_lifetime)
-    max_lifetime = max(np.max(data[k][:,4]),max_lifetime)
+for file in file_list:
+    with open(file, 'rb') as infile:
+        param_space, ub, lb, mean = pickle.load(infile)
+        data.append(mean)
+        min_lifetime = min(np.min(mean),min_lifetime)
+        max_lifetime = max(np.max(mean),max_lifetime)
 
 # Find number of batches
 batchnum = len(data)
@@ -91,9 +94,9 @@ def make_frame(k2):
         plt.clabel(C,fmt='%1.1f')
 
         ## PLOT POLICIES
-        idx_subset = np.where(data[k2][:,2]==c3)
-        policy_subset = data[k2][idx_subset,0:4][0]
-        lifetime_subset = data[k2][idx_subset,4]
+        idx_subset = np.where(param_space[:,2]==c3)
+        policy_subset = param_space[idx_subset]
+        lifetime_subset = data[k2][idx_subset]
         plt.scatter(policy_subset[:,0],policy_subset[:,1],vmin=minn,vmax=maxx,
                     c=lifetime_subset.ravel(),zorder=2,s=100)
 
@@ -107,7 +110,7 @@ def make_frame(k2):
         plt.xlim((min(C1list)-margin, max(C1list)+margin))
         plt.ylim((min(C1list)-margin, max(C1list)+margin))
 
-    plt.suptitle('Batch ' + str(k2+1))
+    plt.suptitle('Before batch ' + str(k2+1))
 
     return fig
 
@@ -115,4 +118,4 @@ def make_frame(k2):
 anim = animation.FuncAnimation(fig, make_frame, frames=batchnum,
                                interval=1000, blit=False)
 
-anim.save('animation.gif', writer='imagemagick', fps=0.5)
+anim.save('animation_bounds.gif', writer='imagemagick', fps=0.5)
