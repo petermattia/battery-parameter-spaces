@@ -18,7 +18,7 @@ plt.close('all')
 
 ##############################################################################
 # PARAMETERS TO CREATE POLICY SPACE
-C1list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6, 8]
+min_policy_bound, max_policy_bound = 3.6, 8
 C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
@@ -53,8 +53,8 @@ manager.window.showMaximized()
 minn, maxx = min_lifetime, max_lifetime
 
 # Calculate C4(CC1, CC2) values for contour lines
-C1_grid = np.arange(min(C1list)-margin,max(C1list) + margin,0.01)
-C2_grid = np.arange(min(C1list)-margin,max(C1list) + margin,0.01)
+C1_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
+C2_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
 [X,Y] = np.meshgrid(C1_grid,C2_grid)
 
 ## MAKE SUBPLOTS
@@ -104,8 +104,8 @@ def make_frame(k2):
         plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
         plt.xlabel('C1')
         plt.ylabel('C2')
-        plt.xlim((min(C1list)-margin, max(C1list)+margin))
-        plt.ylim((min(C1list)-margin, max(C1list)+margin))
+        plt.xlim((min_policy_bound-margin, max_policy_bound+margin))
+        plt.ylim((min_policy_bound-margin, max_policy_bound+margin))
 
     plt.suptitle('Batch ' + str(k2+1))
 
