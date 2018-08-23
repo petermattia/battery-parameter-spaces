@@ -139,7 +139,6 @@ class BayesGap(object):
 			np_X_t = np.vstack(X_t)
 			np_Y_t = np.vstack(Y_t)
 			upper_bounds, lower_bounds = self.get_posterior_bounds(beta, np_X_t, np_Y_t)
-			print(upper_bounds)
 			J_prev_round = proposal_arms[round_idx-1]
 			temp_upper_bounds = np.delete(upper_bounds, J_prev_round)
 			B_k_t = np.amax(temp_upper_bounds) - lower_bounds[J_prev_round]
@@ -243,6 +242,7 @@ class BayesGap(object):
 
 		policies = np.genfromtxt(self.policy_file,
 				delimiter=',', skip_header=0)
+		np.random.shuffle(policies)
 
 		return policies[:, :3]
 
