@@ -15,7 +15,7 @@ import numpy as np
 vals = np.zeros((1000,1))
 
 for k in range(1000):
-    vals[k] = sim(4.8,4.8,4.8,'lo',variance=True, seed=k)
+    vals[k] = sim(4.8,4.8,4.8,variance=True, seed=k)
 
 plt.hist(vals)
 plt.xlabel('Lifetime'),plt.ylabel('Frequency')
@@ -77,7 +77,7 @@ print('Median range =',str(np.median([range1,range2,range3,range4b])))
 """
 ### STEVE HARRIS DATA
 ## Table 1 of Harris, Harris, Li (2017)
-steve = [255, 301, 326, 338, 340, 341, 379, 408, 409, 430, 449, 475, 497, 509, 
+steve = [255, 301, 326, 338, 340, 341, 379, 408, 409, 430, 449, 475, 497, 509,
          515, 518, 537, 541, 541, 560]
 plt.figure()
 plt.hist(steve)
