@@ -4,13 +4,13 @@
 Created on Wed Jun 27 10:01:38 2018
 
 @author: peter
-This script performs hyperparamater optimization with closed_loop_oed.py
+This script performs hyperparameter optimization with closed_loop_oed.py
+Note: May take a few hours to run on a personal computer
 """
 
 import subprocess
 
 ################################################
-#sim_mode_list = ['hi']
 beta_list = [0.2,0.5,1.0,2.0,5.0,10.0]
 gamma_list = [0.1,0.3,1.0,3.0,10.0,30.0,100.0]
 epsilon_list = [0.5,0.6,0.7,0.8,0.9]
@@ -40,7 +40,6 @@ for beta,gamma,epsilon,seed in [(beta,
     count += 1
     
     # Generate new bash script
-    #new_text = text.replace('sim_mode=lo','sim_mode=' + sim_mode)
     new_text = text.replace('beta=1','beta=' + str(beta))
     new_text = new_text.replace('gamma=1','gamma=' + str(gamma))
     new_text = new_text.replace('epsilon=0.8','epsilon=' + str(epsilon))

@@ -3,7 +3,7 @@
 """
 4-step policy simulator
 Peter Attia
-Last modified June 27, 2018
+Last modified August 23, 2018
 
 INPUTS:
     -C1, C2, C3: C rate parameters (C4 is calculated)
@@ -23,7 +23,7 @@ def sim(C1, C2, C3, mode='hi', variance=True, seed=0):
 
     # STANDARD DEVIATION
     if variance:
-        sigma = 136 # Sampling variation + prediction error. Estimated from batch8
+        sigma = 164 # Sampling variation + prediction error. Estimated from batch8
     else:
         sigma = 0
 

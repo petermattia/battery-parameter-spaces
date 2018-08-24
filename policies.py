@@ -10,7 +10,7 @@ It saves a file called policies.csv to the current directory,
 where each row is a charging policy
 
 Peter Attia
-Last modified June 21, 2018
+Last modified August 23, 2018
 """
 
 import numpy as np

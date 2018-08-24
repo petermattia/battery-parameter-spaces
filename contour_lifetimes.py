@@ -4,7 +4,7 @@
 Creates map of 4-step policy space with associated lifetimes
 
 Peter Attia
-Last modified June 21, 2018
+Last modified August 23, 2018
 """
 
 from sim_with_seed import sim

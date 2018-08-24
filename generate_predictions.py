@@ -2,7 +2,7 @@
 Script to generate predictions from simulator for closed_loop_oed simulations
 
 Peter Attia
-Last updated June 26, 2018
+Last updated August 23, 2018
 """
 
 import numpy as np
