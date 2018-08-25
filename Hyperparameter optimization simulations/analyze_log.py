@@ -14,7 +14,8 @@ sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed','lifetime']
 sim_name = 'sim'
 
 # Add column for rank
-lifetimes = pd.read_csv('policies_lifetimes_' + sim_name + '.csv')
+lifetimes = pd.read_csv('policies_lifetimes_' + sim_name + '.csv', 
+                        names=['C1','C2','C3','C4','Lifetime'])
 lifetimes_sorted = lifetimes.sort_values('Lifetime',ascending=False)
 lifetimes_sorted = lifetimes_sorted.reset_index(drop=True)
 
