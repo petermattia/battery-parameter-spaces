@@ -41,7 +41,7 @@ for i in range(len(policies)):
     lifetime[i] = sim(C1,C2,C3,variance=False)
 
 # Save csv with policies and lifetimes
-f=open('policies_lifetimes'+FILENAME+'.csv','a')
+f=open('policies_lifetimes_'+FILENAME+'.csv','a')
 np.savetxt(f,np.c_[policies,lifetime],delimiter=',', fmt='%1.3f')
 f.close()
 

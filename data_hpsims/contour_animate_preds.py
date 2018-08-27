@@ -115,4 +115,4 @@ def make_frame(k2):
 anim = animation.FuncAnimation(fig, make_frame, frames=batchnum,
                                interval=1000, blit=False)
 
-anim.save('animation.gif', writer='imagemagick', fps=0.5)
+anim.save('animation_preds.gif', writer='imagemagick', fps=0.5)

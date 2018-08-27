@@ -310,17 +310,18 @@ def main():
 		# lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
 		print('Lifetime of current best arm as per data simulator:', lifetime_best_arm)
 
-	# Log the best arm at the end of the experiment
-	if args.round_idx == args.budget:
-		log_path = os.path.join(args.data_dir, args.log_file)
+	# Log the best arm at the end of each round
+	log_path = os.path.join(args.data_dir, args.log_file)
+	print('Logging data...')
+	if args.round_idx == 0:
 		with open(log_path, "a") as log_file:
-         		print('Experiment complete. Logging data...')
          		log_file.write(',\n' + str(args.init_beta) + ',' +
                           str(args.gamma) + ',' +
                           str(args.epsilon) + ',' +
-                          str(args.seed) + ',' +
-                          str(lifetime_best_arm))
-
+                          str(args.seed))
+	else:
+		with open(log_path, "a") as log_file:
+         		log_file.write(',' + str(lifetime_best_arm))
 
 if __name__ == '__main__':
 
