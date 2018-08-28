@@ -10,7 +10,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed','lifetime'])
+lifetime_key = 'l8'
+
+#sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed',lifetime_key])
+sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed',
+                                     'l1','l2','l3','l4','l5','l6','l7','l8','l9','l10'])
+sim_name = 'sim'
 sim_name = 'sim'
 
 # Add column for rank
@@ -21,7 +26,7 @@ lifetimes_sorted = lifetimes_sorted.reset_index(drop=True)
 
 lifetime_idx_array = np.zeros((len(sims),1))
 
-for k,val in enumerate(sims['lifetime']):
+for k,val in enumerate(sims[lifetime_key]):
     lifetime_idx_array[k] = lifetimes_sorted.index[lifetimes_sorted['Lifetime']==val].tolist()[0]
 
 sims['mean rank'] = lifetime_idx_array
@@ -49,8 +54,8 @@ for beta, subgroup in sims.groupby('beta'):
             #print('beta_count = ', beta_count,', gamma_count = ', gamma_count,
             #      ', epsilon_count = ', epsilon_count)
 
-            means[beta_count,gamma_count,epsilon_count] = subgroup3['lifetime'].mean()
-            std[beta_count,gamma_count,epsilon_count] = subgroup3['lifetime'].std()
+            means[beta_count,gamma_count,epsilon_count] = subgroup3[lifetime_key].mean()
+            std[beta_count,gamma_count,epsilon_count] = subgroup3[lifetime_key].std()
 
             mean_rank[beta_count,gamma_count,epsilon_count] = subgroup3['mean rank'].mean()
             min_rank[beta_count,gamma_count,epsilon_count] = subgroup3['mean rank'].min()

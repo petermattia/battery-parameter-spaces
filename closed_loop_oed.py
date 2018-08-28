@@ -266,7 +266,7 @@ def parse_args():
 
 	parser.add_argument('--seed', default=0, type=int,
 						help='Seed for random number generators')
-	parser.add_argument('--budget', default=5, type=int,
+	parser.add_argument('--budget', default=8, type=int,
 						help='Time budget')
 	parser.add_argument('--bsize', default=48, type=int,
 						help='batch size')
@@ -275,17 +275,15 @@ def parse_args():
 						help='kernel bandwidth for Gaussian kernel')
 	parser.add_argument('--likelihood_std', default=164, type=float,
 						help='standard deviation for the likelihood std')
-	parser.add_argument('--init_beta', default=0.5, type=float,
+	parser.add_argument('--init_beta', default=5.0, type=float,
 						help='initial exploration constant in Thm 1')
-	parser.add_argument('--epsilon', default=0.7, type=float,
+	parser.add_argument('--epsilon', default=0.5, type=float,
 						help='decay constant for exploration')
 
 	parser.add_argument('--standardization_mean', default=947.0, type=float,
 						help='mean lifetime from batch8')
 	parser.add_argument('--standardization_std', default=164, type=float,
 						help='std lifetime from batch8')
-
-	#parser.add_argument('--sim_mode', nargs='?', default='lo')
 
 	return parser.parse_args()
 
@@ -307,20 +305,20 @@ def main():
 	if args.round_idx != 0:
 		print('Best arm until round', args.round_idx-1, 'is', best_arm_params)
 		lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], variance=False)
-		# lifetime_best_arm = sim(best_arm_params[0], best_arm_params[1], best_arm_params[2], mode=args.sim_mode, variance=False)
 		print('Lifetime of current best arm as per data simulator:', lifetime_best_arm)
 
 	# Log the best arm at the end of each round
 	log_path = os.path.join(args.data_dir, args.log_file)
-	print('Logging data...')
-	if args.round_idx == 0:
-		with open(log_path, "a") as log_file:
-         		log_file.write(',\n' + str(args.init_beta) + ',' +
-                          str(args.gamma) + ',' +
-                          str(args.epsilon) + ',' +
+	with open(log_path, "a") as log_file:
+		print('Logging data...')
+		if args.round_idx == 0:
+			log_file.write(str(args.init_beta)  + ',' +
+                          str(args.gamma)      + ',' +
+                          str(args.epsilon)    + ',' +
                           str(args.seed))
-	else:
-		with open(log_path, "a") as log_file:
+		elif args.round_idx == args.budget:
+         		log_file.write(',' + str(lifetime_best_arm) + '\n')
+		else:
          		log_file.write(',' + str(lifetime_best_arm))
 
 if __name__ == '__main__':
