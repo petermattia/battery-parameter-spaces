@@ -16,8 +16,10 @@ min_policy_bound, max_policy_bound = 3.6, 8
 C3 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 C4_LIMITS = [0.1, 4.81]
 
-# Import policies
 filename = '0' # saving
+plot_file = 'data/plots/contour_' + filename + '.png'
+
+# Import policies
 file_path = '/Users/peter/Documents/GitHub/battery-parameter-spaces/data/batch/'+filename+'.csv';
 policies = np.genfromtxt(file_path, delimiter=',')
 
@@ -83,4 +85,4 @@ plt.clim(min(C4_LIMITS),max(C4_LIMITS))
 cbar.ax.set_title('C4')
 
 ## SAVE FIGURE
-plt.savefig('contour_' + filename + '.png', bbox_inches='tight')
+plt.savefig(plot_file, bbox_inches='tight')
