@@ -16,7 +16,6 @@ lifetime_key = 'l8'
 sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed',
                                      'l1','l2','l3','l4','l5','l6','l7','l8','l9','l10'])
 sim_name = 'sim'
-sim_name = 'sim'
 
 # Add column for rank
 lifetimes = pd.read_csv('policies_lifetimes_' + sim_name + '.csv', 

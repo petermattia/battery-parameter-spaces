@@ -2,7 +2,7 @@
 echo *******NEW SIMULATION******
 # Set hyperparamaters
 beta=5.0
-gamma=1
+gamma=1.0
 epsilon=0.5
 seed=0
 
