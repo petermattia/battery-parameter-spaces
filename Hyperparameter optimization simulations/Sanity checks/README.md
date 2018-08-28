@@ -1,4 +1,4 @@
-Sanity check notes
+### Sanity check notes
 
 - Run on 224-policy space
 - For extreme gamma tests, beta = 1
