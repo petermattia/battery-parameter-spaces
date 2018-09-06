@@ -5,7 +5,7 @@ Created on Wed Jun 27 10:01:38 2018
 
 @author: peter
 This script performs hyperparameter optimization with closed_loop_oed.py
-Note: May take a few hours to run on a personal computer
+Note: Script works on Mac, fails on Windows (due to subprocess module). May take a few hours to run on a personal computer
 """
 
 import subprocess
