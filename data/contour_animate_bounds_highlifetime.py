@@ -119,4 +119,4 @@ def make_frame(k2):
 anim = animation.FuncAnimation(fig, make_frame, frames=batchnum,
                                interval=1000, blit=False)
 
-anim.save('animation_bounds_highlifetime.gif', writer='imagemagick', fps=0.5)
+anim.save('plots/animation_bounds_highlifetime.gif', writer='imagemagick', fps=0.5)
