@@ -16,7 +16,7 @@ min_policy_bound, max_policy_bound = 3.6, 8
 C3 = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 C4_LIMITS = [0.1, 4.81]
 
-filename = '3' # saving
+filename = '4' # saving
 plot_file = 'data/plots/contour_' + filename + '.png'
 
 # Import policies

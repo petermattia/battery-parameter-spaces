@@ -14,3 +14,4 @@ seed_list = [0,1,2,3,4,5,6,7,8,9]
 - Number of rounds = min from simulator (6) + 2 "bonus" = `8`
 - Results: `init_beta = 5.0`, `gamma = 1.0`, `epsilon = 0.5`
 - `seed=0`
+- In plots, gamma is denoted by color in the legend
