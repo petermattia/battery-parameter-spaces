@@ -17,19 +17,6 @@ import pickle
 
 plt.close('all')
 
-##############################################################################
-# PARAMETERS TO CREATE POLICY SPACE
-min_policy_bound, max_policy_bound = 3.6, 8
-C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
-
-C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
-##############################################################################
-
-one_step = 4.8
-margin = 0.2 # plotting margin
-
-colormap = 'plasma_r'
-
 # IMPORT RESULTS
 # Get folder path containing text files
 file_list = sorted(glob.glob('./bounds/[0-9]_bounds.pkl'))

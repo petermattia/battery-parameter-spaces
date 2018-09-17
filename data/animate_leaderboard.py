@@ -32,35 +32,43 @@ for file in file_list:
         min_lifetime = min(np.min(lbs),min_lifetime)
         max_lifetime = max(np.max(ubs),max_lifetime)
 
-# Find number of batches
-batchnum = len(means)
+batchnum = len(means) # Find number of batches
+polnum   = len(means[0]) # Find number of batches
 
-## INITIALIZE CONTOUR PLOT
+## INITIALIZE LEADERBOARD PLOT
 # SETTINGS
 fig = plt.figure()
 plt.style.use('classic')
-plt.set_cmap(colormap)
 manager = plt.get_current_fig_manager() # Make full screen
 manager.window.showMaximized()
 
-plt.suptitle('Batch ' + str(1))
 
 # FUNCTION FOR LOOPING THROUGH BATCHES
 def make_frame(k2):
     plt.cla()
     
     ## PLOT POLICIES
-    plt.errorbar(np.arange(224), means[k2],yerr=[means[k2]-lbs[k2],ubs[k2]-means[k2]],fmt='o')
-    plt.xlim((0,224))
-    plt.ylim((1150,1250))
-    plt.xlabel('Policy index')
-    plt.ylabel('Upper and lower bounds on lifetime')
-    plt.suptitle('Before batch ' + str(k2+1))
-
+    plt.ylim((0,24))
+    plt.xlim((0,10))
+    plt.axis('off')
+    
+    plt.text(5,22,'Before batch ' + str(k2+1),fontsize=24,horizontalalignment='center')
+    
+    best_indices = np.flip(np.argsort(means[k2]),axis=0)
+    
+    for k3 in np.arange(10):
+        k = best_indices[k3]
+        plt.text(5,20-k3*2,str(k3+1) + ': Policy ' + str(k) + ' '
+                 + str(param_space[k]) + 
+                 ', ' + str(int(means[k2][k])) + 
+                 ' (' + str(int(lbs[k2][k])) + ',' + str(int(ubs[k2][k])) + ')',
+                 fontsize=20,
+                 horizontalalignment='center',
+                 verticalalignment='center')
     return fig
 
 ## SAVE ANIMATION
 anim = animation.FuncAnimation(fig, make_frame, frames=batchnum,
                                interval=1000, blit=False)
 
-anim.save('plots/scatter_animation_bounds_highlifetime.gif', writer='imagemagick', fps=0.5)
+anim.save('plots/leaderboard_animate.gif', writer='imagemagick', fps=0.5)
