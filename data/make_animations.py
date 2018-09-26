@@ -14,3 +14,4 @@ import contour_animate_bounds
 import contour_animate_bounds_highlifetime
 import scatter_animate_bounds
 import scatter_animate_bounds_highlifetime
+import leaderboardplot

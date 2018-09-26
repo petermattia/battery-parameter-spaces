@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-lifetime_key = 'l8'
+lifetime_key = 'l4'
 
 #sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed',lifetime_key])
 sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed',

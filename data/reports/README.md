@@ -2,7 +2,7 @@
 
 Batches are 0-indexed.
 
-- oed_0: Started on 2018-08-28. Two cells failed on start (ch 17 & 27). 46 successful cells
+- oed_0: Started on 2018-08-28. Two cells failed on start (ch 17 & 27), one cell had anomalous prediction. 45 successful cells
 - oed_1: Started on 2018-09-02. Two cells failed mid-run (ch 4 & 5). 46 successful cells
 - oed_2: Started on 2018-09-06. One cell failed due to anomalous prediction (ch 12). 47 successful cells
 - oed_3: Started on 2018-09-10. One cell was removed due to anomalous prediction (ch 6). 47 successful cells

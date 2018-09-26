@@ -64,5 +64,6 @@ for k in np.arange(batchnum):
         if k==batchnum-1:
             plt.text(4,k2+1,str(k3) + ': ' + str(param_space[k3]),
                      fontsize=16,verticalalignment='center')
+            print(str(k3) + ': ' + str(param_space[k3]))
 
 plt.savefig('plots/leaderboardplot.png',bbox_inches='tight')
