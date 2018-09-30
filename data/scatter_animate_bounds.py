@@ -10,7 +10,6 @@ NOTE: REQUIRES IMAGEMAGICK. https://www.imagemagick.org/script/download.php
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
 from matplotlib import animation
 import glob
 import pickle
@@ -39,11 +38,8 @@ batchnum = len(means)
 # SETTINGS
 fig = plt.figure()
 plt.style.use('classic')
-plt.set_cmap(colormap)
 manager = plt.get_current_fig_manager() # Make full screen
 manager.window.showMaximized()
-
-plt.suptitle('Batch ' + str(1))
 
 # FUNCTION FOR LOOPING THROUGH BATCHES
 def make_frame(k2):
@@ -55,8 +51,8 @@ def make_frame(k2):
     plt.ylim((min_lifetime-10,max_lifetime+10))
     plt.xlabel('Policy index')
     plt.ylabel('Upper and lower bounds on lifetime')
-    plt.suptitle('Before batch ' + str(k2+1))
-
+    plt.title('Before batch ' + str(k2+1))
+    plt.tight_layout()
     return fig
 
 ## SAVE ANIMATION
