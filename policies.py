@@ -15,6 +15,7 @@ Last modified August 23, 2018
 
 import numpy as np
 import contour_points
+import surface_points
 
 ##############################################################################
 
@@ -66,4 +67,5 @@ if RANDOM_SUBSET:
     subset = valid_policies[0:48]
     np.savetxt('policies_' + FILENAME + '.csv',subset,delimiter=',', fmt='%1.3f')
 
-contour_points.plot_contour(C1, C2, C3, C4_LIMITS, FILENAME)
+#contour_points.plot_contour(C1, C2, C3, C4_LIMITS, FILENAME)
+surface_points.plot_surface(C1, C2, C3, C4_LIMITS, FILENAME)

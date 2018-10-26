@@ -22,6 +22,11 @@ def plot_contour(C1, C2, C3, C4_LIMITS, filename):
     one_step = 4.8
     margin = 0.2 # plotting margin
     
+    # editable text for exported vector graphics
+    # http://jonathansoma.com/lede/data-studio/matplotlib/exporting-from-matplotlib-to-open-in-adobe-illustrator/
+    matplotlib.rcParams['pdf.fonttype'] = 42
+    matplotlib.rcParams['ps.fonttype'] = 42
+    
     # Calculate C4(CC1, CC2) values for contour lines
     C1_grid = np.arange(min(C1)-margin,max(C1) + margin,0.01)
     C2_grid = np.arange(min(C1)-margin,max(C1) + margin,0.01)
@@ -58,9 +63,9 @@ def plot_contour(C1, C2, C3, C4_LIMITS, filename):
         policy_subset = policies[idx_subset,:][0]
         plt.scatter(policy_subset[:,0],policy_subset[:,1],c='k',zorder=2,s=50)
         
-        plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
-        plt.xlabel('C1')
-        plt.ylabel('C2')
+        plt.title('CC3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
+        plt.xlabel('CC1')
+        plt.ylabel('CC2')
         plt.xlim((min(C1)-margin, max(C1)+margin))
         plt.ylim((min(C1)-margin, max(C1)+margin))
     
@@ -76,7 +81,9 @@ def plot_contour(C1, C2, C3, C4_LIMITS, filename):
     cbar = plt.colorbar(m, cax=cbar_ax)
     #fig.colorbar(m, cax=cbar_ax)
     plt.clim(min(C4_LIMITS),max(C4_LIMITS))
-    cbar.ax.set_title('C4')
+    cbar.ax.set_title('CC4')
     
     ## SAVE FIGURE
     plt.savefig('contour_' + filename + '.png', bbox_inches='tight')
+    plt.savefig('contour_' + filename + '.pdf', bbox_inches='tight', format='pdf')
+    
