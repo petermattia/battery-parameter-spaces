@@ -38,6 +38,7 @@ batchnum = len(means)
 # SETTINGS
 fig = plt.figure()
 plt.style.use('classic')
+plt.rcParams.update({'font.size': 16})
 manager = plt.get_current_fig_manager() # Make full screen
 manager.window.showMaximized()
 

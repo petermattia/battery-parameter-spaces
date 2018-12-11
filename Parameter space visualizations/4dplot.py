@@ -50,13 +50,13 @@ for k, c3 in enumerate(C3):
 
 # PLOT FORMATTING
 ax.scatter(4.8, 4.8, 4.8, c='k', marker='s', s=50)
-ax.set_title('SOC width = 20%, C4 constrained')
-ax.set_xlabel('C1')
-ax.set_ylabel('C2')
-ax.set_zlabel('C3')
+ax.set_title('SOC width = 20%, CC4 constrained')
+ax.set_xlabel('CC1')
+ax.set_ylabel('CC2')
+ax.set_zlabel('CC3')
 ax.set_zlim(2.5, 6.5)
-cbar = plt.colorbar(m)
-cbar.ax.set_title('C4')
+ cbar = plt.colorbar(m)
+cbar.ax.set_title('CC4')
 
 # Make full screen
 manager = plt.get_current_fig_manager()

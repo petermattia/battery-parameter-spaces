@@ -47,6 +47,7 @@ batchnum = len(data)
 # SETTINGS
 fig = plt.figure()
 plt.style.use('classic')
+plt.rcParams.update({'font.size': 16})
 plt.set_cmap(colormap)
 manager = plt.get_current_fig_manager() # Make full screen
 manager.window.showMaximized()
@@ -72,7 +73,7 @@ norm = matplotlib.colors.Normalize(minn, maxx)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
-cbar.ax.set_title('Cycle life')
+cbar.ax.set_title('Predicted cycle life')
 
 # FUNCTION FOR LOOPING THROUGH BATCHES
 def make_frame(k2):
@@ -94,16 +95,17 @@ def make_frame(k2):
         idx_subset = np.where(data[k2][:,2]==c3)
         policy_subset = data[k2][idx_subset,0:4][0]
         lifetime_subset = data[k2][idx_subset,4]
-        plt.scatter(policy_subset[:,0],policy_subset[:,1],vmin=minn,vmax=maxx,
+        if np.size(lifetime_subset):
+            plt.scatter(policy_subset[:,0],policy_subset[:,1],vmin=minn,vmax=maxx,
                     c=lifetime_subset.ravel(),zorder=2,s=100)
 
         ## BASELINE
         if c3 == one_step:
             plt.scatter(one_step,one_step,c='k',marker='s',zorder=3,s=100)
 
-        plt.title('C3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
-        plt.xlabel('C1')
-        plt.ylabel('C2')
+        plt.title('CC3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
+        plt.xlabel('CC1')
+        plt.ylabel('CC2')
         plt.xlim((min_policy_bound-margin, max_policy_bound+margin))
         plt.ylim((min_policy_bound-margin, max_policy_bound+margin))
 
