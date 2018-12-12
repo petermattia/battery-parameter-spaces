@@ -20,7 +20,7 @@ seed_list = np.arange(100)
 ################################################
 
 # Calculate total simulations
-total_sims = len(beta_list) * len(gamma_list) * len(epsilon_list) * len(seed_list)
+total_sims = len(beta_list) * len(gamma_list) * len(epsilon_list) * len(seed_list) * len(batch_size_list)
 count = 1
 
 # Load bash script template
