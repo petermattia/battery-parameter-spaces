@@ -47,7 +47,7 @@ plt.ylabel('Averaged early predicted lifetime')
 plt.xlabel('Number of arms per round')
 plt.title('Total rounds = 3, seeds = 100')
 plt.legend()
-plt.savefig('random.png')
+plt.savefig('data_baseline/random.png')
 plt.show()
 		
 # Random without replacement
