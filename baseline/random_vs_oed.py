@@ -43,7 +43,11 @@ print(list(range(start_batch_size, max_batch_size, step_batch_size)))
 plt.errorbar(list(range(start_batch_size, max_batch_size, step_batch_size)), best_random_lifetimes_mean, \
 	linewidth=2, yerr=np.vstack((3*best_random_lifetimes_std, 3*best_random_lifetimes_std)), marker='o', \
 	linestyle=':', label='random')
+plt.ylabel('Averaged early predicted lifetime')
+plt.xlabel('Number of arms per round')
+plt.title('Total rounds = 3, seeds = 100')
 plt.legend()
+plt.savefig('random.png')
 plt.show()
 		
 # Random without replacement
