@@ -16,6 +16,8 @@ import pickle
 
 plt.close('all')
 
+CROPPED_BOUNDS = False
+
 ##############################################################################
 # PARAMETERS TO CREATE POLICY SPACE
 min_policy_bound, max_policy_bound = 3.6, 8
@@ -56,7 +58,10 @@ plt.rcParams.update({'font.size': 16})
 plt.set_cmap(colormap)
 manager = plt.get_current_fig_manager() # Make full screen
 manager.window.showMaximized()
-minn, maxx = 1000, max_lifetime
+if CROPPED_BOUNDS:
+    minn, maxx = 1000, max_lifetime
+else:
+    minn, maxx = min_lifetime, max_lifetime
 
 # Calculate C4(CC1, CC2) values for contour lines
 C1_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
@@ -114,5 +119,9 @@ for k, c3 in enumerate(C3list):
 
 ## SAVE Plot
 
-plt.savefig('plots/final_bounds.png', bbox_inches = 'tight')
-plt.savefig('plots/final_bounds.pdf', bbox_inches = 'tight')
+if CROPPED_BOUNDS:
+    plt.savefig('plots/final_bounds.png', bbox_inches = 'tight')
+    plt.savefig('plots/final_bounds.pdf', bbox_inches = 'tight')
+else:
+    plt.savefig('plots/final_bounds_full.png', bbox_inches = 'tight')
+    plt.savefig('plots/final_bounds_full.pdf', bbox_inches = 'tight')
