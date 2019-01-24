@@ -20,7 +20,7 @@ policies = np.asarray([[4.8,5.2,5.2], # oed1
                        [6,5.6,4.4]]) # Graphite overpotential minimization
 
 # Repeat 9x
-policies_repeated = np.transpose(np.tile(np.transpose(policies), 9))
+policies_repeated = np.transpose(np.tile(np.transpose(policies), 5))
 
 validation_batch_file = 'validation.csv'
 
