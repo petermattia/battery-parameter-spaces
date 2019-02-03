@@ -61,6 +61,7 @@ if addLines:
     for k,p in enumerate(policies):
         idx = np.where(np.sum(p==param_space,axis=1)==3)[0][0]
         life_p = mean[idx]
+        print(p, life_p)
         if k < 3: c='k'
         elif k<7: c='r'
         else: c='g'
