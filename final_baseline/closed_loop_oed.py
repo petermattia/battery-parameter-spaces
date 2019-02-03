@@ -408,7 +408,7 @@ def main():
 		with open(log_file, 'w') as outfile:
 			outfile.write('\t'.join(map(str, agent.population_lifetimes))+'\n')
 			outfile.write('\t'.join(map(str, np.argsort(-agent.population_lifetimes)))+'\n')
-			outfile.write('\t'.join(map(str, rank_idx)))
+			outfile.write('\t'.join(map(str, rank_idx))+'\n')
 			outfile.write('\t'.join(map(str, best_arm_params)))
 
 			# true lifetimes
