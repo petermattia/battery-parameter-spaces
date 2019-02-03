@@ -27,9 +27,6 @@ class BayesGap(object):
 		self.param_space = self.get_parameter_space()
 		self.num_arms = self.param_space.shape[0]
 
-		print(self.param_space)
-		print(self.param_space.shape)
-
 		self.X = self.get_design_matrix(args.gamma)
 
 		self.num_dims = self.X.shape[1]
@@ -154,13 +151,10 @@ class BayesGap(object):
 				with open(prev_batch_lifetimes_file) as infile:
 					reader = csv.reader(infile, delimiter=',')
 					resampled_lifetimes = np.asarray([list(map(float, row)) for row in reader])
-				print('Resampled lifetimes')
+				print('Resampled policy + non-standardized lifetime')
 				print(resampled_lifetimes)
-				print()
-				print('Standardized resampled lifetimes')
 				resampled_lifetimes[:, -1] = resampled_lifetimes[:, -1] - self.standardization_mean
-				print(resampled_lifetimes)
-				print()
+				
 
 				batch_policies = resampled_lifetimes[:, :3]
 				batch_arms = [param_space.tolist().index(policy) for policy in batch_policies.tolist()]
@@ -193,6 +187,7 @@ class BayesGap(object):
 		# Save bounds 
 		with open(arm_bounds_file[:-4]+'_bounds.pkl', 'wb') as outfile:
 			pickle.dump([param_space, nonstd_upper_bounds, nonstd_lower_bounds, (nonstd_upper_bounds+nonstd_lower_bounds)/2], outfile)
+		print()
 
 		print('Round', round_idx)
 		print('Current beta', beta)
@@ -230,7 +225,7 @@ class BayesGap(object):
 					print('Next round selection is arm idx', arm, ' with policy params', policy)
 					# print('Resampled lifetime', resampled_lifetime)
 					writer.writerow(np.concatenate((policy, resampled_lifetime)))
-
+		print()
 		return best_arm_params, rank_idx
 
 	def posterior_theta(self, X_t, Y_t):
@@ -292,17 +287,18 @@ class BayesGap(object):
 	def get_parameter_space(self):
 
 		data = np.genfromtxt(self.policy_file, delimiter=',')
-		print(self.train_policy_idx)
+		
 		data = data[self.train_policy_idx, :]
-		print('Full data')
-		print(data)
-		print()
+		
 		policies = data[:, :3]
 		
 		self.sampled_lifetimes = data[:, 3:3+self.pop_budget]
 		self.population_lifetimes = np.sum(self.sampled_lifetimes, axis=-1)/np.count_nonzero(self.sampled_lifetimes, axis=-1)
-		print('True lifetimes', self.population_lifetimes)
-
+		
+		print('Ordered policy list', self.train_policy_idx)
+		print('Full data')
+		print(data)
+		print()
 		return policies
 
 def parse_args():
@@ -411,14 +407,10 @@ def main():
 			outfile.write('\t'.join(map(str, rank_idx))+'\n')
 			outfile.write('\t'.join(map(str, best_arm_params)))
 
-			# true lifetimes
-			print('\t'.join(map(str, agent.population_lifetimes)))
-			# true ranks
-			print('\t'.join(map(str, np.argsort(-agent.population_lifetimes))))
-			# predicted ranks
-			print('\t'.join(map(str, rank_idx)))
-			# predicted best arm parameters
-			print('\t'.join(map(str, best_arm_params)))
+			print('True lifetimes:', '\t'.join(map(str, agent.population_lifetimes)))
+			print('True ranks:', '\t'.join(map(str, np.argsort(-agent.population_lifetimes))))
+			print('Predicted ranks:', '\t'.join(map(str, rank_idx)))
+			print('Predicted best arm parameters:', '\t'.join(map(str, best_arm_params)))
 
 	# delete pickle files to save memory
 	if args.round_idx == args.max_budget:
