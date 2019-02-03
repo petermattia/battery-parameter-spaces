@@ -9,7 +9,7 @@ epsilon_list = [0.5,0.6,0.7,0.8,0.9]
 
 num_policies = 8
 num_train_policies = 4
-num_seeds = 100
+num_seeds = 10
 pop_budget = 5
 
 
@@ -26,8 +26,7 @@ pop_budget = 3
 policy_list = np.arange(num_policies).tolist()
 num_rounds = pop_budget*num_train_policies+1
 
-print('total expected cmds', len(list(itertools.combinations(policy_list, num_train_policies)))*num_seeds*len(list(itertools.product(beta_list, gamma_list, epsilon_list)))*num_rounds)
-
+print('total expected cmds', len(list(itertools.permutations(policy_list, num_train_policies)))*num_seeds*len(list(itertools.product(beta_list, gamma_list, epsilon_list)))*num_rounds)
 current_exp_id = 1
 num_cmds = 0
 
@@ -39,7 +38,7 @@ if not os.path.exists(script_dir):
 for seed in range(num_seeds):
 	script_file = os.path.join(script_dir, 'seed_' + str(seed) + '.sh')
 	with open(script_file, 'w') as outfile:
-		for train_policy_list in itertools.combinations(policy_list, num_train_policies):
+		for train_policy_list in itertools.permutations(policy_list, num_train_policies):
 			for beta, gamma, epsilon in itertools.product(beta_list, gamma_list, epsilon_list):
 				cmd_prefix = 'python final_baseline/closed_loop_oed.py'\
 					+ ' --exp_id ' + str(current_exp_id)\

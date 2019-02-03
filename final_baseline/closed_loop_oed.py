@@ -10,7 +10,7 @@ class BayesGap(object):
 
 		self.policy_file = args.policy_file
 		self.train_policy_idx = args.train_policy_idx
-		np.random.shuffle(self.train_policy_idx)
+		# np.random.shuffle(self.train_policy_idx) 
 		self.pop_budget = args.pop_budget
 
 		self.prev_arm_bounds_file = os.path.join(args.logdir, args.exp_id, args.arm_bounds_dir, str(args.round_idx-1) + '.pkl') # note this is for previous round
@@ -123,6 +123,7 @@ class BayesGap(object):
 			beta = self.beta
 			upper_bounds, lower_bounds = self.get_posterior_bounds(beta)
 			best_arm_params = None
+			rank_idx = None
 		else:
 
 			# load proposal_arms, proposal_gaps, X_t, Y_t, beta for previous round in bounds/<round_idx-1>.pkl
@@ -152,18 +153,18 @@ class BayesGap(object):
 			else:
 				with open(prev_batch_lifetimes_file) as infile:
 					reader = csv.reader(infile, delimiter=',')
-					sampled_lifetimes = np.asarray([list(map(float, row)) for row in reader])
-				print('Sampled lifetimes')
-				print(sampled_lifetimes)
+					resampled_lifetimes = np.asarray([list(map(float, row)) for row in reader])
+				print('Resampled lifetimes')
+				print(resampled_lifetimes)
 				print()
-				print('Standardized sampled lifetimes')
-				sampled_lifetimes[:, -1] = sampled_lifetimes[:, -1] - self.standardization_mean
-				print(sampled_lifetimes)
+				print('Standardized resampled lifetimes')
+				resampled_lifetimes[:, -1] = resampled_lifetimes[:, -1] - self.standardization_mean
+				print(resampled_lifetimes)
 				print()
 
-				batch_policies = sampled_lifetimes[:, :3]
+				batch_policies = resampled_lifetimes[:, :3]
 				batch_arms = [param_space.tolist().index(policy) for policy in batch_policies.tolist()]
-				batch_rewards = sampled_lifetimes[:, 3].reshape(-1, 1) # this corresponds to 4th column coz we dumped 4th column as lifetime here
+				batch_rewards = resampled_lifetimes[:, 3].reshape(-1, 1) # this corresponds to 4th column coz we dumped 4th column as lifetime here
 			
 			X_t.append(X[batch_arms])
 			Y_t.append(batch_rewards)
@@ -181,7 +182,7 @@ class BayesGap(object):
 			# just take best upper bound arm
 			best_arm_idx = np.argmax(upper_bounds)
 			best_arm_params = param_space[best_arm_idx]
-
+			rank_idx = np.argsort(-upper_bounds) # sort in descending order
 			
 
 		print('Arms with (non-standardized) upper bounds, lower bounds, and mean (upper+lower)/2 lifetimes')
@@ -225,14 +226,12 @@ class BayesGap(object):
 			with open(next_batch_lifetimes_file, 'w+') as outfile:
 				writer = csv.writer(outfile)
 				for arm, policy in zip(batch_arms, batch_policies):
-					arm_lifetime = np.random.choice(self.lifetimes[arm])[None]
-					print('Selection for next round:')
-					print('Arm', arm)
-					print('Policy', policy)
-					# print('Sampled lifetime', arm_lifetime)
-					writer.writerow(np.concatenate((policy,arm_lifetime)))
+					resampled_lifetime = np.random.choice(self.sampled_lifetimes[arm])[None]
+					print('Next round selection is arm idx', arm, ' with policy params', policy)
+					# print('Resampled lifetime', resampled_lifetime)
+					writer.writerow(np.concatenate((policy, resampled_lifetime)))
 
-		return best_arm_params
+		return best_arm_params, rank_idx
 
 	def posterior_theta(self, X_t, Y_t):
 
@@ -300,8 +299,9 @@ class BayesGap(object):
 		print()
 		policies = data[:, :3]
 		
-		if not self.early_pred:
-			self.lifetimes = data[:, 3:3+self.pop_budget]
+		self.sampled_lifetimes = data[:, 3:3+self.pop_budget]
+		self.population_lifetimes = np.sum(self.sampled_lifetimes, axis=-1)/np.count_nonzero(self.sampled_lifetimes, axis=-1)
+		print('True lifetimes', self.population_lifetimes)
 
 		return policies
 
@@ -313,11 +313,8 @@ def parse_args():
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 
 	parser.add_argument('--policy_file', nargs='?', default='data/testing/high_grad.csv')
-	parser.add_argument('--logdir', nargs='?', default='logs/')
 	parser.add_argument('--arm_bounds_dir', nargs='?', default='bounds/')
 	parser.add_argument('--early_pred_dir', nargs='?', default='pred/')
-	parser.add_argument('--sampled_lifetimes_dir', nargs='?', default='sample/')
-
 	parser.add_argument('--next_batch_dir', nargs='?', default='batch/')
 	parser.add_argument('--round_idx', default=0, type=int)
 
@@ -340,18 +337,21 @@ def parse_args():
 	parser.add_argument('--standardization_std', default=164, type=float,
 						help='std lifetime from batch8')
 
+	# new args
+	parser.add_argument('--logdir', nargs='?', default='logs/')
 	parser.add_argument('--exp_id', default='0', type=str,
 						help='unique experiment id')
 	parser.add_argument('--train_policy_idx', nargs='*', default=[0,1,5,7], type=int,
 						help='list of train policies')
 	parser.add_argument('--pop_budget', default=3, type=int,
 						help='Number of samples for computing population budget')
-
 	parser.add_argument('--early_pred', dest='early_pred', action='store_true', default=False,
                         help='uses early prediction if true')
-
+	parser.add_argument('--max-budget', default=20, type=int,
+						help='maximum number of rounds to run experiment')
 	parser.add_argument('--dump', dest='dump', action='store_true', default=False,
                         help='dumps to log file if true')
+	parser.add_argument('--sampled_lifetimes_dir', nargs='?', default='sample/')
 
 
 	return parser.parse_args()
@@ -361,7 +361,7 @@ def main():
 
 	args = parse_args()
 
-	np.random.seed(args.seed)
+	np.random.seed(args.seed+1000*args.round_idx)
 	np.set_printoptions(threshold=np.inf)
 
 	resdir = os.path.join(args.logdir, args.exp_id)
@@ -382,6 +382,8 @@ def main():
 			os.mkdir(os.path.join(resdir, args.next_batch_dir))
 			if args.early_pred:
 				os.mkdir(os.path.join(resdir, args.early_pred_dir))
+				raise NotImplementedError('STILL NEED TO MAKE SURE W/ and W/O EARLY PRED FILES\
+				 FOR bounds/ batch/ logs.csv DONT CONFLICT. TECHNICALLY OKA')
 			else:
 				os.mkdir(os.path.join(resdir, args.sampled_lifetimes_dir))
 
@@ -395,43 +397,40 @@ def main():
 		sys.stdout = open(os.path.join(resdir, 'round_' + str(args.round_idx) + '_log.txt'), 'a+')
 
 	agent = BayesGap(args)
-	best_arm_params = agent.run()
+	best_arm_params, rank_idx = agent.run()
 
 	if args.round_idx != 0:
-		print('Best arm until round', args.round_idx-1, 'is', best_arm_params)
+		print('Best arm until round', args.round_idx-1, \
+			'is', best_arm_params, \
+			'with population lifetime', agent.population_lifetimes[rank_idx[0]])
 
 		# Log the best arm at the end of each round
 		with open(log_file, 'w') as outfile:
-			data = np.genfromtxt(args.policy_file, delimiter=',')
-			train_policies = data[args.train_policy_idx, :3]
-			train_lifetimes = data[args.train_policy_idx, 3:3+args.pop_budget]  # 5 is hard coded assuming 5 runs/policy for pop mean
-			true_lifetimes = np.sum(train_lifetimes, axis=-1)/np.count_nonzero(train_lifetimes, axis=-1)
-			policy_idx = np.where((train_policies == (best_arm_params[0], best_arm_params[1], best_arm_params[2])).all(axis=1))
-			predicted_best_arm_lifetime = true_lifetimes[policy_idx][0]
-			true_best_arm_lifetime = np.amax(true_lifetimes)
-			outfile.write(str(best_arm_params[0]) + '\t' +
-						  str(best_arm_params[1]) + '\t' +	
-						  str(best_arm_params[2]) + '\n')
-			outfile.write(str(true_best_arm_lifetime-predicted_best_arm_lifetime) + '\n')
-			print(predicted_best_arm_lifetime)
-			print(true_best_arm_lifetime)
-			print(true_lifetimes)
+			outfile.write('\t'.join(map(str, agent.population_lifetimes))+'\n')
+			outfile.write('\t'.join(map(str, np.argsort(-agent.population_lifetimes)))+'\n')
+			outfile.write('\t'.join(map(str, rank_idx)))
+			outfile.write('\t'.join(map(str, best_arm_params)))
 
-	# log_path = os.path.join(args.logdir, 'beta_' + str(args.init_beta) + \
-	# 	'gamma_' + str(args.gamma) + 'epsilon_' + str(args.epsilon) + '_' + args.log_file)
-	# with open(log_path, "a") as log_file:
-	# 	print('Logging data...')
-	# 	if args.round_idx == args.budget:
-	# 			if args.high_grad:
-	# 				data = np.genfromtxt('data/testing/high_grad.csv', delimiter=',')
-	# 			else:
-	# 				data = np.genfromtxt('data/testing/repeated.csv', delimiter=',')
-	# 			all_policies = data[:, :3]
-	# 			all_lifetimes = data[:, 3:6]
-	# 			true_lifetimes = np.sum(all_lifetimes, axis=-1)/np.count_nonzero(all_lifetimes, axis=-1)
-	# 			policy_idx = np.where((all_policies == (best_arm_params[0], best_arm_params[1], best_arm_params[2])).all(axis=1))
-	# 			lifetime_best_arm = true_lifetimes[policy_idx][0]
-	# 			log_file.write(str(lifetime_best_arm) + '\n')
+			# true lifetimes
+			print('\t'.join(map(str, agent.population_lifetimes)))
+			# true ranks
+			print('\t'.join(map(str, np.argsort(-agent.population_lifetimes))))
+			# predicted ranks
+			print('\t'.join(map(str, rank_idx)))
+			# predicted best arm parameters
+			print('\t'.join(map(str, best_arm_params)))
+
+	# delete pickle files to save memory
+	if args.round_idx == args.max_budget:
+		import shutil
+		shutil.rmtree(os.path.join(resdir, args.arm_bounds_dir))
+		shutil.rmtree(os.path.join(resdir, args.next_batch_dir))
+		if args.early_pred:
+				shutil.rmtree(os.path.join(resdir, args.early_pred_dir))
+		else:
+			shutil.rmtree(os.path.join(resdir, args.sampled_lifetimes_dir))
+
+
 
 if __name__ == '__main__':
 
