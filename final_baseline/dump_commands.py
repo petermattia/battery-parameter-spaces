@@ -24,9 +24,9 @@ pop_budget = 3
 ####
 
 policy_list = np.arange(num_policies).tolist()
-num_rounds = pop_budget*num_train_policies+1
+max_budget = pop_budget*num_train_policies
 
-print('total expected cmds', len(list(itertools.permutations(policy_list, num_train_policies)))*num_seeds*len(list(itertools.product(beta_list, gamma_list, epsilon_list)))*num_rounds)
+print('total expected cmds', len(list(itertools.permutations(policy_list, num_train_policies)))*num_seeds*len(list(itertools.product(beta_list, gamma_list, epsilon_list)))*max_budget)
 current_exp_id = 1
 num_cmds = 0
 
@@ -42,13 +42,14 @@ for seed in range(num_seeds):
 			for beta, gamma, epsilon in itertools.product(beta_list, gamma_list, epsilon_list):
 				cmd_prefix = 'python final_baseline/closed_loop_oed.py'\
 					+ ' --exp_id ' + str(current_exp_id)\
+					+ ' --max_budget ' +  str(max_budget)\
 					+ ' --pop_budget ' +  str(pop_budget)\
 					+ ' --train_policy_idx ' + ' '.join(map(str, train_policy_list)) \
 					+ ' --seed ' + str(seed)\
 					+ ' --init_beta ' + str(beta)\
 					+ ' --gamma ' + str(gamma)\
 					+ ' --epsilon '  + str(epsilon)
-				for round_idx in range(num_rounds):
+				for round_idx in range(max_budget+1):
 					cmd = cmd_prefix + ' --round_idx ' + str(round_idx) + '\n'
 					num_cmds += 1
 					print(cmd)
