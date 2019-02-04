@@ -366,8 +366,7 @@ def main():
 	resdir = os.path.join(args.logdir, args.exp_id)
 	log_file = os.path.join(resdir, 'round_' + str(args.round_idx) + '.txt')	
 
-	if ((os.path.exists(resdir) and args.round_idx != 0) or (os.path.isfile(log_file))) \
-		and args.exp_id != '0': # exp_id = 0 is reserved for testing code and can be rewritten
+	if os.path.exists(resdir) and args.round_idx == 0 and args.exp_id != '0': # exp_id = 0 is reserved for testing code and can be rewritten
 		print('Results folder', resdir, os.path.exists(resdir))
 		print('Log file', log_file, os.path.isfile(log_file))
 		print('Results folder/log file already exists...exiting')
@@ -386,14 +385,7 @@ def main():
 		print()
 
 		if args.exp_id != '0':
-			os.mkdir(resdir)
-
-		shutil.rmtree(os.path.join(resdir, args.arm_bounds_dir))
-		shutil.rmtree(os.path.join(resdir, args.next_batch_dir))
-		if args.early_pred:
-			shutil.rmtree(os.path.join(resdir, args.early_pred_dir))
-		else:
-			shutil.rmtree(os.path.join(resdir, args.sampled_lifetimes_dir))
+			os.mkdir(resdir)	
 		os.mkdir(os.path.join(resdir, args.arm_bounds_dir))
 		os.mkdir(os.path.join(resdir, args.next_batch_dir))
 		if args.early_pred:
