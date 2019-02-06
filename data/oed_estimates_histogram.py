@@ -14,6 +14,8 @@ import matplotlib
 import glob
 import pickle
 
+addLines = True
+
 plt.close('all')
 
 matplotlib.rcParams['pdf.fonttype'] = 42
@@ -34,7 +36,7 @@ for file in file_list:
         min_lifetime = min(np.min(mean),min_lifetime)
         max_lifetime = max(np.max(mean),max_lifetime)
 
-## INITIALIZE CONTOUR PLOT
+## INITIALIZE PLOT
 # SETTINGS
 fig = plt.figure()
 plt.style.use('classic')
@@ -44,6 +46,26 @@ plt.set_cmap(colormap)
 plt.hist(data, bins=12, range=(600,1200))
 plt.xlabel('OED-estimated lifetimes')
 plt.ylabel('Count')
+
+# Add lines for validated policies
+if addLines:
+    policies = np.asarray([[4.8,5.2,5.2], # oed1
+                           [5.2,5.2,4.8], # oed2
+                           [4.4,5.6,5.2], # oed3
+                           [7,4.8,4.8], # Samsung
+                           [8,4.4,4.4], # Notten
+                           [3.6,6,5.6], # Zhang
+                           [8,6,4.8], # Tesla
+                           [8,7,5.2], # Lowest policy
+                           [6,5.6,4.4]]) # Graphite overpotential minimization
+    for k,p in enumerate(policies):
+        idx = np.where(np.sum(p==param_space,axis=1)==3)[0][0]
+        life_p = mean[idx]
+        print(p, life_p)
+        if k < 3: c='k'
+        elif k<7: c='r'
+        else: c='g'
+        plt.axvline(life_p, color=c, linestyle='dashed', linewidth=2)
 
 ## SAVE Plot
 plt.savefig('plots/OED_estimates_histogram.png', bbox_inches = 'tight')
