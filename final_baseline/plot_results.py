@@ -11,6 +11,8 @@ num_policies = 6
 pop_budget = 5
 run_id = 'feb6'
 logdir = './logs/' + run_id
+policy_list = np.arange(num_policies).tolist()
+
 
 with open(os.path.join(logdir, 'aggegated_results.pkl'), 'rb') as infile:
 	results_list = pickle.load(infile)
@@ -23,23 +25,18 @@ def get_complement_policy(policy):
 	return "".join(map(str, complement_set.tolist()))
 
 
-
 max_budget = len(results_list)
 oed_means = []
 oed_stds = []
 baseline_means = []
 baseline_stds = []
 
-oed_ranking_means = []
-oed_ranking_stds = []
-baseline_ranking_means = []
-baseline_ranking_stds = []
 for round_idx in range(max_budget):
 	data = results_list[round_idx]
 	print(round_idx)
 
-	# if round_idx == 2:
-	# 	break
+	if round_idx == 4:
+		break
 
 	policy_loss_dict = defaultdict(list) # key: policy_list, hparam, value: list of losses
 	best_policy_losses = []
@@ -71,6 +68,7 @@ for round_idx in range(max_budget):
 	oed_loss_list = []
 	baseline_loss_list = []
 	for policy, best_hparam in best_hparam_dict.items():
+		print(policy, best_hparam)
 		complement_policy = get_complement_policy(policy)
 		oed_loss = avg_policy_loss_dict[(complement_policy, best_hparam[0], best_hparam[1], best_hparam[2])]
 		oed_loss_list.append(oed_loss)
@@ -91,44 +89,55 @@ for round_idx in range(max_budget):
 print(oed_means)
 print(oed_stds)
 
-print(baseline_means)
-print(baseline_stds)
+# print(baseline_means)
+# print(baseline_stds)
 
 baseline_means = []
 baseline_stds = []
 
 num_train_policies = 3
-data = np.genfromtxt('final_baseline/predictions_3and3.csv')
-
-for round_idx in range(max_budget):
+data = np.genfromtxt('final_baseline/predictions_3and3.csv', delimiter=',', skip_header=1)
+print(data)
+for round_idx in range(1, max_budget+1):
+	print('Round', round_idx)
 	baseline_loss_list = []
 	for train_policy_list in itertools.combinations(policy_list, num_train_policies):
-		train_data = data[train_policy_list]
-		sample_lifetimes = train_data[:, 3+pop_budget]
+		
+		train_data = data[list(train_policy_list)]
+		sample_lifetimes = train_data[:, :3+pop_budget]
 		pop_lifetimes = np.mean(sample_lifetimes, axis=-1)
 		best_pop_lifetime = np.max(pop_lifetimes)
 
-		emp_policy_lifetimes = defaultdict(list)
 		for seed in range(100):
-			policies_selected = np.random.choice(max_budget, round_idx, replace=True).tolist()
+			emp_policy_lifetimes = []
+			policies_selected = np.random.choice(num_train_policies, round_idx, replace=True).tolist()
+			
+			for _ in range(num_train_policies):
+				emp_policy_lifetimes.append([])
 			for policy_idx in policies_selected:
 				emp_policy_lifetimes[policy_idx].append(np.random.choice(train_data[policy_idx]))
 
-		for policy_idx in range(num_policies):
-			if policy_idx in emp_policy_lifetimes.keys():
-				policy_losses.append(np.mean(emp_np.array(policy_lifetimes[policy_idx])))
+			avg_emp_policy_lifetimes = []
+			for policy_idx in range(num_train_policies):
+				if len(emp_policy_lifetimes[policy_idx]) > 0:
+					avg_emp_policy_lifetimes.append(np.mean(np.array(emp_policy_lifetimes[policy_idx])))
+				else:
+					avg_emp_policy_lifetimes.append(-np.inf)
+			random_policy = np.argmax(np.array(avg_emp_policy_lifetimes))
+			baseline_loss_list.append(best_pop_lifetime-pop_lifetimes[random_policy])
 
-				#TODO
+	baseline_loss_np = np.array(baseline_loss_list)
+	baseline_means.append(np.mean(baseline_loss_np))
+	baseline_stds.append(sem(baseline_loss_np))
 
-
-
-
+print(baseline_means)
+print(baseline_stds)
 
 plt.figure()
-plt.errorbar(np.arange(max_budget), baseline_means, alpha=0.8,\
+plt.errorbar(np.arange(max_budget)+1, baseline_means, alpha=0.8,\
 	linewidth=2, yerr=np.vstack((baseline_stds, baseline_stds)), marker='o', \
 	linestyle=':', label='random')
-plt.errorbar(np.arange(max_budget), oed_means, alpha=0.8, \
+plt.errorbar(np.arange(max_budget)+1, oed_means, alpha=0.8, \
 	linewidth=2, yerr=np.vstack((oed_stds, oed_stds)), marker='o', \
 	linestyle=':', label='oed')
 plt.ylabel('true best lifetime - predicted best lifetime')
