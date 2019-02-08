@@ -295,7 +295,7 @@ class BayesGap(object):
 
 	def get_parameter_space(self):
 
-		data = np.genfromtxt(self.policy_file, delimiter=',')
+		data = np.genfromtxt(self.policy_file, delimiter=',', skip_header=1)
 		data = data[self.train_policy_idx, :] # shuffle according to provided permutation
 		policies = data[:, :3]
 		
@@ -311,7 +311,7 @@ def parse_args():
 
 	parser = argparse.ArgumentParser(description='Best arm identification using Bayes Gap.')
 
-	parser.add_argument('--policy_file', nargs='?', default='data/testing/high_grad.csv')
+	parser.add_argument('--policy_file', nargs='?', default='final_baseline/predictions_3and3.csv')
 	parser.add_argument('--arm_bounds_dir', nargs='?', default='bounds/')
 	parser.add_argument('--early_pred_dir', nargs='?', default='pred/')
 	parser.add_argument('--next_batch_dir', nargs='?', default='batch/')
@@ -372,17 +372,7 @@ def main():
 		print('Results folder/log file already exists...exiting')
 		exit()
 
-	if args.dump:
-		import sys
-		sys.stdout = open(os.path.join(resdir, 'log.txt'), 'a+')
-
 	if args.round_idx == 0:
-		data = np.genfromtxt(args.policy_file, delimiter=',')
-		data = data[args.train_policy_idx, :]
-		print('Ordered policy list', args.train_policy_idx)
-		print('Ordered full data')
-		print(data)
-		print()
 
 		if args.exp_id != '0':
 			os.mkdir(resdir)	
@@ -395,10 +385,25 @@ def main():
 		else:
 			os.mkdir(os.path.join(resdir, args.sampled_lifetimes_dir))
 
+		
 
 		import json
 		with open(os.path.join(resdir, 'config.json'), 'w') as fp:
 		    json.dump(vars(args), fp, indent=4, separators=(',', ': '))
+
+
+	if args.dump:
+		import sys
+		sys.stdout = open(os.path.join(resdir, 'log.txt'), 'a+')
+
+	if args.round_idx == 0:
+
+		data = np.genfromtxt(args.policy_file, delimiter=',', skip_header=1)
+		data = data[args.train_policy_idx, :]
+		print('Ordered policy list', args.train_policy_idx)
+		print('Ordered full data')
+		print(data)
+		print()
 
 	
 
