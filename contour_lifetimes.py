@@ -23,7 +23,7 @@ FILENAME = 'sim'
 
 ############################################################################## 
 plt.close('all')
-colormap = 'plasma_r'   
+colormap = 'plasma_r'
 
 # Import policies
 policies = np.genfromtxt('policies_all.csv', delimiter=',')

@@ -69,4 +69,4 @@ if addLines:
 
 ## SAVE Plot
 plt.savefig('plots/OED_estimates_histogram.png', bbox_inches = 'tight')
-plt.savefig('plots/OED_estimates_histogram.png', bbox_inches = 'tight')
+plt.savefig('plots/OED_estimates_histogram.pdf', bbox_inches = 'tight')
