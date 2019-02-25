@@ -43,7 +43,6 @@ def sim(C1, C2, C3):
     h = 10 # [=] W/m^2-K, heat transfer coefficient
 
     # DEGRADATION PARAMETERS. ESTIMATED FROM SMITH, DAHN ET AL 2011
-    A = 136      # [=] 1/s, pre-exponential constant
     Ea = 0.122    # [=] eV, activation energy
     kb = 8.617E-5 # [=] eV/K, Boltzmann's constant
 
@@ -122,7 +121,7 @@ def sim(C1, C2, C3):
         time = time + dt
 
         for Tidx in T:
-            deg_rates = deg_rates + A * math.exp(-Ea/(kb*Tidx))
+            deg_rates = deg_rates + math.exp(-Ea/(kb*Tidx))
 
     ## C2 step
     while time < t1 + t2:
@@ -130,7 +129,7 @@ def sim(C1, C2, C3):
         time = time + dt
 
         for Tidx in T:
-            deg_rates = deg_rates + A * math.exp(-Ea/(kb*Tidx))
+            deg_rates = deg_rates + math.exp(-Ea/(kb*Tidx))
             
     ## C3 step
     while time < t1 + t2 + t3:
@@ -139,7 +138,7 @@ def sim(C1, C2, C3):
         time = time + dt
 
         for Tidx in T:
-            deg_rates = deg_rates + A * math.exp(-Ea/(kb*Tidx))
+            deg_rates = deg_rates + math.exp(-Ea/(kb*Tidx))
             
     ## C4 step
     while time < t1 + t2 + t3 + t4:
@@ -148,9 +147,9 @@ def sim(C1, C2, C3):
         time = time + dt
 
         for Tidx in T:
-            deg_rates = deg_rates + A * math.exp(-Ea/(kb*Tidx))
+            deg_rates = deg_rates + math.exp(-Ea/(kb*Tidx))
     
     # arbitrary factor to give lifetimes on the order of 100s of cycles
     
-    return deg_rates*1e13
+    return deg_rates*1e15
 

@@ -8,9 +8,11 @@ Last modified February 23, 2018
 """
 
 from thermal_sim import sim
+
+import numpy as np
 import glob
 import pickle
-import numpy as np
+import os
 
 # Import policies
 file = glob.glob('./data/bounds/4_bounds.pkl')[0]
@@ -36,6 +38,7 @@ for i in range(len(policies)):
     lifetime[i] = sim(C1,C2,C3)
 
 # Save csv with policies and lifetimes
+os.remove('policies_deg.csv')
 f=open('policies_deg.csv','a')
 np.savetxt(f,np.c_[policies,lifetime],delimiter=',', fmt='%1.3f')
 f.close()
