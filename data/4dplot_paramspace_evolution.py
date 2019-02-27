@@ -74,9 +74,8 @@ for k, batch_idx in enumerate(batches_to_plot):
     ax.view_init(elev=el, azim=az)
 
 # ADD COLORBAR
-fig.subplots_adjust(right=0.85)
-fig.subplots_adjust(top=0.93)
-cbar_ax = fig.add_axes([0.9, 0.15, 0.05, 0.7])
+fig.subplots_adjust(left=0.01,right=0.85,bottom=0.02,top=0.98,wspace=0.000001)
+cbar_ax = fig.add_axes([0.9, 0.05, 0.05, 0.85])
 norm = matplotlib.colors.Normalize(min_lifetime, max_lifetime)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
