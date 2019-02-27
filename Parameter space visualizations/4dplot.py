@@ -55,7 +55,7 @@ ax.set_xlabel('CC1')
 ax.set_ylabel('CC2')
 ax.set_zlabel('CC3')
 ax.set_zlim(2.5, 6.5)
- cbar = plt.colorbar(m)
+cbar = plt.colorbar(m)
 cbar.ax.set_title('CC4')
 
 # Make full screen
