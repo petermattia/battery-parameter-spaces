@@ -9,6 +9,7 @@ Created on Tue Feb 20 07:29:14 2018
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import glob
 import pickle
 from scipy.stats import pearsonr, linregress
@@ -57,8 +58,10 @@ for model in MODELS:
     xlabel = MODELS[model][1]
     
     plt.figure()
+    rcParams['font.sans-serif'] = ['Arial']
+    rcParams['font.size'] = 14
     plt.plot(values,mean,'o')
-    plt.xlabel(xlabel)
-    plt.ylabel('OED-estimated lifetime (cycles)')
+    plt.xlabel(xlabel,fontsize=14)
+    plt.ylabel('OED-estimated lifetime (cycles)',fontsize=14)
     plt.title('ρ = {:.2}'.format(pearsonr(values,mean)[0]))
     plt.savefig('./plots/correlations/'+model+'.png', bbox_inches = 'tight')
