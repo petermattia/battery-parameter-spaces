@@ -8,6 +8,7 @@ Created on Tue Jan 29 22:09:03 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import glob
 import pickle
 from cycler import cycler
@@ -60,10 +61,10 @@ print('MAPE = ' + str(mape) + '% (bias-corrected)')
 
 # Summary statistics
 pred_means = np.round(np.nanmean(predicted_lifetimes,axis=1))
-pred_stdevs = np.round(np.nanstd(predicted_lifetimes,axis=1))
+pred_stdevs = np.round(1.96*np.nanstd(predicted_lifetimes,axis=1))
 
 final_means = np.round(np.nanmean(final_lifetimes,axis=1))
-final_stdevs = np.round(np.nanstd(final_lifetimes,axis=1))
+final_stdevs = np.round(1.96*np.nanstd(final_lifetimes,axis=1))
 
 # Rankings calculations
 oed_ranks = np.empty_like(oed_means.argsort())
@@ -80,16 +81,37 @@ final_ranks = np.max(final_ranks) - final_ranks + 1 # swap order and use 1-index
 
 ########## PLOTS ##########
 
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+rcParams['font.sans-serif'] = ['Arial', 'Tahoma', 'DejaVu Sans',
+                               'Lucida Grande', 'Verdana']
+rcParams['font.size'] = 12
+
+upper_lim = 1400
+
+default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+c1 = default_colors[0]
+c2 = default_colors[1]
+c3 = default_colors[2]
+c4 = default_colors[3]
+custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c4]) +
+                 cycler(marker=   ['o','o','s','v','o','s','v','^','o']) +
+                 cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
+
 ## Lifetimes plot
-fig = plt.errorbar(pred_means,oed_means,fmt='o',xerr=pred_stdevs)
-ax = plt.gca()
-plt.xlim([0,1300])
-plt.ylim([0,1300])
-ax.set_aspect('equal', 'box')
-ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
+fig, ax0 = plt.subplots()
+ax0.set_prop_cycle(custom_cycler)
+for k in range(len(pred_means)):
+    ax0.errorbar(pred_means[k],oed_means[k],xerr=pred_stdevs[k])
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
+ax0.set_aspect('equal', 'box')
+plt.legend(validation_policies)
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Estimated cycle life from OED')
 plt.savefig('plots/lifetimes_oed_vs_pred.png')
+
 
 ## Rankings plot
 plt.figure()
@@ -105,13 +127,15 @@ plt.savefig('plots/rankings_oed_vs_pred.png')
 
 
 ## Lifetimes plot
-plt.figure()
-fig3 = plt.errorbar(pred_means,final_means,fmt='o',xerr=pred_stdevs,yerr=final_stdevs)
-ax = plt.gca()
-plt.xlim([0,1300])
-plt.ylim([0,1300])
-ax.set_aspect('equal', 'box')
-ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
+fig, ax0 = plt.subplots()
+ax0.set_prop_cycle(custom_cycler)
+for k in range(len(pred_means)):
+    plt.errorbar(pred_means[k],final_means[k],xerr=pred_stdevs[k],yerr=final_stdevs[k])
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
+ax0.set_aspect('equal', 'box')
+plt.legend(validation_policies)
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Mean cycle life')
 plt.savefig('plots/lifetimes_pred_vs_final.png')
@@ -129,13 +153,15 @@ plt.ylabel('True ranking')
 plt.savefig('plots/rankings_pred_vs_final.png')
 
 ## Lifetimes plot
-plt.figure()
-fig5 = plt.errorbar(oed_means,final_means,fmt='o',yerr=final_stdevs)
-ax = plt.gca()
-plt.xlim([0,1300])
-plt.ylim([0,1300])
-ax.set_aspect('equal', 'box')
-ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
+fig, ax0 = plt.subplots()
+ax0.set_prop_cycle(custom_cycler)
+for k in range(len(oed_means)):
+     plt.errorbar(oed_means[k],final_means[k],yerr=final_stdevs[k])
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
+plt.legend(validation_policies)
+ax0.set_aspect('equal', 'box')
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Estimated cycle life from OED')
 plt.ylabel('Mean cycle life')
 plt.savefig('plots/lifetimes_oed_vs_final.png')
@@ -155,11 +181,11 @@ plt.savefig('plots/rankings_oed_vs_final.png')
 
 ## Lifetimes plot - raw
 fig, ax0 = plt.subplots()
-ax0.set_prop_cycle(cycler('color', ['b','r','r','r','k','b','b','b','k']))
-fig7 = ax0.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),'o')
+ax0.set_prop_cycle(custom_cycler)
+ax0.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
 plt.legend(validation_policies)
-plt.xlim([0,1300])
-plt.ylim([0,1300])
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
 #ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
@@ -169,12 +195,12 @@ plt.savefig('plots/lifetimes_pred_vs_final_raw.png')
 
 ## Lifetimes plot - raw, bias-corrected
 fig, ax0 = plt.subplots()
-ax0.set_prop_cycle(cycler('color', ['b','r','r','r','k','b','b','b','k']))
-fig7 = ax0.plot(np.transpose(predicted_lifetimes_bias_corrected), \
-                np.transpose(final_lifetimes),'o')
+ax0.set_prop_cycle(custom_cycler)
+ax0.plot(np.transpose(predicted_lifetimes_bias_corrected), \
+                np.transpose(final_lifetimes))
 plt.legend(validation_policies)
-plt.xlim([0,1300])
-plt.ylim([0,1300])
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
 #ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')

@@ -9,8 +9,11 @@ Created on Wed Aug 15 08:06:18 2018
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
 num_batches=5
+
+font_size = 20
 
 data = []
 file_list = sorted(glob.glob('./pred/[0-9].csv'))
@@ -35,7 +38,8 @@ for k in np.arange(num_batches):
     pol_reps[k] = sum(isTested==k)
     print('Policies tested', k, 'time(s):', int(pol_reps[k]))
     
-plt.bar(np.arange(num_batches),pol_reps)
-plt.xlabel('n')
-plt.ylabel('Number of policies tested n times')
+plt.bar(np.arange(num_batches),pol_reps,tick_label = ['0','1','2','3','4'],align='center')
+plt.xlabel('n',fontsize=font_size+2)
+plt.ylabel('Number of policies tested n times',fontsize=font_size+2)
 plt.savefig('plots/uniqueness.png',bbox_inches='tight')
+plt.savefig('plots/uniqueness.pdf',bbox_inches='tight')

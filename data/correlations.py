@@ -36,10 +36,13 @@ slope, intercept, r_value, p_value, std_err = linregress(np.log(np.sum(policies,
 
 # create dictionary where keys = string, value = [model, x axis label]
 MODELS = {'sum': [np.sum(policies,axis=1), 'sum(I)'],
+          'mean': [np.mean(policies,axis=1), 'mean(I)'],
           'sum_sq': [np.sum(policies**2,axis=1), 'sum(I^2)'],
+          'mean_sq': [np.mean(policies**2,axis=1), 'mean(I^2)'],
+          'rms': [np.sqrt(np.mean(policies**2,axis=1)), 'sqrt(mean(I^2))'],
           'power': [np.sum(policies,axis=1)**slope, 'sum(I^'+str(int(slope*100)/100)+')'],
           'range': [np.ptp(policies,axis=1), 'range(I)'],
-          'max': [np.max(policies,axis=1), 'max(I)'],l
+          'max': [np.max(policies,axis=1), 'max(I)'],
           'var': [np.var(policies,axis=1), 'var(I)'],
           'sum_abs_diff': [np.sum(np.abs(policies-4.8),axis=1), 'sum(abs(I-4.8))'],
           'sum_diff_sq': [np.sum((policies-4.8)**2,axis=1), 'sum((I-4.8)^2)'],
