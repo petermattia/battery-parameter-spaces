@@ -63,10 +63,10 @@ print('MAPE = ' + str(mape) + '% (bias-corrected)')
 
 # Summary statistics
 pred_means = np.round(np.nanmean(predicted_lifetimes,axis=1))
-pred_stdevs = np.round(1.96*np.nanstd(predicted_lifetimes,axis=1))
+pred_sterr = np.round(1.96*np.nanstd(predicted_lifetimes,axis=1)/np.sqrt(5))
 
 final_means = np.round(np.nanmean(final_lifetimes,axis=1))
-final_stdevs = np.round(1.96*np.nanstd(final_lifetimes,axis=1))
+final_sterr = np.round(1.96*np.nanstd(final_lifetimes,axis=1)/np.sqrt(5))
 
 # Rankings calculations
 oed_ranks = np.empty_like(oed_means.argsort())
@@ -100,11 +100,12 @@ custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c4]) +
                  cycler(marker=   ['o','o','s','v','o','s','v','^','o']) +
                  cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
 
+#### PRED vs OED
 ## Lifetimes plot
 fig, ax0 = plt.subplots()
 ax0.set_prop_cycle(custom_cycler)
 for k in range(len(pred_means)):
-    ax0.errorbar(pred_means[k],oed_means[k],xerr=pred_stdevs[k])
+    ax0.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
@@ -114,6 +115,21 @@ plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Estimated cycle life from OED')
 plt.savefig('plots/lifetimes_oed_vs_pred.png')
 
+## Individual lifetimes plot
+fig, ax0 = plt.subplots()
+ax0.set_prop_cycle(custom_cycler)
+for k in range(len(predicted_lifetimes)):
+    predicted_lifetimes_vector = predicted_lifetimes[k][~np.isnan(predicted_lifetimes[k])]
+    oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(predicted_lifetimes[k])))
+    ax0.plot(predicted_lifetimes_vector, oed_value_vector)
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
+ax0.set_aspect('equal', 'box')
+plt.legend(validation_policies)
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
+plt.xlabel('Mean cycle life from early prediction')
+plt.ylabel('Estimated cycle life from OED')
+plt.savefig('plots/lifetimes_oed_vs_pred_individual.png')
 
 ## Rankings plot
 plt.figure()
@@ -127,12 +143,12 @@ plt.xlabel('Mean ranking from early prediction')
 plt.ylabel('Estimated ranking from OED')
 plt.savefig('plots/rankings_oed_vs_pred.png')
 
-
+#### PRED vs FINAL
 ## Lifetimes plot
 fig, ax0 = plt.subplots()
 ax0.set_prop_cycle(custom_cycler)
 for k in range(len(pred_means)):
-    plt.errorbar(pred_means[k],final_means[k],xerr=pred_stdevs[k],yerr=final_stdevs[k])
+    plt.errorbar(pred_means[k],final_means[k],xerr=pred_sterr[k],yerr=final_sterr[k])
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
@@ -154,11 +170,41 @@ plt.xlabel('Mean ranking from early prediction')
 plt.ylabel('True ranking')
 plt.savefig('plots/rankings_pred_vs_final.png')
 
+## Lifetimes plot - raw
+fig, ax0 = plt.subplots()
+ax0.set_prop_cycle(custom_cycler)
+ax0.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
+plt.legend(validation_policies)
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
+ax0.set_aspect('equal', 'box')
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
+#ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
+plt.xlabel('Predicted cycle life')
+plt.ylabel('Observed cycle life')
+plt.savefig('plots/lifetimes_pred_vs_final_raw.png')
+
+## Lifetimes plot - raw, bias-corrected
+fig, ax0 = plt.subplots()
+ax0.set_prop_cycle(custom_cycler)
+ax0.plot(np.transpose(predicted_lifetimes_bias_corrected), \
+                np.transpose(final_lifetimes))
+plt.legend(validation_policies)
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
+ax0.set_aspect('equal', 'box')
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
+#ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
+plt.xlabel('Predicted cycle life')
+plt.ylabel('Observed cycle life')
+plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.png')
+
+#### OED vs FINAL
 ## Lifetimes plot
 fig, ax0 = plt.subplots()
 ax0.set_prop_cycle(custom_cycler)
 for k in range(len(oed_means)):
-     plt.errorbar(oed_means[k],final_means[k],yerr=final_stdevs[k])
+    plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 plt.legend(validation_policies)
@@ -180,32 +226,18 @@ plt.xlabel('Estimated ranking from OED')
 plt.ylabel('True ranking')
 plt.savefig('plots/rankings_oed_vs_final.png')
 
-
-## Lifetimes plot - raw
+## Individual lifetimes plot
 fig, ax0 = plt.subplots()
 ax0.set_prop_cycle(custom_cycler)
-ax0.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
-plt.legend(validation_policies)
+for k in range(len(predicted_lifetimes)):
+    final_lifetimes_vector = final_lifetimes[k][~np.isnan(final_lifetimes[k])]
+    oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(final_lifetimes[k])))
+    ax0.plot(oed_value_vector, final_lifetimes_vector)
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
-#ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
-plt.xlabel('Mean cycle life from early prediction')
-plt.ylabel('Mean cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final_raw.png')
-
-## Lifetimes plot - raw, bias-corrected
-fig, ax0 = plt.subplots()
-ax0.set_prop_cycle(custom_cycler)
-ax0.plot(np.transpose(predicted_lifetimes_bias_corrected), \
-                np.transpose(final_lifetimes))
 plt.legend(validation_policies)
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-ax0.set_aspect('equal', 'box')
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
-#ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
-plt.xlabel('Mean cycle life from early prediction')
-plt.ylabel('Mean cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.png')
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
+plt.xlabel('OED-estimated cycle life')
+plt.ylabel('Observed cycle life')
+plt.savefig('plots/lifetimes_oed_vs_final_individual.png')
