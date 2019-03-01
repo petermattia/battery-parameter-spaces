@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import rcParams
 import glob
 import pickle
 
@@ -47,6 +48,11 @@ for file in file_list:
 fig = plt.figure(figsize=(20,5))
 plt.style.use('classic')
 plt.set_cmap(colormap)
+
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+rcParams['font.sans-serif'] = ['Arial', 'Tahoma', 'DejaVu Sans',
+                               'Lucida Grande', 'Verdana']
 
 # Randomly select indices to plot
 np.random.seed(seed=seed)
