@@ -30,56 +30,28 @@ for k, pol in enumerate(policies_temp):
 policies = np.asarray(policies) # cast to numpy array
 
 
-# Sum
-sum_model = np.sum(policies,axis=1)
-plt.figure()
-plt.plot(sum_model,mean,'o')
-plt.xlabel('sum(I)')
-plt.ylabel('OED-estimated lifetime (cycles)')
-plt.title('p = {:.2}'.format(pearsonr(sum_model,mean)[0]))
-plt.savefig('./plots/correlations/sum.png', bbox_inches = 'tight')
+## MODELS 
+sim_model = np.genfromtxt('../policies_deg.csv',delimiter=',')[:,4]
 
-# Sum sq
-sum_sq_model = np.sum(policies*policies,axis=1)
-plt.figure()
-plt.plot(sum_sq_model,mean,'o')
-plt.xlabel('sum(I^2)')
-plt.ylabel('OED-estimated lifetime (cycles)')
-plt.title('p = {:.2}'.format(pearsonr(sum_sq_model,mean)[0]))
-plt.savefig('./plots/correlations/sumsq.png', bbox_inches = 'tight')
+# create dictionary where keys = string, value = [model, x axis label]
+MODELS = {'sum': [np.sum(policies,axis=1), 'sum(I)'],
+          'sum_sq': [np.sum(policies*policies,axis=1), 'sum(I^2)'],
+          'range': [np.ptp(policies,axis=1), 'range(I)'],
+          'max': [np.max(policies,axis=1), 'max(I)'],
+          'var': [np.var(policies,axis=1), 'var(I)'],
+          'CC1': [policies[:,0], 'CC1'],
+          'CC2': [policies[:,1], 'CC2'],
+          'CC3': [policies[:,2], 'CC3'],
+          'CC4': [policies[:,3], 'CC4'],
+          'sim': [sim_model, 'Thermal sim degradation']}
 
-# Range
-range_model = np.ptp(policies,axis=1)
-plt.figure()
-plt.plot(range_model,mean,'o')
-plt.xlabel('range(I)')
-plt.ylabel('OED-estimated lifetime (cycles)')
-plt.title('p = {:.2}'.format(pearsonr(range_model,mean)[0]))
-plt.savefig('./plots/correlations/range.png', bbox_inches = 'tight')
-
-# Max
-max_model = np.max(policies,axis=1)
-plt.figure()
-plt.plot(max_model,mean,'o')
-plt.xlabel('max(I)')
-plt.ylabel('OED-estimated lifetime (cycles)')
-plt.title('p = {:.2}'.format(pearsonr(max_model,mean)[0]))
-plt.savefig('./plots/correlations/max.png', bbox_inches = 'tight')
-
-# Variance
-var_model = np.var(policies,axis=1)
-plt.figure()
-plt.plot(var_model,mean,'o')
-plt.xlabel('var(I)')
-plt.ylabel('OED-estimated lifetime (cycles)')
-plt.title('p = {:.2}'.format(pearsonr(var_model,mean)[0]))
-plt.savefig('./plots/correlations/var.png', bbox_inches = 'tight')
-
-# Thermal sim
-sim_model = np.genfromtxt('../policies_deg.csv',delimiter=',')
-plt.figure()
-plt.plot(sim_model[:,4],mean,'o')
-plt.xlabel('Thermal sim degradation')
-plt.ylabel('OED-estimated lifetime (cycles)')
-plt.title('p = {:.2}'.format(pearsonr(sim_model[:,4],mean)[0]))
-plt.savefig('./plots/correlations/sim.png', bbox_inches = 'tight')
+for model in MODELS:
+    values = MODELS[model][0]
+    xlabel = MODELS[model][1]
+    
+    plt.figure()
+    plt.plot(values,mean,'o')
+    plt.xlabel(xlabel)
+    plt.ylabel('OED-estimated lifetime (cycles)')
+    plt.title('ρ = {:.2}'.format(pearsonr(values,mean)[0]))
+    plt.savefig('./plots/correlations/'+model+'.png', bbox_inches = 'tight')
