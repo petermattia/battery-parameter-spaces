@@ -53,6 +53,8 @@ print('MAPE = ' + str(mape) + '%')
 # calculate bias-corrected early prediction error
 predicted_lifetimes_bias_corrected = predicted_lifetimes \
   - np.nanmean(predicted_lifetimes) + np.nanmean(final_lifetimes)
+print('Bias correction: ' + str(np.nanmean(final_lifetimes) - \
+                                np.nanmean(predicted_lifetimes)) + ' cycles')
 rmse = np.sqrt(np.nanmean(((predicted_lifetimes_bias_corrected - final_lifetimes) ** 2)))
 print('RMSE = ' + str(rmse) + ' cycles (bias-corrected)')
 
