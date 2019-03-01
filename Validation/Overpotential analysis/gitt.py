@@ -11,7 +11,7 @@ import glob
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-do_plots = False
+do_plots = True
 
 Crates = np.asarray([3.6,4,4.4,4.8,5.2,5.6,6,7,8])
 currents = Crates * 1.1

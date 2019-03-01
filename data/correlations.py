@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 import pickle
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, linregress
 
 plt.close('all')
 
@@ -32,13 +32,17 @@ policies = np.asarray(policies) # cast to numpy array
 
 ## MODELS 
 sim_model = np.genfromtxt('../policies_deg.csv',delimiter=',')[:,4]
+slope, intercept, r_value, p_value, std_err = linregress(np.log(np.sum(policies,axis=1)),np.log(mean))
 
 # create dictionary where keys = string, value = [model, x axis label]
 MODELS = {'sum': [np.sum(policies,axis=1), 'sum(I)'],
-          'sum_sq': [np.sum(policies*policies,axis=1), 'sum(I^2)'],
+          'sum_sq': [np.sum(policies**2,axis=1), 'sum(I^2)'],
+          'power': [np.sum(policies,axis=1)**slope, 'sum(I^'+str(int(slope*100)/100)+')'],
           'range': [np.ptp(policies,axis=1), 'range(I)'],
-          'max': [np.max(policies,axis=1), 'max(I)'],
+          'max': [np.max(policies,axis=1), 'max(I)'],l
           'var': [np.var(policies,axis=1), 'var(I)'],
+          'sum_abs_diff': [np.sum(np.abs(policies-4.8),axis=1), 'sum(abs(I-4.8))'],
+          'sum_diff_sq': [np.sum((policies-4.8)**2,axis=1), 'sum((I-4.8)^2)'],
           'CC1': [policies[:,0], 'CC1'],
           'CC2': [policies[:,1], 'CC2'],
           'CC3': [policies[:,2], 'CC3'],
