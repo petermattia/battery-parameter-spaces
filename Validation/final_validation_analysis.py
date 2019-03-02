@@ -13,6 +13,8 @@ import glob
 import pickle
 from cycler import cycler
 
+plt.close('all')
+
 ########## LOAD DATA ##########
 # Load predictions
 filename = 'predictions.csv'
@@ -113,7 +115,7 @@ plt.legend(validation_policies)
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Estimated cycle life from OED')
-plt.savefig('plots/lifetimes_oed_vs_pred.png')
+plt.savefig('plots/lifetimes_oed_vs_pred.png',bbox_inches='tight')
 
 ## Individual lifetimes plot
 fig, ax0 = plt.subplots()
@@ -129,7 +131,7 @@ plt.legend(validation_policies)
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Estimated cycle life from OED')
-plt.savefig('plots/lifetimes_oed_vs_pred_individual.png')
+plt.savefig('plots/lifetimes_oed_vs_pred_individual.png',bbox_inches='tight')
 
 ## Rankings plot
 plt.figure()
@@ -141,7 +143,7 @@ ax.set_aspect('equal', 'box')
 ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean ranking from early prediction')
 plt.ylabel('Estimated ranking from OED')
-plt.savefig('plots/rankings_oed_vs_pred.png')
+plt.savefig('plots/rankings_oed_vs_pred.png',bbox_inches='tight')
 
 #### PRED vs FINAL
 ## Lifetimes plot
@@ -156,7 +158,7 @@ plt.legend(validation_policies)
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Mean cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final.png')
+plt.savefig('plots/lifetimes_pred_vs_final.png',bbox_inches='tight')
 
 ## Rankings plot
 plt.figure()
@@ -168,7 +170,7 @@ ax.set_aspect('equal', 'box')
 ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean ranking from early prediction')
 plt.ylabel('True ranking')
-plt.savefig('plots/rankings_pred_vs_final.png')
+plt.savefig('plots/rankings_pred_vs_final.png',bbox_inches='tight')
 
 ## Lifetimes plot - raw
 fig, ax0 = plt.subplots()
@@ -182,7 +184,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
 #ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
 plt.xlabel('Predicted cycle life')
 plt.ylabel('Observed cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final_raw.png')
+plt.savefig('plots/lifetimes_pred_vs_final_raw.png',bbox_inches='tight')
 
 ## Lifetimes plot - raw, bias-corrected
 fig, ax0 = plt.subplots()
@@ -197,7 +199,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
 #ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
 plt.xlabel('Predicted cycle life')
 plt.ylabel('Observed cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.png')
+plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.png',bbox_inches='tight')
 
 #### OED vs FINAL
 ## Lifetimes plot
@@ -210,9 +212,9 @@ plt.ylim([0,upper_lim])
 plt.legend(validation_policies)
 ax0.set_aspect('equal', 'box')
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('Estimated cycle life from OED')
+plt.xlabel('OED-estimated cycle life')
 plt.ylabel('Mean cycle life')
-plt.savefig('plots/lifetimes_oed_vs_final.png')
+plt.savefig('plots/lifetimes_oed_vs_final.png',bbox_inches='tight')
 
 ## Rankings plot
 plt.figure()
@@ -224,7 +226,7 @@ ax.set_aspect('equal', 'box')
 ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
 plt.xlabel('Estimated ranking from OED')
 plt.ylabel('True ranking')
-plt.savefig('plots/rankings_oed_vs_final.png')
+plt.savefig('plots/rankings_oed_vs_final.png',bbox_inches='tight')
 
 ## Individual lifetimes plot
 fig, ax0 = plt.subplots()
@@ -240,4 +242,33 @@ plt.legend(validation_policies)
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('OED-estimated cycle life')
 plt.ylabel('Observed cycle life')
-plt.savefig('plots/lifetimes_oed_vs_final_individual.png')
+plt.savefig('plots/lifetimes_oed_vs_final_individual.png',bbox_inches='tight')
+
+
+
+## Lifetimes plot - remove green
+custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c1, c1, c1, c1]) +
+                 cycler(marker=   ['o','o','s','v','s','v','^','D']) +
+                 cycler(linestyle=['' , '', '', '', '', '', '', '']))
+fig, ax0 = plt.subplots()
+fig.set_figheight(6)
+fig.set_figwidth(6)
+ax0.set_prop_cycle(custom_cycler)
+vals = [x for i,x in enumerate(range(9)) if i!=4]
+oed_means = oed_means[vals]
+final_means = final_means[vals]
+validation_policies = validation_policies[vals]
+for k in range(len(oed_means)):
+    plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
+plt.xlim([0,upper_lim])
+plt.ylim([0,upper_lim])
+plt.legend(validation_policies,fontsize=16)
+ax0.set_aspect('equal', 'box')
+ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
+plt.xlabel('OED-estimated cycle life')
+plt.ylabel('Mean cycle life')
+for item in ([ax0.xaxis.label, ax0.yaxis.label] +
+             ax0.get_xticklabels() + ax0.get_yticklabels()):
+    item.set_fontsize(20)
+plt.savefig('plots/lifetimes_oed_vs_final_mod.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_oed_vs_final_mod.pdf',bbox_inches='tight')
