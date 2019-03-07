@@ -243,32 +243,3 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('OED-estimated cycle life')
 plt.ylabel('Observed cycle life')
 plt.savefig('plots/lifetimes_oed_vs_final_individual.png',bbox_inches='tight')
-
-
-
-## Lifetimes plot - remove green
-custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c1, c1, c1, c1]) +
-                 cycler(marker=   ['o','o','s','v','s','v','^','D']) +
-                 cycler(linestyle=['' , '', '', '', '', '', '', '']))
-fig, ax0 = plt.subplots()
-fig.set_figheight(6)
-fig.set_figwidth(6)
-ax0.set_prop_cycle(custom_cycler)
-vals = [x for i,x in enumerate(range(9)) if i!=4]
-oed_means = oed_means[vals]
-final_means = final_means[vals]
-validation_policies = validation_policies[vals]
-for k in range(len(oed_means)):
-    plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-plt.legend(validation_policies,fontsize=16)
-ax0.set_aspect('equal', 'box')
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('OED-estimated cycle life')
-plt.ylabel('Mean cycle life')
-for item in ([ax0.xaxis.label, ax0.yaxis.label] +
-             ax0.get_xticklabels() + ax0.get_yticklabels()):
-    item.set_fontsize(20)
-plt.savefig('plots/lifetimes_oed_vs_final_mod.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_oed_vs_final_mod.pdf',bbox_inches='tight')
