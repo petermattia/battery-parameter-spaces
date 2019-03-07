@@ -129,7 +129,7 @@ plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
 plt.legend(validation_policies)
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('Mean cycle life from early prediction')
+plt.xlabel('Predicted cycle life')
 plt.ylabel('Estimated cycle life from OED')
 plt.savefig('plots/lifetimes_oed_vs_pred_individual.png',bbox_inches='tight')
 
