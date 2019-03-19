@@ -23,7 +23,7 @@ def sim(C1, C2, C3, variance=True, seed=0, early_pred=False):
     # STANDARD DEVIATION
     if variance:
         if early_pred:
-            sigma = math.sqrt(99^2 + 99^2) # Sampling variation + pred error. Estimated from batch9
+            sigma = math.sqrt(99**2 + 99**2) # Sampling variation + pred error. Estimated from batch9
         else:
             sigma = 99 # Sampling variation. Estimated from batch9
     else:
