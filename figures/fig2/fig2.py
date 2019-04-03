@@ -86,8 +86,8 @@ ax1.plot([0,80],[0.5,0.5], linewidth=2, color='grey')
 
 textstr = 'Charging time to 80% SOC = 10 minutes'
 props = dict(boxstyle='round', facecolor='white', alpha=1)
-ax1.text(0.05, 0.5/10, textstr, transform=ax1.transAxes, fontsize=14,
-        verticalalignment='center', bbox=props)
+ax1.text(0.4, 0.5/10, textstr, transform=ax1.transAxes, fontsize=FS,
+        verticalalignment='center', horizontalalignment='center',bbox=props)
 ax1.set_title('a', loc='left')
 
 ########## 2b ##########
@@ -123,9 +123,9 @@ with plt.style.context(('classic')):
     ax2.scatter(CC1,CC2,CC3, s=point_size, c=CC4,
                vmin=min_CC4, vmax=max_CC4)
     
-    ax2.set_xlabel('CC1'), ax2.set_xlim([3, 8])
-    ax2.set_ylabel('CC2'), ax2.set_ylim([3, 8])
-    ax2.set_zlabel('CC3'), ax2.set_zlim([3, 8])
+    ax2.set_xlabel('CC1',fontsize=FS), ax2.set_xlim([3, 8])
+    ax2.set_ylabel('CC2',fontsize=FS), ax2.set_ylim([3, 8])
+    ax2.set_zlabel('CC3',fontsize=FS), ax2.set_zlim([3, 8])
     
     ax2.view_init(elev=el, azim=az)
     
