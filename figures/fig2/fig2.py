@@ -21,6 +21,7 @@ ax2 = plt.subplot(122, projection='3d')
 #plt.style.use('classic')
 
 FS = 14
+LW = 3
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -53,10 +54,10 @@ for c3 in C3list:
     
 # Add example policy
 c1, c2, c3, c4 = 7.0, 4.8, 5.2, 3.45
-ax1.plot([0,20], [c1,c1], linewidth=2, color='red')
-ax1.plot([20,40],[c2,c2], linewidth=2, color='red')
-ax1.plot([40,60],[c3,c3], linewidth=2, color='red')
-ax1.plot([60,80],[c4,c4], linewidth=2, color='blue')
+ax1.plot([0,20], [c1,c1], linewidth=LW, color='red')
+ax1.plot([20,40],[c2,c2], linewidth=LW, color='red')
+ax1.plot([40,60],[c3,c3], linewidth=LW, color='red')
+ax1.plot([60,80],[c4,c4], linewidth=LW, color='blue')
 
 # Add bands
 ax1.axvspan(0,  20, ymin=0.36, ymax=0.8,  color='red', alpha=0.25)
@@ -73,10 +74,10 @@ for k in np.arange(4):
 ax1.text(90,9,'CC5-CV1', horizontalalignment='center')
 
 # Add 1C charging
-ax1.plot([80,89],[1,1], linewidth=2, color='black')
+ax1.plot([80,89],[1,1], linewidth=LW, color='black')
 x = np.linspace(89,100,100)
 y = np.exp(-0.5*(x-89))
-ax1.plot(x,y, linewidth=2, color='black')
+ax1.plot(x,y, linewidth=LW, color='black')
 
 # Add text box
 ax1.plot([0.1,0.1],[0.25,0.75], linewidth=3, color='grey')
