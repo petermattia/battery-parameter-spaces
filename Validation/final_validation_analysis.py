@@ -116,6 +116,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Estimated cycle life from OED')
 plt.savefig('plots/lifetimes_oed_vs_pred.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_oed_vs_pred.pdf',bbox_inches='tight',format='pdf')
 
 ## Individual lifetimes plot
 fig, ax0 = plt.subplots()
@@ -132,6 +133,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Predicted cycle life')
 plt.ylabel('Estimated cycle life from OED')
 plt.savefig('plots/lifetimes_oed_vs_pred_individual.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_oed_vs_pred_individual.pdf',bbox_inches='tight',format='pdf')
 
 ## Rankings plot
 plt.figure()
@@ -144,6 +146,7 @@ ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean ranking from early prediction')
 plt.ylabel('Estimated ranking from OED')
 plt.savefig('plots/rankings_oed_vs_pred.png',bbox_inches='tight')
+plt.savefig('plots/rankings_oed_vs_pred.pdf',bbox_inches='tight',format='pdf')
 
 #### PRED vs FINAL
 ## Lifetimes plot
@@ -159,6 +162,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean cycle life from early prediction')
 plt.ylabel('Mean cycle life')
 plt.savefig('plots/lifetimes_pred_vs_final.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_pred_vs_final.pdf',bbox_inches='tight',format='pdf')
 
 ## Rankings plot
 plt.figure()
@@ -171,6 +175,7 @@ ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
 plt.xlabel('Mean ranking from early prediction')
 plt.ylabel('True ranking')
 plt.savefig('plots/rankings_pred_vs_final.png',bbox_inches='tight')
+plt.savefig('plots/rankings_pred_vs_final.pdf',bbox_inches='tight',format='pdf')
 
 ## Lifetimes plot - raw
 fig, ax0 = plt.subplots()
@@ -185,6 +190,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
 plt.xlabel('Predicted cycle life')
 plt.ylabel('Observed cycle life')
 plt.savefig('plots/lifetimes_pred_vs_final_raw.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_pred_vs_final_raw.pdf',bbox_inches='tight',format='pdf')
 
 ## Lifetimes plot - raw, bias-corrected
 fig, ax0 = plt.subplots()
@@ -200,6 +206,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
 plt.xlabel('Predicted cycle life')
 plt.ylabel('Observed cycle life')
 plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.pdf',bbox_inches='tight',format='pdf')
 
 #### OED vs FINAL
 ## Lifetimes plot
@@ -215,6 +222,7 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('OED-estimated cycle life')
 plt.ylabel('Mean cycle life')
 plt.savefig('plots/lifetimes_oed_vs_final.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_oed_vs_final.pdf',bbox_inches='tight',format='pdf')
 
 ## Rankings plot
 plt.figure()
@@ -227,6 +235,7 @@ ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
 plt.xlabel('Estimated ranking from OED')
 plt.ylabel('True ranking')
 plt.savefig('plots/rankings_oed_vs_final.png',bbox_inches='tight')
+plt.savefig('plots/rankings_oed_vs_final.pdf',bbox_inches='tight',format='pdf')
 
 ## Individual lifetimes plot
 fig, ax0 = plt.subplots()
@@ -243,3 +252,4 @@ ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('OED-estimated cycle life')
 plt.ylabel('Observed cycle life')
 plt.savefig('plots/lifetimes_oed_vs_final_individual.png',bbox_inches='tight')
+plt.savefig('plots/lifetimes_oed_vs_final_individual.pdf',bbox_inches='tight',format='pdf')
