@@ -41,12 +41,12 @@ MODELS = {'sum': [np.sum(policies,axis=1), 'sum(I)'],
           'sum_sq': [np.sum(policies**2,axis=1), 'sum(I^2)'],
           'mean_sq': [np.mean(policies**2,axis=1), 'mean(I^2)'],
           'rms': [np.sqrt(np.mean(policies**2,axis=1)), 'sqrt(mean(I^2))'],
-          'power': [np.sum(policies,axis=1)**slope, 'sum(I^'+str(int(slope*100)/100)+')'],
+          'power': [np.sum(policies,axis=1)**slope, 'sum(I^{'+str(int(slope*100)/100)+'})'],
           'range': [np.ptp(policies,axis=1), 'range(I)'],
           'max': [np.max(policies,axis=1), 'max(I)'],
           'var': [np.var(policies,axis=1), 'var(I)'],
-          'sum_abs_diff': [np.sum(np.abs(policies-4.8),axis=1), 'sum(abs(I-4.8))'],
-          'sum_diff_sq': [np.sum((policies-4.8)**2,axis=1), 'sum((I-4.8)^2)'],
+          'sum_abs_diff': [np.sum(np.abs(policies-4.8),axis=1), 'sum(abs(I - 4.8))'],
+          'sum_diff_sq': [np.sum((policies-4.8)**2,axis=1), 'sum((I - 4.8)^2)'],
           'CC1': [policies[:,0], 'CC1'],
           'CC2': [policies[:,1], 'CC2'],
           'CC3': [policies[:,2], 'CC3'],
@@ -57,11 +57,18 @@ for model in MODELS:
     values = MODELS[model][0]
     xlabel = MODELS[model][1]
     
+    xlabel_mod = r'$\mathdefault{'+xlabel+'}$'
+    if model=='sim': xlabel_mod = xlabel
+    leglabel = 'ρ = {:.2}'.format(pearsonr(values,mean)[0])
+    
     plt.figure()
     rcParams['font.sans-serif'] = ['Arial']
     rcParams['font.size'] = 14
-    plt.plot(values,mean,'o')
-    plt.xlabel(xlabel,fontsize=14)
+    plt.plot(values,mean,'o',label=leglabel)
+    
+    plt.xlabel(xlabel_mod,fontsize=14)
     plt.ylabel('OED-estimated lifetime (cycles)',fontsize=14)
-    plt.title('ρ = {:.2}'.format(pearsonr(values,mean)[0]))
+    #plt.title(leglabel)
+    plt.legend(loc='best',markerscale=0,frameon=False)
     plt.savefig('./plots/correlations/'+model+'.png', bbox_inches = 'tight')
+    plt.savefig('./plots/correlations/'+model+'.pdf', bbox_inches = 'tight',format='pdf')
