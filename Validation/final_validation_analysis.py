@@ -247,7 +247,7 @@ for k in range(len(predicted_lifetimes)):
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
-plt.legend(validation_policies)
+s
 ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
 plt.xlabel('OED-estimated cycle life')
 plt.ylabel('Observed cycle life')
