@@ -85,8 +85,8 @@ ax1.plot([80,80],[0.25,0.75], linewidth=2, color='grey')
 ax1.plot([0,80],[0.5,0.5], linewidth=2, color='grey')
 
 textstr = 'Charging time to 80% SOC = 10 minutes'
-props = dict(boxstyle='round', facecolor='white', alpha=1)
-ax1.text(0.4, 0.5/10, textstr, transform=ax1.transAxes, fontsize=FS,
+props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=2)
+ax1.text(0.4, 0.5/10, textstr,transform=ax1.transAxes, fontsize=FS,
         verticalalignment='center', horizontalalignment='center',bbox=props)
 ax1.set_title('a', loc='left')
 
