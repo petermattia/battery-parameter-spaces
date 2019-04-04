@@ -122,6 +122,37 @@ ax2.set_ylabel('True ranking')
 ax2.set_title('b',loc='left', weight='bold')
 
 # Aditya's plot
+with open('fig4_plot_data.pkl', 'rb') as infile:
+        data_dict = pickle.load(infile)
+ax3.errorbar(data_dict['random_x'],data_dict['random_y'], \
+             xerr=data_dict['random_xerr'],yerr=data_dict['random_yerr'],\
+	alpha=0.8, \
+	linewidth=2, \
+	marker='o', \
+	linestyle=':', \
+	color=[0,112/256,184/256], \
+	label='Random')
+ax3.errorbar(data_dict['grid_x'],data_dict['grid_y'], \
+             xerr=data_dict['grid_xerr'],yerr=data_dict['grid_yerr'],\
+	alpha=0.8, \
+	linewidth=2, \
+	marker='o', \
+	linestyle=':', \
+    color=[0,167/256,119/256], \
+	label='Grid')
+ax3.errorbar(data_dict['oed_x'],data_dict['oed_y'],yerr=data_dict['oed_yerr'],\
+	linewidth=2, \
+	marker='o', \
+	linestyle=':', \
+    color=[227/256,86/256,0], \
+	label='Closed loop')
+# plt.xticks(np.arange(max_budget+1))
+ax3.legend(frameon=False)
+
+ax3.set_aspect(aspect=36)
+
+ax3.set_xlabel('Experimental time (cycles)')
+ax3.set_ylabel('True cycle life of current best policy (cycles)')
 ax3.set_title('c',loc='left',weight='bold')
 
 plt.tight_layout()

@@ -182,7 +182,7 @@ ax5.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols
 for i in range(len(top_K_pols_list)-1):
     ax5.plot(batches,mean_per_change_topk[i])
 ax5.plot(batches,mean_per_change_topk[i+1],'k')
-ax5.set_xlabel('Batch index (change from round n-1 to n)')
+ax5.set_xlabel('Batch index (change from round i-1 to i)')
 ax5.set_ylabel('Mean abs. change in estimated\nlifetime for top K policies (%)')
 ax5.set_ylim((0,14))
 ax5.set_xticks(np.arange(1, 5, step=1))
