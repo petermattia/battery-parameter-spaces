@@ -14,11 +14,12 @@ import matplotlib
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import seaborn as sns
 
 fig = plt.subplots(1,2,figsize=(16,6))
 ax1 = plt.subplot(121)
-ax2 = plt.subplot(122, projection='3d')
-#plt.style.use('classic')
+with sns.axes_style('white'):
+    ax2 = plt.subplot(122, projection='3d')
 
 FS = 14
 LW = 3
@@ -88,7 +89,7 @@ textstr = 'Charging time to 80% SOC = 10 minutes'
 props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=2)
 ax1.text(0.4, 0.5/10, textstr,transform=ax1.transAxes, fontsize=FS,
         verticalalignment='center', horizontalalignment='center',bbox=props)
-ax1.set_title('a', loc='left')
+ax1.set_title('a', loc='left', weight='bold')
 
 ########## 2b ##########
 ##############################################################################
@@ -99,10 +100,8 @@ point_size = 70
 seed = 0
 ##############################################################################
 
-# IMPORT RESULTS
-# Get folder path containing pickle files
+# IMPORT DATA
 param_space = np.genfromtxt('policies_all.csv', delimiter=',')
-#file_list = sorted(glob.glob('./bounds/[0-9]_bounds.pkl'))
 
 CC1 = param_space[:,0]
 CC2 = param_space[:,1]
@@ -113,9 +112,8 @@ max_CC4 = np.max(CC4)
 
 ## INITIALIZE PLOT
 # SETTINGS
-
 ax2.set_aspect('equal')
-ax2.set_title('b',loc='left')
+ax2.set_title('b',loc='left', weight='bold')
 
 ## PLOT POLICIES
 with plt.style.context(('classic')):
@@ -137,7 +135,7 @@ with plt.style.context(('classic')):
     m.set_array([])
     
     cbar = plt.colorbar(m, cax=cbar_ax)
-    cbar.ax.tick_params(labelsize=FS) 
+    cbar.ax.tick_params(labelsize=FS,length=0)
     cbar.ax.set_title('CC4',fontsize=FS)
 
 #plt.tight_layout()

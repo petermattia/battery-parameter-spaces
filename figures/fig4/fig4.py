@@ -105,9 +105,10 @@ ax1.set_xlim([0,upper_lim])
 ax1.set_ylim([0,upper_lim])
 ax1.set_aspect('equal', 'box')
 ax1.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
+ax1.set_yticks(np.arange(0,1500,250)) # consistent with x
 ax1.set_xlabel('Predicted cycle life')
 ax1.set_ylabel('Observed cycle life')
-ax1.set_title('a',loc='left')
+ax1.set_title('a',loc='left', weight='bold')
 
 
 ## Rankings plot
@@ -118,10 +119,10 @@ ax2.set_aspect('equal', 'box')
 ax2.plot(ax1.get_xlim(), ax1.get_ylim(), ls="--", c=".3")
 ax2.set_xlabel('Estimated ranking from OED')
 ax2.set_ylabel('True ranking')
-ax2.set_title('b',loc='left')
+ax2.set_title('b',loc='left', weight='bold')
 
 # Aditya's plot
-ax3.set_title('c',loc='left')
+ax3.set_title('c',loc='left',weight='bold')
 
 plt.tight_layout()
 plt.savefig('fig4.png',bbox_inches='tight')
