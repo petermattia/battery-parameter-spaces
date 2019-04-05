@@ -152,7 +152,7 @@ ax3.legend(frameon=False)
 ax3.set_aspect(aspect=36)
 
 ax3.set_xlabel('Experimental time (cycles)')
-ax3.set_ylabel('True cycle life of current best policy (cycles)')
+ax3.set_ylabel('True cycle life of current best policy')
 ax3.set_title('c',loc='left',weight='bold')
 
 plt.tight_layout()
