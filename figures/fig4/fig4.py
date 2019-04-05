@@ -99,12 +99,12 @@ custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c3]) +
 
 ## Lifetimes plot - raw
 ax1.set_prop_cycle(custom_cycler)
+ax1.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
 ax1.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
 #ax2.legend(validation_policies)
 ax1.set_xlim([0,upper_lim])
 ax1.set_ylim([0,upper_lim])
 ax1.set_aspect('equal', 'box')
-ax1.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
 ax1.set_yticks(np.arange(0,1500,250)) # consistent with x
 ax1.set_xlabel('Predicted cycle life')
 ax1.set_ylabel('Observed cycle life')
@@ -112,11 +112,11 @@ ax1.set_title('a',loc='left', weight='bold')
 
 
 ## Rankings plot
+ax2.plot(ax1.get_xlim(), ax1.get_ylim(), ls="--", c=".3")
 ax2.plot(oed_ranks,final_ranks,'o')
 ax2.set_xlim([0,10])
 ax2.set_ylim([0,10])
 ax2.set_aspect('equal', 'box')
-ax2.plot(ax1.get_xlim(), ax1.get_ylim(), ls="--", c=".3")
 ax2.set_xlabel('Estimated ranking from OED')
 ax2.set_ylabel('True ranking')
 ax2.set_title('b',loc='left', weight='bold')
