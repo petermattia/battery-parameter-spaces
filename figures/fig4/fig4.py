@@ -113,7 +113,7 @@ ax1.set_title('a',loc='left', weight='bold')
 
 ## Rankings plot
 ax2.plot(ax1.get_xlim(), ax1.get_ylim(), ls="--", c=".3")
-ax2.plot(oed_ranks,final_ranks,'o')
+ax2.plot(oed_ranks,final_ranks,'o',color=[0.1,0.4,0.8])
 ax2.set_xlim([0,10])
 ax2.set_ylim([0,10])
 ax2.set_aspect('equal', 'box')

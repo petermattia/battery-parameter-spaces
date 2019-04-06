@@ -130,7 +130,8 @@ pol_reps = np.zeros(num_batches)
 for k in np.arange(num_batches):
     pol_reps[k] = sum(isTested==k)
     
-ax4.bar(np.arange(num_batches),pol_reps,tick_label = ['0','1','2','3','4'],align='center')
+ax4.bar(np.arange(num_batches),pol_reps,tick_label = ['0','1','2','3','4'],\
+        align='center',color=[0.1,0.4,0.8])
 ax4.set_xlabel('n',fontsize=FS)
 ax4.set_ylabel('Number of policies tested n times',fontsize=FS)
 
@@ -210,7 +211,7 @@ values = np.sum(policies**2,axis=1)
 xlabel_mod = r'$\mathdefault{sum(I^2)=\Sigma_{i=1}^{4}CC_i}$'
 leglabel = 'ρ = {:.2}'.format(pearsonr(values,mean)[0])
 
-ax6.plot(values,mean,'o',label=leglabel)
+ax6.plot(values,mean,'o',label=leglabel,color=[0.1,0.4,0.8])
 ax6.set_xlabel(xlabel_mod,fontsize=FS)
 ax6.set_ylabel('OED-estimated lifetime (cycles)',fontsize=FS)
 ax6.legend(loc='best',markerscale=0,frameon=False)
