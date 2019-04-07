@@ -15,6 +15,18 @@ from cycler import cycler
 
 plt.close('all')
 
+FS = 14
+LW = 3
+
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+rcParams['font.size'] = FS
+rcParams['axes.labelsize'] = FS
+rcParams['xtick.labelsize'] = FS
+rcParams['ytick.labelsize'] = FS
+rcParams['font.sans-serif'] = ['Arial']
+upper_lim = 1500
+
 ########## LOAD DATA ##########
 # Load predictions
 filename = 'predictions.csv'
@@ -23,6 +35,11 @@ pred_data = np.genfromtxt(filename, delimiter=',',skip_header=1)
 validation_policies = pred_data[:,0:3]
 predicted_lifetimes = pred_data[:,3:]
 
+validation_pol_leg = []
+for p in validation_policies:
+    c4 = 0.2/(1/6 - (0.2/p[0] + 0.2/p[1] + 0.2/p[2]))
+    validation_pol_leg.append(str(p[0])+'-'+str(p[1])+'-'+str(p[2])+'-'+'{0:.3f}'.format(c4))
+
 # Load final results
 filename = 'final_results.csv'
 final_data = np.genfromtxt(filename, delimiter=',',skip_header=1)
@@ -30,7 +47,7 @@ final_data = np.genfromtxt(filename, delimiter=',',skip_header=1)
 final_lifetimes = final_data[:,3:]
 
 # Load OED means
-oed_bounds_file = glob.glob('../data/bounds/4_bounds.pkl')[0]
+oed_bounds_file = glob.glob('4_bounds.pkl')[0]
 with open(oed_bounds_file, 'rb') as infile:
         param_space, ub, lb, all_oed_means = pickle.load(infile)
 
@@ -85,42 +102,38 @@ final_ranks = np.max(final_ranks) - final_ranks + 1 # swap order and use 1-index
 
 ########## PLOTS ##########
 
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.sans-serif'] = ['Arial', 'Tahoma', 'DejaVu Sans',
-                               'Lucida Grande', 'Verdana']
-rcParams['font.size'] = 12
-
-upper_lim = 1400
+fig = plt.figure(figsize=(12,12))
 
 default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 c1 = default_colors[0]
 c2 = default_colors[1]
 c3 = default_colors[2]
 c4 = default_colors[3]
-custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c4]) +
-                 cycler(marker=   ['o','o','s','v','o','s','v','^','o']) +
+custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c3]) +
+                 cycler(marker=   ['o','o','s','v','o','s','v','^','s']) +
                  cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
 
+ax0 = plt.subplot(3,3,1)
 #### PRED vs OED
 ## Lifetimes plot
-fig, ax0 = plt.subplots()
 ax0.set_prop_cycle(custom_cycler)
+ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
 for k in range(len(pred_means)):
     ax0.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
-plt.legend(validation_policies)
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('Mean cycle life from early prediction')
-plt.ylabel('Estimated cycle life from OED')
-plt.savefig('plots/lifetimes_oed_vs_pred.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_oed_vs_pred.pdf',bbox_inches='tight',format='pdf')
+#plt.legend(validation_policies)
+plt.xlabel('Mean predicted cycle life',fontsize=FS)
+plt.ylabel('OED-estimated cycle life',fontsize=FS)
+plt.title(chr(97),loc='left', weight='bold',fontsize=FS)
+ax0.set_xticks([0,750,1500])
+ax0.set_yticks([0,750,1500])
 
 ## Individual lifetimes plot
-fig, ax0 = plt.subplots()
+ax0 = plt.subplot(3,3,2)
 ax0.set_prop_cycle(custom_cycler)
+ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
 for k in range(len(predicted_lifetimes)):
     predicted_lifetimes_vector = predicted_lifetimes[k][~np.isnan(predicted_lifetimes[k])]
     oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(predicted_lifetimes[k])))
@@ -128,117 +141,108 @@ for k in range(len(predicted_lifetimes)):
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
-plt.legend(validation_policies)
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('Predicted cycle life')
-plt.ylabel('Estimated cycle life from OED')
-plt.savefig('plots/lifetimes_oed_vs_pred_individual.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_oed_vs_pred_individual.pdf',bbox_inches='tight',format='pdf')
+#plt.legend(validation_policies)
+plt.xlabel('Early-predicted cycle life',fontsize=FS)
+plt.ylabel('OED-estimated cycle life',fontsize=FS)
+plt.title(chr(98),loc='left', weight='bold',fontsize=FS)
+ax0.set_xticks([0,750,1500])
+ax0.set_yticks([0,750,1500])
 
 ## Rankings plot
-plt.figure()
-fig2 = plt.plot(pred_ranks,oed_ranks,'o')
-ax = plt.gca()
+ax0 = plt.subplot(3,3,3)
+ax0.plot((-1,11),(-1,11), ls="--", c=".3")
+ax0.set_prop_cycle(custom_cycler)
+for k in range(len(pred_ranks)):
+    plt.plot(pred_ranks[k],oed_ranks[k])
 plt.xlim([0,10])
 plt.ylim([0,10])
-ax.set_aspect('equal', 'box')
-ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
-plt.xlabel('Mean ranking from early prediction')
-plt.ylabel('Estimated ranking from OED')
-plt.savefig('plots/rankings_oed_vs_pred.png',bbox_inches='tight')
-plt.savefig('plots/rankings_oed_vs_pred.pdf',bbox_inches='tight',format='pdf')
+ax0.set_aspect('equal', 'box')
+plt.xlabel('Mean early-predicted ranking',fontsize=FS)
+plt.ylabel('OED-estimated ranking',fontsize=FS)
+plt.title(chr(99),loc='left', weight='bold',fontsize=FS)
+ax0.set_yticks([0,5,10]) # consistent with x
 
 #### PRED vs FINAL
 ## Lifetimes plot
-fig, ax0 = plt.subplots()
+ax0 = plt.subplot(3,3,4)
+ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
 ax0.set_prop_cycle(custom_cycler)
 for k in range(len(pred_means)):
     plt.errorbar(pred_means[k],final_means[k],xerr=pred_sterr[k],yerr=final_sterr[k])
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
-plt.legend(validation_policies)
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('Mean cycle life from early prediction')
-plt.ylabel('Mean cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_pred_vs_final.pdf',bbox_inches='tight',format='pdf')
-
-## Rankings plot
-plt.figure()
-fig4 = plt.plot(pred_ranks,final_ranks,'o')
-ax = plt.gca()
-plt.xlim([0,10])
-plt.ylim([0,10])
-ax.set_aspect('equal', 'box')
-ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
-plt.xlabel('Mean ranking from early prediction')
-plt.ylabel('True ranking')
-plt.savefig('plots/rankings_pred_vs_final.png',bbox_inches='tight')
-plt.savefig('plots/rankings_pred_vs_final.pdf',bbox_inches='tight',format='pdf')
+#plt.legend(validation_policies)
+plt.xlabel('Mean early-predicted cycle life',fontsize=FS)
+plt.ylabel('Mean cycle life',fontsize=FS)
+plt.title(chr(100),loc='left', weight='bold',fontsize=FS)
+ax0.set_xticks([0,750,1500])
+ax0.set_yticks([0,750,1500])
 
 ## Lifetimes plot - raw
-fig, ax0 = plt.subplots()
+ax0 = plt.subplot(3,3,5)
+ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
 ax0.set_prop_cycle(custom_cycler)
 ax0.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
-plt.legend(validation_policies)
+#plt.legend(validation_policies,loc=9, bbox_to_anchor=(2.1, 0.5))
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
 #ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
-plt.xlabel('Predicted cycle life')
-plt.ylabel('Observed cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final_raw.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_pred_vs_final_raw.pdf',bbox_inches='tight',format='pdf')
+plt.xlabel('Early-predicted cycle life',fontsize=FS)
+plt.ylabel('Observed cycle life',fontsize=FS)
+plt.title(chr(101),loc='left', weight='bold',fontsize=FS)
+ax0.set_xticks([0,750,1500])
+ax0.set_yticks([0,750,1500])
 
-## Lifetimes plot - raw, bias-corrected
-fig, ax0 = plt.subplots()
+## Rankings plot
+ax0 = plt.subplot(3,3,6)
+ax0.plot((-1,11),(-1,11), ls="--", c=".3")
 ax0.set_prop_cycle(custom_cycler)
-ax0.plot(np.transpose(predicted_lifetimes_bias_corrected), \
-                np.transpose(final_lifetimes))
-plt.legend(validation_policies)
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
+for k in range(len(pred_ranks)):
+    plt.plot(pred_ranks[k],final_ranks[k])
+plt.xlim([0,10])
+plt.ylim([0,10])
 ax0.set_aspect('equal', 'box')
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
-#ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
-plt.xlabel('Predicted cycle life')
-plt.ylabel('Observed cycle life')
-plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_pred_vs_final_raw_biascorrected.pdf',bbox_inches='tight',format='pdf')
+plt.xlabel('Mean early-predicted ranking',fontsize=FS)
+plt.ylabel('True ranking',fontsize=FS)
+plt.title(chr(102),loc='left', weight='bold',fontsize=FS)
+ax0.set_yticks([0,5,10]) # consistent with x
+
+### Lifetimes plot - raw, bias-corrected
+#fig, ax0 = plt.subplots()
+#ax0.set_prop_cycle(custom_cycler)
+#ax0.plot(np.transpose(predicted_lifetimes_bias_corrected), \
+#                np.transpose(final_lifetimes))
+#plt.legend(validation_policies)
+#plt.xlim([0,upper_lim])
+#plt.ylim([0,upper_lim])
+#ax0.set_aspect('equal', 'box')
+#ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls='--', c='.3')
+##ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
+#plt.xlabel('Predicted cycle life')
+#plt.ylabel('Observed cycle life')
 
 #### OED vs FINAL
 ## Lifetimes plot
-fig, ax0 = plt.subplots()
+ax0 = plt.subplot(3,3,7)
+ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
 ax0.set_prop_cycle(custom_cycler)
 for k in range(len(oed_means)):
     plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
-plt.legend(validation_policies)
+#plt.legend(validation_policies)
 ax0.set_aspect('equal', 'box')
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('OED-estimated cycle life')
-plt.ylabel('Mean cycle life')
-plt.savefig('plots/lifetimes_oed_vs_final.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_oed_vs_final.pdf',bbox_inches='tight',format='pdf')
-
-## Rankings plot
-plt.figure()
-fig6 = plt.plot(oed_ranks,final_ranks,'o')
-ax = plt.gca()
-plt.xlim([0,10])
-plt.ylim([0,10])
-ax.set_aspect('equal', 'box')
-ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
-plt.xlabel('Estimated ranking from OED')
-plt.ylabel('True ranking')
-plt.savefig('plots/rankings_oed_vs_final.png',bbox_inches='tight')
-plt.savefig('plots/rankings_oed_vs_final.pdf',bbox_inches='tight',format='pdf')
+plt.xlabel('OED-estimated cycle life',fontsize=FS)
+plt.ylabel('Mean cycle life',fontsize=FS)
+plt.title(chr(103),loc='left', weight='bold',fontsize=FS)
+ax0.set_xticks([0,750,1500])
+ax0.set_yticks([0,750,1500])
 
 ## Individual lifetimes plot
-fig, ax0 = plt.subplots()
+ax0 = plt.subplot(3,3,8)
+ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
 ax0.set_prop_cycle(custom_cycler)
 for k in range(len(predicted_lifetimes)):
     final_lifetimes_vector = final_lifetimes[k][~np.isnan(final_lifetimes[k])]
@@ -247,9 +251,31 @@ for k in range(len(predicted_lifetimes)):
 plt.xlim([0,upper_lim])
 plt.ylim([0,upper_lim])
 ax0.set_aspect('equal', 'box')
-s
-ax0.plot(ax0.get_xlim(), ax0.get_ylim(), ls="--", c=".3")
-plt.xlabel('OED-estimated cycle life')
-plt.ylabel('Observed cycle life')
-plt.savefig('plots/lifetimes_oed_vs_final_individual.png',bbox_inches='tight')
-plt.savefig('plots/lifetimes_oed_vs_final_individual.pdf',bbox_inches='tight',format='pdf')
+plt.xlabel('OED-estimated cycle life',fontsize=FS)
+plt.ylabel('Observed cycle life',fontsize=FS)
+plt.title(chr(104),loc='left', weight='bold',fontsize=FS)
+ax0.set_xticks([0,750,1500])
+ax0.set_yticks([0,750,1500])
+
+## Rankings plot
+ax0 = plt.subplot(3,3,9)
+ax0.plot((-1,11),(-1,11), ls="--", c=".3")
+ax0.set_prop_cycle(custom_cycler)
+for k in range(len(pred_ranks)):
+    plt.plot(oed_ranks[k],final_ranks[k])
+plt.xlim([0,10])
+plt.ylim([0,10])
+ax0.set_aspect('equal', 'box')
+plt.xlabel('OED-estimated ranking',fontsize=FS)
+plt.ylabel('True ranking',fontsize=FS)
+plt.title(chr(105),loc='left', weight='bold',fontsize=FS)
+ax0.set_yticks([0,5,10]) # consistent with x
+
+#
+plt.tight_layout()
+plt.subplots_adjust(right=0.8)
+ax0 = plt.subplot(3,3,5)
+#plt.legend(validation_pol_leg,loc=9, bbox_to_anchor=(3.8, 1.2),frameon=True)
+plt.legend(validation_pol_leg,loc=9, bbox_to_anchor=(0.5, -2),frameon=True,ncol=3)
+plt.savefig('validation_ablation.png',bbox_inches='tight')
+plt.savefig('validation_ablation.pdf',bbox_inches='tight',format='pdf')

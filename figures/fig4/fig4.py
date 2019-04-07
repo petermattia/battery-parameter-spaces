@@ -100,7 +100,7 @@ custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c3]) +
 ## Lifetimes plot - raw
 ax1.set_prop_cycle(custom_cycler)
 ax1.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
-ax1.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
+ax1.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),markersize=8)
 #ax2.legend(validation_policies)
 ax1.set_xlim([0,upper_lim])
 ax1.set_ylim([0,upper_lim])
@@ -112,8 +112,10 @@ ax1.set_title('a',loc='left', weight='bold')
 
 
 ## Rankings plot
-ax2.plot(ax1.get_xlim(), ax1.get_ylim(), ls="--", c=".3")
-ax2.plot(oed_ranks,final_ranks,'o',color=[0.1,0.4,0.8])
+ax2.plot((-1,11),(-1,11), ls="--", c=".3")
+ax2.set_prop_cycle(custom_cycler)
+for k in range(len(pred_ranks)):
+    ax2.plot(oed_ranks[k],final_ranks[k],markersize=8)
 ax2.set_xlim([0,10])
 ax2.set_ylim([0,10])
 ax2.set_aspect('equal', 'box')

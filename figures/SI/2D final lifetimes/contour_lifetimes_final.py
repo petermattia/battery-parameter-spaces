@@ -9,6 +9,7 @@ Created on Tue Feb 20 07:29:14 2018
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import matplotlib
 import glob
 import pickle
@@ -28,35 +29,39 @@ C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 one_step = 4.8
 margin = 0.2 # plotting margin
 
-matplotlib.rcParams['pdf.fonttype'] = 42
-matplotlib.rcParams['ps.fonttype'] = 42
+FS = 14
+LW = 3
+
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+rcParams['font.size'] = FS
+rcParams['axes.labelsize'] = FS
+rcParams['xtick.labelsize'] = FS
+rcParams['ytick.labelsize'] = FS
+rcParams['font.sans-serif'] = ['Arial']
 
 colormap = 'plasma_r'
 
 # IMPORT RESULTS
 # Get folder path containing text files
-file_list = sorted(glob.glob('./bounds/4_bounds.pkl'))
+file = '4_bounds.pkl'
 data = []
 min_lifetime = 10000
 max_lifetime = -1
-for file in file_list:
-    with open(file, 'rb') as infile:
-        param_space, ub, lb, mean = pickle.load(infile)
-        data.append(mean)
-        min_lifetime = min(np.min(mean),min_lifetime)
-        max_lifetime = max(np.max(mean),max_lifetime)
+with open(file, 'rb') as infile:
+    param_space, ub, lb, mean = pickle.load(infile)
+    data.append(mean)
+    min_lifetime = min(np.min(mean),min_lifetime)
+    max_lifetime = max(np.max(mean),max_lifetime)
 
 # Find number of batches
 batchnum = len(data)
 
 ## INITIALIZE CONTOUR PLOT
 # SETTINGS
-fig = plt.figure()
-plt.style.use('classic')
-plt.rcParams.update({'font.size': 16})
+fig = plt.figure(figsize=(16,12))
+#plt.style.use('classic')
 plt.set_cmap(colormap)
-manager = plt.get_current_fig_manager() # Make full screen
-manager.window.showMaximized()
 if CROPPED_BOUNDS:
     minn, maxx = 1000, max_lifetime
 else:
@@ -75,12 +80,13 @@ for k, c3 in enumerate(C3list):
 # ADD COLORBAR
 fig.subplots_adjust(right=0.8)
 fig.subplots_adjust(top=0.93)
-cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+cbar_ax = fig.add_axes([0.85, 0.15, 0.04, 0.72]) # [left, bottom, width, height]
 norm = matplotlib.colors.Normalize(minn, maxx)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
-cbar.ax.set_title('Estimated cycle life')
+cbar.ax.tick_params(labelsize=FS,length=0)
+cbar.ax.set_title('OED-estimated\ncycle life',fontsize=FS)
 
 k2 = 0
 
@@ -107,20 +113,21 @@ for k, c3 in enumerate(C3list):
                 c=lifetime_subset.ravel(),zorder=2,s=100)
 
     ## BASELINE
-    if c3 == one_step:
-        plt.scatter(one_step,one_step,c='k',marker='s',zorder=3,s=100)
-
-    plt.title('CC3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
-    plt.xlabel('CC1')
-    plt.ylabel('CC2')
+    #if c3 == one_step:
+    #    plt.scatter(one_step,one_step,c='k',marker='s',zorder=3,s=100)
+    plt.title(chr(k+97),loc='left', weight='bold',fontsize=FS)
+    plt.annotate('CC3=' + str(c3) + '\n' + str(len(policy_subset)) + ' policies',\
+              (3.62, 3.62), fontsize=FS)
+    plt.xlabel('CC1',fontsize=FS)
+    plt.ylabel('CC2',fontsize=FS)
     plt.xlim((min_policy_bound-margin, max_policy_bound+margin))
     plt.ylim((min_policy_bound-margin, max_policy_bound+margin))
 
-## SAVE Plot
+## SAVE
 
 if CROPPED_BOUNDS:
-    plt.savefig('plots/final_bounds.png', bbox_inches = 'tight')
-    plt.savefig('plots/final_bounds.pdf', bbox_inches = 'tight')
+    plt.savefig('final_bounds.png', bbox_inches = 'tight')
+    plt.savefig('final_bounds.pdf', bbox_inches = 'tight')
 else:
-    plt.savefig('plots/final_bounds_full.png', bbox_inches = 'tight')
-    plt.savefig('plots/final_bounds_full.pdf', bbox_inches = 'tight')
+    plt.savefig('final_bounds_full.png', bbox_inches = 'tight')
+    plt.savefig('final_bounds_full.pdf', bbox_inches = 'tight')
