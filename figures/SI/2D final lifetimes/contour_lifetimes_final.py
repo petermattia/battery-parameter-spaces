@@ -117,7 +117,7 @@ for k, c3 in enumerate(C3list):
     #    plt.scatter(one_step,one_step,c='k',marker='s',zorder=3,s=100)
     plt.title(chr(k+97),loc='left', weight='bold',fontsize=FS)
     plt.annotate('CC3=' + str(c3) + '\n' + str(len(policy_subset)) + ' policies',\
-              (3.62, 3.62), fontsize=FS)
+              (3.52, 3.52), fontsize=FS)
     plt.xlabel('CC1',fontsize=FS)
     plt.ylabel('CC2',fontsize=FS)
     plt.xlim((min_policy_bound-margin, max_policy_bound+margin))

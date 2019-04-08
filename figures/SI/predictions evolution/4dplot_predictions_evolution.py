@@ -91,4 +91,4 @@ cbar.ax.tick_params(labelsize=FS,length=0)
 cbar.ax.set_title('Predicted\ncycle life',fontsize=FS)
 
 plt.savefig('pred_evolution.png')
-plt.savefig('pred_evolution.pdf')
+plt.savefig('pred_evolution.pdf',format='pdf')
