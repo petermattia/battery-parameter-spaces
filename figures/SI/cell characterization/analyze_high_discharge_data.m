@@ -19,6 +19,7 @@ Qc = data(:,8); % charge capacity
 Qd = data(:,9); % discharge capacity
 T = data(:,15); % surface temperature
 
+
 %% Pre-initialize arrays/cell arrays
 step_idx_list = 4:4:40;
 n_cycles = length(step_idx_list);
