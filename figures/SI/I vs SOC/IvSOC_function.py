@@ -67,7 +67,7 @@ def plot_policy(CC1, CC2, CC3, ax,life_dict):
     """
     
     # Label policies
-    name = '{0}-{1}-{2}-{3:.3f}'.format(CC1, CC2, CC3, CC4)
+    name = '{0}C-{1}C-{2}C-{3:.3f}C'.format(CC1, CC2, CC3, CC4)
     ax.text(50,9,name,horizontalalignment='center',fontsize=FS)
     
     oed_str = 'OED: {:d}'.format(int(life_dict['oed']))

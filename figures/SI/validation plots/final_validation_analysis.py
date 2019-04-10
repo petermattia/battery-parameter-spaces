@@ -38,7 +38,7 @@ predicted_lifetimes = pred_data[:,3:]
 validation_pol_leg = []
 for p in validation_policies:
     c4 = 0.2/(1/6 - (0.2/p[0] + 0.2/p[1] + 0.2/p[2]))
-    validation_pol_leg.append(str(p[0])+'-'+str(p[1])+'-'+str(p[2])+'-'+'{0:.3f}'.format(c4))
+    validation_pol_leg.append(str(p[0])+'C-'+str(p[1])+'C-'+str(p[2])+'C-'+'{0:.3f}C'.format(c4))
 
 # Load final results
 filename = 'final_results.csv'
