@@ -201,7 +201,6 @@ format_rankings_plot('pred_vs_final_rankings')
 ax0 = init_lifetimes_plot()
 for k in range(len(oed_means)):
     plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
-plt.savefig('plots/rankings_oed_vs_final.png',bbox_inches='tight')
 plt.xlabel('OED-estimated cycle life',fontsize=FS)
 plt.ylabel('Mean cycle life',fontsize=FS)
 format_lifetimes_plot('oed_vs_final')
