@@ -10,6 +10,7 @@ NOTE: REQUIRES IMAGEMAGICK. https://www.imagemagick.org/script/download.php
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 from matplotlib import animation
 import glob
 import pickle
@@ -34,13 +35,19 @@ for file in file_list:
 # Find number of batches
 batchnum = len(means)
 
-## INITIALIZE CONTOUR PLOT
+## INITIALIZE PLOT
 # SETTINGS
-fig = plt.figure()
-plt.style.use('classic')
-plt.rcParams.update({'font.size': 16})
-manager = plt.get_current_fig_manager() # Make full screen
-manager.window.showMaximized()
+fig = plt.figure(figsize=(16,10))
+
+FS = 14
+
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+rcParams['font.size'] = FS
+rcParams['axes.labelsize'] = FS
+rcParams['xtick.labelsize'] = FS
+rcParams['ytick.labelsize'] = FS
+rcParams['font.sans-serif'] = ['Arial']
 
 # FUNCTION FOR LOOPING THROUGH BATCHES
 def make_frame(k2):
