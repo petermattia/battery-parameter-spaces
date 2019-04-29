@@ -129,7 +129,7 @@ m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('True cycle life\nof best policy',fontsize=FS)
+cbar.ax.set_title('True cycle life\nof best protocol',fontsize=FS)
 
 ## SAVE
 plt.savefig('hyperparameter_sensitivity.png', bbox_inches = 'tight')
