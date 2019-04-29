@@ -79,7 +79,7 @@ for i in range(len(top_K_pols_list)-1):
     ax0.plot(batches,mean_change_topk[i])
 ax0.plot(batches,mean_change_topk[i+1],'k')
 ax0.set_xlabel('Batch index (change from round n-1 to n)')
-ax0.set_ylabel('Mean abs. change in estimated lifetime\nfor top K policies (cycles)')
+ax0.set_ylabel('Mean abs. change in estimated cycle life\nfor top K policies (cycles)')
 ax0.set_ylim((0,140))
 ax0.set_xticks(np.arange(1, 5, step=1))
 ax0.legend(legend,frameon=False)
@@ -87,7 +87,7 @@ ax0.legend(legend,frameon=False)
 ## Histogram
 with plt.style.context(('classic')):
     ax1.hist(data[-1], bins=12, range=(600,1200),color=[0.1,0.4,0.8])
-ax1.set_xlabel('OED-estimated lifetimes')
+ax1.set_xlabel('OED-estimated cycle life')
 ax1.set_ylabel('Count')
 ax1.set_xlim([600,1200])
 

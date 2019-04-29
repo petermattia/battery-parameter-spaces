@@ -184,7 +184,7 @@ for i in range(len(top_K_pols_list)-1):
     ax5.plot(batches,mean_per_change_topk[i])
 ax5.plot(batches,mean_per_change_topk[i+1],'k')
 ax5.set_xlabel('Batch index (change from round i-1 to i)')
-ax5.set_ylabel('Mean abs. change in estimated\nlifetime for top K policies (%)')
+ax5.set_ylabel('Mean abs. change in estimated\ncycle life for top K policies (%)')
 ax5.set_ylim((0,14))
 ax5.set_xticks(np.arange(1, 5, step=1))
 ax5.legend(legend,frameon=False)
@@ -213,7 +213,7 @@ leglabel = 'ρ = {:.2}'.format(pearsonr(values,mean)[0])
 
 ax6.plot(values,mean,'o',label=leglabel,color=[0.1,0.4,0.8])
 ax6.set_xlabel(xlabel_mod,fontsize=FS)
-ax6.set_ylabel('OED-estimated lifetime (cycles)',fontsize=FS)
+ax6.set_ylabel('OED-estimated cycle life',fontsize=FS)
 ax6.legend(loc='best',markerscale=0,frameon=False)
 
 
