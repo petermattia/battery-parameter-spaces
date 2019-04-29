@@ -127,7 +127,7 @@ for k, c3 in enumerate(C3list):
 
 if CROPPED_BOUNDS:
     plt.savefig('final_bounds.png', bbox_inches = 'tight')
-    plt.savefig('final_bounds.pdf', bbox_inches = 'tight')
+    plt.savefig('final_bounds.pdf', bbox_inches = 'tight',format='pdf')
 else:
     plt.savefig('final_bounds_full.png', bbox_inches = 'tight')
-    plt.savefig('final_bounds_full.pdf', bbox_inches = 'tight')
+    plt.savefig('final_bounds_full.pdf', bbox_inches = 'tight',format='pdf')

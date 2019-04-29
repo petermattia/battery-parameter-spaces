@@ -123,4 +123,4 @@ for k, c3 in enumerate(C3list):
 
 ## SAVE
 plt.savefig('final_bounds_uncertainty.png', bbox_inches = 'tight')
-plt.savefig('final_bounds_uncertainty.pdf', bbox_inches = 'tight')
+plt.savefig('final_bounds_uncertainty.pdf', bbox_inches = 'tight',format='pdf')

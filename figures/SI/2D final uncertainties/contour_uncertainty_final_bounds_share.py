@@ -120,4 +120,4 @@ cbar.ax.set_title('OED bounds on\ncycle life',fontsize=FS)
 
 ## SAVE
 plt.savefig('final_bounds_uncertainty_sharexy.png', bbox_inches = 'tight')
-plt.savefig('final_bounds_uncertainty_sharexy.pdf', bbox_inches = 'tight')
+plt.savefig('final_bounds_uncertainty_sharexy.pdf', bbox_inches = 'tight',format='pdf')
