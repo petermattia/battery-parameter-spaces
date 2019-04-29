@@ -72,43 +72,10 @@ for beta, subgroup in sims.groupby('beta'):
 min_lifetime = np.amin(means)
 max_lifetime = np.amax(means)
 
-"""
-## Lifetime figure
-plt.figure()
-manager = plt.get_current_fig_manager() # Make full screen
-manager.window.showMaximized()
 
-c1='#1f77b4' #blue
-c2='#7C0A02' #red
-
-def fadeColor(c1,c2,mix=0): #fade (linear interpolate) from color c1 (at mix=0) to c2 (mix=1)
-    assert len(c1)==len(c2)
-    assert mix>=0 and mix<=1, 'mix='+str(mix)
-    rgb1=np.array([int(c1[ii:ii+2],16) for ii in range(1,len(c1),2)])
-    rgb2=np.array([int(c2[ii:ii+2],16) for ii in range(1,len(c2),2)])
-    rgb=((1-mix)*rgb1+mix*rgb2).astype(int)
-    c='#'+''.join([hex(a)[2:] for a in rgb])
-    return c
-
-for k, beta in enumerate(sims.beta.unique()):
-    plt.subplot(2,3,k+1)
-    for k2, gamma in enumerate(sims.gamma.unique()):
-        means_subset = means[k,k2,:]
-        std_subset = std[k,k2,:]
-        plt.errorbar(sims.epsilon.unique(), means_subset, yerr=std_subset,
-                     fmt='o', color=fadeColor(c1,c2,k2/7))
-
-    plt.title('beta = ' + str(beta))
-    plt.xlabel('epsilon')
-    plt.ylabel('True lifetime of best policy')
-    plt.gca().legend(sims.gamma.unique(),fontsize=10)
-    #plt.xscale('log')
-    plt.xlim((0.4,1.0))
-    plt.ylim((1100,1250))
-    plt.hlines([1208,1192],0.4,1.0)
-"""
+## INITIALIZE PLOT
+# SETTINGS
 FS = 14
-CROPPED_BOUNDS = False
 colormap = 'plasma_r'
 lower_lifetime_lim = 1000
 
@@ -121,44 +88,39 @@ rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
 
-## INITIALIZE CONTOUR PLOT
-# SETTINGS
-fig, ax = plt.subplots(2,3,figsize=(16,12),sharex=True,sharey=True)
+fig, ax = plt.subplots(2,4,figsize=(16,12),sharex=True,sharey=True)
 #plt.style.use('classic')
 plt.set_cmap(colormap)
-if CROPPED_BOUNDS:
-    minn, maxx = lower_lifetime_lim, max_lifetime
-else:
-    minn, maxx = min_lifetime, max_lifetime
+minn, maxx = min_lifetime, max_lifetime
 
 fig.subplots_adjust(right=0.8)
 fig.subplots_adjust(top=0.93)
 
 k2 = 0
 
-# FUNCTION FOR LOOPING THROUGH BATCHES
-for k, c3 in enumerate(sims.epsilon.unique()):
-    temp_ax = ax[int(k/3)][k%3]
+# FUNCTION FOR LOOPING THROUGH COMBINATIONS
+for k, c3 in enumerate(sims.gamma.unique()):
+    temp_ax = ax[int(k/4)][k%4]
     plt.axis('square')
     
-    """
     ## PLOT COMBINATIONS
-    idx_subset = np.where(param_space[:,2]==c3)
-    policy_subset = param_space[idx_subset]
-    lifetime_subset = data[k2][idx_subset]
-    temp_ax.scatter(policy_subset[:,0],policy_subset[:,1],vmin=minn,vmax=maxx,
-                c=lifetime_subset.ravel(),zorder=2,s=100)
-
+    [X,Y] = np.meshgrid(sims.beta.unique(),sims.epsilon.unique())
+    temp_ax.scatter(X.ravel(),Y.ravel(),vmin=minn,vmax=maxx,
+                c=means[:,k,:].ravel(),zorder=2,s=100)
+    
     temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=FS)
-    temp_ax.annotate('CC3=' + str(c3) + '\n' + str(len(policy_subset)) + ' policies',\
-              (3.52, 3.52), fontsize=FS)
-    if int(k/3)==1:
-        temp_ax.set_xlabel('\beta',fontsize=FS)
-    if k%3 == 0:
-        temp_ax.set_ylabel('\gamma',fontsize=FS)
-    temp_ax.set_xlim((min_policy_bound-margin, max_policy_bound+margin))
-    temp_ax.set_ylim((min_policy_bound-margin, max_policy_bound+margin))
-    """
+    
+    temp_ax.annotate('γ=' + str(c3), (15, 0.95), fontsize=FS,horizontalalignment='right')
+    if int(k/4)==1 or k==3:
+        temp_ax.set_xlabel('β',fontsize=FS)
+    if k%4 == 0:
+        temp_ax.set_ylabel('ε',fontsize=FS)
+    
+    temp_ax.set_xlim((0.1, 20))
+    temp_ax.set_ylim((0.4,1.0))
+    temp_ax.set_xscale('log')
+
+ax[-1, -1].axis('off')
 
 # ADD COLORBAR
 cbar_ax = fig.add_axes([0.85, 0.15, 0.04, 0.72]) # [left, bottom, width, height]
