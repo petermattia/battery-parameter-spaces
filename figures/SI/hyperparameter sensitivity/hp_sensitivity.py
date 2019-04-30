@@ -88,7 +88,7 @@ rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
 
-fig, ax = plt.subplots(2,4,figsize=(16,12),sharex=True,sharey=True)
+fig, ax = plt.subplots(2,4,figsize=(16,12),sharey=True)
 #plt.style.use('classic')
 plt.set_cmap(colormap)
 minn, maxx = min_lifetime, max_lifetime
@@ -99,7 +99,7 @@ fig.subplots_adjust(top=0.93)
 k2 = 0
 
 # FUNCTION FOR LOOPING THROUGH COMBINATIONS
-for k, c3 in enumerate(sims.gamma.unique()):
+for k, gamma in enumerate(sims.gamma.unique()):
     temp_ax = ax[int(k/4)][k%4]
     plt.axis('square')
     
@@ -110,9 +110,11 @@ for k, c3 in enumerate(sims.gamma.unique()):
     
     temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=FS)
     
-    temp_ax.annotate('γ=' + str(c3), (15, 0.95), fontsize=FS,horizontalalignment='right')
+    temp_ax.annotate('γ=' + str(gamma), (15, 0.95), fontsize=FS,horizontalalignment='right')
     if int(k/4)==1 or k==3:
         temp_ax.set_xlabel('β',fontsize=FS)
+    else:
+        plt.setp(temp_ax.get_xticklabels(), visible=False)
     if k%4 == 0:
         temp_ax.set_ylabel('ε',fontsize=FS)
     
@@ -129,7 +131,7 @@ m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('True cycle life\nof best protocol',fontsize=FS)
+cbar.ax.set_title('Cycle life\nof best protocol\n(simulated)',fontsize=FS)
 
 ## SAVE
 plt.savefig('hyperparameter_sensitivity.png', bbox_inches = 'tight')
