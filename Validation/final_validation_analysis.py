@@ -12,6 +12,8 @@ from matplotlib import rcParams
 import glob
 import pickle
 from cycler import cycler
+from scipy.stats import kendalltau
+from scipy.stats import pearsonr
 
 plt.close('all')
 
@@ -124,11 +126,12 @@ def format_lifetimes_plot(filename):
     plt.savefig('plots/'+filename+'.png',bbox_inches='tight')
     plt.savefig('plots/'+filename+'.pdf',bbox_inches='tight',format='pdf')
 
-def format_rankings_plot(filename):
+def format_rankings_plot(filename, tau):
     plt.xlim([0,10])
     plt.ylim([0,10])
     ax0.set_aspect('equal', 'box')
     plt.legend(validation_pol_leg, bbox_to_anchor=(1.01, 0.85))
+    plt.annotate('τ = {:.2}'.format(tau),(0.5,9.0))
     plt.savefig('plots/'+filename+'.png',bbox_inches='tight')
     plt.savefig('plots/'+filename+'.pdf',bbox_inches='tight',format='pdf')
     
@@ -157,7 +160,8 @@ for k in range(len(pred_ranks)):
     plt.plot(pred_ranks[k],oed_ranks[k])
 plt.xlabel('Mean early-predicted ranking',fontsize=FS)
 plt.ylabel('OED-estimated ranking',fontsize=FS)
-format_rankings_plot('pred_vs_oed_rankings')
+tau = kendalltau(pred_ranks,oed_ranks)[0]
+format_rankings_plot('pred_vs_oed_rankings',tau)
 
 #### PRED vs FINAL
 ## Lifetimes plot
@@ -194,7 +198,8 @@ for k in range(len(pred_ranks)):
     plt.plot(pred_ranks[k],final_ranks[k])
 plt.xlabel('Mean early-predicted ranking',fontsize=FS)
 plt.ylabel('True ranking',fontsize=FS)
-format_rankings_plot('pred_vs_final_rankings')
+tau = kendalltau(pred_ranks,final_ranks)[0]
+format_rankings_plot('pred_vs_final_rankings',tau)
 
 #### OED vs FINAL
 ## Lifetimes plot
@@ -221,4 +226,5 @@ for k in range(len(pred_ranks)):
     plt.plot(oed_ranks[k],final_ranks[k])
 plt.xlabel('OED-estimated ranking',fontsize=FS)
 plt.ylabel('True ranking',fontsize=FS)
-format_rankings_plot('oed_vs_final_rankings')
+tau = kendalltau(oed_ranks,final_ranks)[0]
+format_rankings_plot('oed_vs_final_rankings',tau)

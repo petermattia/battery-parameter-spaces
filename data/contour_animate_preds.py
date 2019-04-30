@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib import animation
 import glob
+from matplotlib import rcParams
 
 plt.close('all')
 
@@ -27,7 +28,17 @@ C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 one_step = 4.8
 margin = 0.2 # plotting margin
 
+FS = 12
+
 colormap = 'plasma_r'
+
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+rcParams['font.size'] = FS
+rcParams['axes.labelsize'] = FS
+rcParams['xtick.labelsize'] = FS
+rcParams['ytick.labelsize'] = FS
+rcParams['font.sans-serif'] = ['Arial']
 
 # IMPORT RESULTS
 # Get folder path containing text files
@@ -46,8 +57,6 @@ batchnum = len(data)
 ## INITIALIZE CONTOUR PLOT
 # SETTINGS
 fig = plt.figure()
-plt.style.use('classic')
-plt.rcParams.update({'font.size': 16})
 plt.set_cmap(colormap)
 manager = plt.get_current_fig_manager() # Make full screen
 manager.window.showMaximized()
@@ -73,7 +82,7 @@ norm = matplotlib.colors.Normalize(minn, maxx)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
-cbar.ax.set_title('Predicted cycle life')
+cbar.ax.set_title('Predicted\ncycle life',fontsize=14)
 
 # FUNCTION FOR LOOPING THROUGH BATCHES
 def make_frame(k2):
@@ -100,16 +109,16 @@ def make_frame(k2):
                     c=lifetime_subset.ravel(),zorder=2,s=100)
 
         ## BASELINE
-        if c3 == one_step:
-            plt.scatter(one_step,one_step,c='k',marker='s',zorder=3,s=100)
+        #if c3 == one_step:
+        #    plt.scatter(one_step,one_step,c='k',marker='s',zorder=3,s=100)
 
-        plt.title('CC3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=16)
-        plt.xlabel('CC1')
-        plt.ylabel('CC2')
+        plt.title('CC3=' + str(c3) + ': ' + str(len(policy_subset)) + ' policies',fontsize=12)
+        plt.xlabel('CC1',fontsize=12)
+        plt.ylabel('CC2',fontsize=12)
         plt.xlim((min_policy_bound-margin, max_policy_bound+margin))
         plt.ylim((min_policy_bound-margin, max_policy_bound+margin))
 
-    plt.suptitle('Batch ' + str(k2+1))
+    plt.suptitle('Batch ' + str(k2+1),fontsize=12)
 
     return fig
 

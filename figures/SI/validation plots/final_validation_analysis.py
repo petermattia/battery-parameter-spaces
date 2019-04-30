@@ -12,6 +12,7 @@ from matplotlib import rcParams
 import glob
 import pickle
 from cycler import cycler
+from scipy.stats import kendalltau
 
 plt.close('all')
 
