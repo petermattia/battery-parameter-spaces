@@ -9,9 +9,12 @@ Created on Tue Jan 29 22:09:03 2019
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+from matplotlib.legend_handler import HandlerLine2D
 import glob
 import pickle
 from cycler import cycler
+from scipy.stats import kendalltau
+from scipy.stats import pearsonr
 
 plt.close('all')
 
@@ -91,7 +94,7 @@ c3 = default_colors[2]
 c4 = default_colors[3]
 #custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c4]) +
 #                 cycler(marker=   ['o','o','s','v','o','s','v','^','o']) +
-custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c3]) +
+custom_cycler = (cycler(color=    [c1, c2, c2, c2, c3, c1, c1, c1, c3]) +
                  cycler(marker=   ['o','o','s','v','o','s','v','^','s']) +
                  cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
 
@@ -99,29 +102,48 @@ custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c3]) +
 
 ## Lifetimes plot - raw
 ax1.set_prop_cycle(custom_cycler)
-ax1.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
+ax1.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
 ax1.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),markersize=8)
 #ax2.legend(validation_policies)
 ax1.set_xlim([0,upper_lim])
 ax1.set_ylim([0,upper_lim])
 ax1.set_aspect('equal', 'box')
+ax1.set_xticks(np.arange(0,1500,250))
 ax1.set_yticks(np.arange(0,1500,250)) # consistent with x
 ax1.set_xlabel('Predicted cycle life')
 ax1.set_ylabel('Observed cycle life')
+idx = ~np.isnan(predicted_lifetimes.ravel())
+r = pearsonr(predicted_lifetimes.ravel()[idx],final_lifetimes.ravel()[idx])[0]
+ax1.annotate('r = {:.2}'.format(r),(1330,75),horizontalalignment='right')
 ax1.set_title('a',loc='left', weight='bold')
 
-
 ## Rankings plot
-ax2.plot((-1,11),(-1,11), ls="--", c=".3")
+ax2.plot((-1,11),(-1,11), ls="--", c=".3",label='_nolegend_')
 ax2.set_prop_cycle(custom_cycler)
+p = [None]*9
 for k in range(len(pred_ranks)):
-    ax2.plot(oed_ranks[k],final_ranks[k],markersize=8)
+    p[k], = ax2.plot(oed_ranks[k],final_ranks[k],markersize=8)
 ax2.set_xlim([0,10])
 ax2.set_ylim([0,10])
 ax2.set_aspect('equal', 'box')
 ax2.set_xlabel('Estimated ranking from OED')
 ax2.set_ylabel('True ranking')
+tau = kendalltau(oed_ranks,final_ranks)[0]
+ax2.annotate('τ = {:.2}'.format(tau),(9.5,0.5),horizontalalignment='right')
 ax2.set_title('b',loc='left', weight='bold')
+"""
+ax2.legend([(p[1],p[2],p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])],
+            ['OED Top 3', 'Lit-inspired', 'Misc.'],
+            handler_map={p[1]:HandlerLine2D(numpoints=1), 
+                         p[0]:HandlerLine2D(numpoints=1),
+                         p[8]:HandlerLine2D(numpoints=1)})
+    """
+import matplotlib.patches as mpatches
+p1 = mpatches.Patch(color=c2, label='OED Top 3')
+p2 = mpatches.Patch(color=c1, label='Lit-inspired')
+p3 = mpatches.Patch(color=c3, label='Misc.')
+ax2.legend(handles=[p1,p2,p3])
+ax1.legend(handles=[p1,p2,p3])
 
 # Aditya's plot
 with open('fig4_plot_data.pkl', 'rb') as infile:
