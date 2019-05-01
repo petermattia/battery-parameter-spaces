@@ -55,10 +55,11 @@ def make_frame(k2):
     
     ## PLOT POLICIES
     plt.errorbar(np.arange(224), means[k2],yerr=[means[k2]-lbs[k2],ubs[k2]-means[k2]],fmt='o')
-    plt.xlim((0,224))
+    plt.xlim((-1,225))
+    plt.xticks([],[])
     plt.ylim((min_lifetime-10,max_lifetime+10))
     plt.xlabel('Policy index')
-    plt.ylabel('Upper and lower bounds on lifetime')
+    plt.ylabel('Upper and lower bounds on cycle life')
     plt.title('Before batch ' + str(k2+1))
     plt.tight_layout()
     return fig
