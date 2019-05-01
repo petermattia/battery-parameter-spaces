@@ -13,6 +13,7 @@ import glob
 import pickle
 from cycler import cycler
 from scipy.stats import kendalltau
+from scipy.stats import pearsonr
 
 plt.close('all')
 
@@ -114,101 +115,96 @@ custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c3]) +
                  cycler(marker=   ['o','o','s','v','o','s','v','^','s']) +
                  cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
 
+def init_plot(ax):
+    ax.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
+    ax.set_prop_cycle(custom_cycler)
+
+def format_lifetimes_plot(r):
+    plt.xlim([0,upper_lim])
+    plt.ylim([0,upper_lim])
+    ax0.set_aspect('equal', 'box')
+    ax0.set_xticks([0,750,1500])
+    ax0.set_yticks([0,750,1500])
+    #plt.legend(validation_pol_leg, bbox_to_anchor=(1.01, 0.85))
+    plt.annotate('r = {:.2}'.format(r),(75,1250))
+
+def format_rankings_plot(tau):
+    plt.xlim([0,10])
+    plt.ylim([0,10])
+    ax0.set_yticks([0,5,10]) # consistent with x
+    ax0.set_aspect('equal', 'box')
+    #plt.legend(validation_pol_leg, bbox_to_anchor=(1.01, 0.85))
+    plt.annotate('τ = {:.2}'.format(tau),(0.5,8.33))
+
 ax0 = plt.subplot(3,3,1)
 #### PRED vs OED
 ## Lifetimes plot
-ax0.set_prop_cycle(custom_cycler)
-ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
+init_plot(ax0)
 for k in range(len(pred_means)):
     ax0.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-ax0.set_aspect('equal', 'box')
-#plt.legend(validation_policies)
 plt.xlabel('Mean predicted cycle life',fontsize=FS)
 plt.ylabel('OED-estimated cycle life',fontsize=FS)
 plt.title(chr(97),loc='left', weight='bold',fontsize=FS)
-ax0.set_xticks([0,750,1500])
-ax0.set_yticks([0,750,1500])
+r = pearsonr(pred_means,oed_means)[0]
+format_lifetimes_plot(r)
 
 ## Individual lifetimes plot
 ax0 = plt.subplot(3,3,2)
-ax0.set_prop_cycle(custom_cycler)
-ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
+init_plot(ax0)
 for k in range(len(predicted_lifetimes)):
     predicted_lifetimes_vector = predicted_lifetimes[k][~np.isnan(predicted_lifetimes[k])]
     oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(predicted_lifetimes[k])))
     ax0.plot(predicted_lifetimes_vector, oed_value_vector)
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-ax0.set_aspect('equal', 'box')
-#plt.legend(validation_policies)
 plt.xlabel('Early-predicted cycle life',fontsize=FS)
 plt.ylabel('OED-estimated cycle life',fontsize=FS)
 plt.title(chr(98),loc='left', weight='bold',fontsize=FS)
-ax0.set_xticks([0,750,1500])
-ax0.set_yticks([0,750,1500])
+idx = ~np.isnan(predicted_lifetimes.ravel())
+r = pearsonr(predicted_lifetimes.ravel()[idx],np.repeat(oed_means,5)[idx])[0]
+format_lifetimes_plot(r)
 
 ## Rankings plot
 ax0 = plt.subplot(3,3,3)
-ax0.plot((-1,11),(-1,11), ls="--", c=".3")
-ax0.set_prop_cycle(custom_cycler)
+init_plot(ax0)
 for k in range(len(pred_ranks)):
     plt.plot(pred_ranks[k],oed_ranks[k])
-plt.xlim([0,10])
-plt.ylim([0,10])
-ax0.set_aspect('equal', 'box')
 plt.xlabel('Mean early-predicted ranking',fontsize=FS)
 plt.ylabel('OED-estimated ranking',fontsize=FS)
 plt.title(chr(99),loc='left', weight='bold',fontsize=FS)
-ax0.set_yticks([0,5,10]) # consistent with x
+tau = kendalltau(pred_ranks,oed_ranks)[0]
+format_rankings_plot(tau)
 
 #### PRED vs FINAL
 ## Lifetimes plot
 ax0 = plt.subplot(3,3,4)
-ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
-ax0.set_prop_cycle(custom_cycler)
+init_plot(ax0)
 for k in range(len(pred_means)):
     plt.errorbar(pred_means[k],final_means[k],xerr=pred_sterr[k],yerr=final_sterr[k])
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-ax0.set_aspect('equal', 'box')
-#plt.legend(validation_policies)
 plt.xlabel('Mean early-predicted cycle life',fontsize=FS)
 plt.ylabel('Mean cycle life',fontsize=FS)
 plt.title(chr(100),loc='left', weight='bold',fontsize=FS)
-ax0.set_xticks([0,750,1500])
-ax0.set_yticks([0,750,1500])
+r = pearsonr(pred_means,final_means)[0]
+format_lifetimes_plot(r)
 
 ## Lifetimes plot - raw
 ax0 = plt.subplot(3,3,5)
-ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
-ax0.set_prop_cycle(custom_cycler)
+init_plot(ax0)
 ax0.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
-#plt.legend(validation_policies,loc=9, bbox_to_anchor=(2.1, 0.5))
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-ax0.set_aspect('equal', 'box')
-#ax0.plot([100,100], ax0.get_ylim(), ls="--", c='r')
 plt.xlabel('Early-predicted cycle life',fontsize=FS)
 plt.ylabel('Observed cycle life',fontsize=FS)
 plt.title(chr(101),loc='left', weight='bold',fontsize=FS)
-ax0.set_xticks([0,750,1500])
-ax0.set_yticks([0,750,1500])
+r = pearsonr(predicted_lifetimes.ravel()[idx],final_lifetimes.ravel()[idx])[0]
+format_lifetimes_plot(r)
 
 ## Rankings plot
 ax0 = plt.subplot(3,3,6)
-ax0.plot((-1,11),(-1,11), ls="--", c=".3")
-ax0.set_prop_cycle(custom_cycler)
+init_plot(ax0)
 for k in range(len(pred_ranks)):
     plt.plot(pred_ranks[k],final_ranks[k])
-plt.xlim([0,10])
-plt.ylim([0,10])
-ax0.set_aspect('equal', 'box')
 plt.xlabel('Mean early-predicted ranking',fontsize=FS)
 plt.ylabel('True ranking',fontsize=FS)
 plt.title(chr(102),loc='left', weight='bold',fontsize=FS)
-ax0.set_yticks([0,5,10]) # consistent with x
+tau = kendalltau(pred_ranks,final_ranks)[0]
+format_rankings_plot(tau)
 
 ### Lifetimes plot - raw, bias-corrected
 #fig, ax0 = plt.subplots()
@@ -227,52 +223,40 @@ ax0.set_yticks([0,5,10]) # consistent with x
 #### OED vs FINAL
 ## Lifetimes plot
 ax0 = plt.subplot(3,3,7)
-ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
-ax0.set_prop_cycle(custom_cycler)
+init_plot(ax0)
 for k in range(len(oed_means)):
     plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-#plt.legend(validation_policies)
-ax0.set_aspect('equal', 'box')
 plt.xlabel('OED-estimated cycle life',fontsize=FS)
 plt.ylabel('Mean cycle life',fontsize=FS)
 plt.title(chr(103),loc='left', weight='bold',fontsize=FS)
-ax0.set_xticks([0,750,1500])
-ax0.set_yticks([0,750,1500])
+r = pearsonr(oed_means,final_means)[0]
+format_lifetimes_plot(r)
 
 ## Individual lifetimes plot
 ax0 = plt.subplot(3,3,8)
-ax0.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3')
-ax0.set_prop_cycle(custom_cycler)
+init_plot(ax0)
 for k in range(len(predicted_lifetimes)):
     final_lifetimes_vector = final_lifetimes[k][~np.isnan(final_lifetimes[k])]
     oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(final_lifetimes[k])))
     ax0.plot(oed_value_vector, final_lifetimes_vector)
-plt.xlim([0,upper_lim])
-plt.ylim([0,upper_lim])
-ax0.set_aspect('equal', 'box')
 plt.xlabel('OED-estimated cycle life',fontsize=FS)
 plt.ylabel('Observed cycle life',fontsize=FS)
 plt.title(chr(104),loc='left', weight='bold',fontsize=FS)
-ax0.set_xticks([0,750,1500])
-ax0.set_yticks([0,750,1500])
+r = pearsonr(np.repeat(oed_means,5),final_lifetimes.ravel())[0]
+format_lifetimes_plot(r)
 
 ## Rankings plot
 ax0 = plt.subplot(3,3,9)
-ax0.plot((-1,11),(-1,11), ls="--", c=".3")
-ax0.set_prop_cycle(custom_cycler)
+init_plot(ax0)
 for k in range(len(pred_ranks)):
     plt.plot(oed_ranks[k],final_ranks[k])
-plt.xlim([0,10])
-plt.ylim([0,10])
-ax0.set_aspect('equal', 'box')
 plt.xlabel('OED-estimated ranking',fontsize=FS)
 plt.ylabel('True ranking',fontsize=FS)
 plt.title(chr(105),loc='left', weight='bold',fontsize=FS)
-ax0.set_yticks([0,5,10]) # consistent with x
+tau = kendalltau(oed_ranks,final_ranks)[0]
+format_rankings_plot(tau)
 
-#
+# Adjust and legend
 plt.tight_layout()
 plt.subplots_adjust(right=0.8)
 ax0 = plt.subplot(3,3,5)
