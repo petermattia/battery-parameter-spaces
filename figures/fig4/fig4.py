@@ -9,7 +9,7 @@ Created on Tue Jan 29 22:09:03 2019
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
-from matplotlib.legend_handler import HandlerLine2D
+from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
 import glob
 import pickle
 from cycler import cycler
@@ -131,51 +131,65 @@ ax2.set_ylabel('True ranking')
 tau = kendalltau(oed_ranks,final_ranks)[0]
 ax2.annotate('τ = {:.2}'.format(tau),(9.5,0.5),horizontalalignment='right')
 ax2.set_title('b',loc='left', weight='bold')
-"""
-ax2.legend([(p[1],p[2],p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])],
-            ['OED Top 3', 'Lit-inspired', 'Misc.'],
-            handler_map={p[1]:HandlerLine2D(numpoints=1), 
-                         p[0]:HandlerLine2D(numpoints=1),
-                         p[8]:HandlerLine2D(numpoints=1)})
-    """
-import matplotlib.patches as mpatches
-p1 = mpatches.Patch(color=c2, label='OED Top 3')
-p2 = mpatches.Patch(color=c1, label='Lit-inspired')
-p3 = mpatches.Patch(color=c3, label='Misc.')
-ax2.legend(handles=[p1,p2,p3])
-ax1.legend(handles=[p1,p2,p3])
 
-# Aditya's plot
+l = ax2.legend([(p[1], p[2], p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])], 
+              ['OED Top 3', 'Lit-inspired', 'Other'],
+              numpoints=1, handlelength=2.5, frameon=False,
+               handler_map={tuple: HandlerTuple(ndivide=None)})
+
+l = ax1.legend([(p[1], p[2], p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])], 
+              ['OED Top 3', 'Lit-inspired', 'Other'],
+              numpoints=1, handlelength=2.5, frameon=False,
+               handler_map={tuple: HandlerTuple(ndivide=None)})
+
+# Ablation plot
 with open('fig4_plot_data.pkl', 'rb') as infile:
         data_dict = pickle.load(infile)
-ax3.errorbar(data_dict['random_x'],data_dict['random_y'], \
-             xerr=data_dict['random_xerr'],yerr=data_dict['random_yerr'],\
-	alpha=0.8, \
-	linewidth=2, \
-	marker='o', \
-	linestyle=':', \
-	color=[0,112/256,184/256], \
-	label='Random')
-ax3.errorbar(data_dict['grid_x'],data_dict['grid_y'], \
-             xerr=data_dict['grid_xerr'],yerr=data_dict['grid_yerr'],\
-	alpha=0.8, \
-	linewidth=2, \
-	marker='o', \
-	linestyle=':', \
-    color=[0,167/256,119/256], \
-	label='Grid')
-ax3.errorbar(data_dict['oed_x'],data_dict['oed_y'],yerr=data_dict['oed_yerr'],\
-	linewidth=2, \
-	marker='o', \
-	linestyle=':', \
-    color=[227/256,86/256,0], \
+        
+ax3.set_prop_cycle(plt.style.library['bmh']['axes.prop_cycle'])
+
+ax3.plot([-1300,30000],[np.max(final_means),np.max(final_means)],color='k',linestyle='--',linewidth=3,
+         label='Cycle life of best protocol')
+ax3.errorbar(data_dict['no_oed_no_ep_x'],data_dict['no_oed_no_ep_y'], 
+             xerr=data_dict['no_oed_no_ep_xerr'],yerr=data_dict['no_oed_no_ep_yerr'],
+	alpha=0.8, 
+	linewidth=2, 
+	marker='o', 
+	linestyle=':', 
+	#color=[0,112/256,184/256], 
+	label='Pure explor. w/o early pred')
+ax3.errorbar(data_dict['oed_no_ep_x'],data_dict['oed_no_ep_y'],
+             xerr=data_dict['oed_no_ep_xerr'],yerr=data_dict['oed_no_ep_yerr'],
+    alpha=0.8,
+	linewidth=2,
+	marker='o', 
+	linestyle=':', 
+    #color=[227/256,86/256,0], 
+	label='Closed loop w/o early pred')
+ax3.errorbar(data_dict['no_oed_ep_x'],data_dict['no_oed_ep_y'], 
+             yerr=data_dict['no_oed_ep_yerr'],
+	alpha=0.8, 
+	linewidth=2, 
+	marker='o', 
+	linestyle=':', 
+    #color=[0,167/256,119/256], 
+	label='Closed loop w/o OED')
+ax3.errorbar(data_dict['oed_ep_x'],data_dict['oed_ep_y'],yerr=data_dict['oed_ep_yerr'],
+	alpha=0.8, 
+    linewidth=2, 
+	marker='o', 
+	linestyle=':', 
+    #color=[227/256,86/256,0], 
 	label='Closed loop')
 # plt.xticks(np.arange(max_budget+1))
 ax3.legend(frameon=False)
 
-ax3.set_aspect(aspect=36)
+ax3.set_xlim((-1100, 23500))
+xrange = ax3.get_xlim()[1] - ax3.get_xlim()[0]
+yrange = ax3.get_ylim()[1] - ax3.get_ylim()[0]
+ax3.set_aspect(aspect=xrange/yrange)
 
-ax3.set_xlabel('Experimental time (cycles)')
+ax3.set_xlabel('Experimental time (hours)')
 ax3.set_ylabel('True cycle life of current best policy')
 ax3.set_title('c',loc='left',weight='bold')
 
