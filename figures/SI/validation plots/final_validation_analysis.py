@@ -112,7 +112,7 @@ c2 = default_colors[1]
 c3 = default_colors[2]
 c4 = default_colors[3]
 custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c3]) +
-                 cycler(marker=   ['o','o','s','v','o','s','v','^','s']) +
+                 cycler(marker=   ['v','^','<','>','o','p','h','8','s']) +
                  cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
 
 def init_plot(ax):

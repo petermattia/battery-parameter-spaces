@@ -54,7 +54,7 @@ for k, batch in enumerate(data[:-1]):
 mean_per_change = np.mean(np.abs(per_change),axis=0)
 
 ## find mean change for top K policies
-top_K_pols_list = [5,10,25,50,224]
+top_K_pols_list = [5,10,50,224]
 mean_change_topk = np.zeros((len(top_K_pols_list),n_batches-1))
 mean_per_change_topk = np.zeros((len(top_K_pols_list),n_batches-1))
 
@@ -75,75 +75,75 @@ for k1, n in enumerate(top_K_pols_list):
 
 ## plot
 batches = np.arange(n_batches-1)+1
-plt.subplots(2,3,figsize=(16,10))
-#ax0 = ax[0][0]
-#ax1 = ax[0][1]
-ax0 = plt.subplot2grid((2, 3), (0, 0))  
-ax1 = plt.subplot2grid((2, 3), (0, 1))  
-ax2 = plt.subplot2grid((2, 3), (0, 2))   
-ax3 = plt.subplot2grid((2, 3), (1, 0), colspan=3)
+plt.subplots(3,2,figsize=(9,12))
+
+ax0 = plt.subplot2grid((3, 2), (0, 0))  
+ax1 = plt.subplot2grid((3, 2), (0, 1))  
+ax2 = plt.subplot2grid((3, 2), (1, 0))
+ax3 = plt.subplot2grid((3, 2), (1, 1))
+ax4 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
 
 ax0.set_title('a', loc='left', weight='bold')
 ax1.set_title('b', loc='left', weight='bold')
 ax2.set_title('c', loc='left', weight='bold')
 ax3.set_title('d', loc='left', weight='bold')
+ax4.set_title('e', loc='left', weight='bold')
+
+## plot
+batches = np.arange(n_batches-1)+1
 
 cm = plt.get_cmap('winter')
-ax0.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
 
 legend = ['K = ' + str(k) for k in top_K_pols_list]
 
-# Abs. change
+ax0.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
 for i in range(len(top_K_pols_list)-1):
-    ax0.plot(batches,mean_change_topk[i])
-ax0.plot(batches,mean_change_topk[i+1],'k')
-ax0.set_xlabel('Batch index (change from round n-1 to n)')
-ax0.set_ylabel('Mean abs. change in estimated cycle life\nfor top K protocols (cycles)')
-ax0.set_ylim((0,140))
+    ax0.plot(batches,mean_per_change_topk[i])
+ax0.plot(batches,mean_per_change_topk[i+1],'k')
+ax0.set_xlabel('Batch index (change from round i-1 to i)')
+ax0.set_ylabel('Mean abs. change in estimated\ncycle life for top K policies (%)')
+ax0.set_ylim((0,14))
 ax0.set_xticks(np.arange(1, 5, step=1))
 ax0.legend(legend,frameon=False)
 
-# Tau
+# Abs. change
 ax1.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
 for i in range(len(top_K_pols_list)-1):
-    ax1.plot(batches[1:],tau[i])
-ax1.plot(batches[1:],tau[i+1],'k')
+    ax1.plot(batches,mean_change_topk[i])
+ax1.plot(batches,mean_change_topk[i+1],'k')
 ax1.set_xlabel('Batch index (change from round n-1 to n)')
-ax1.set_ylabel('Change in ranking similarity\nfor top K protocols (Kendall\'s tau)')
-ax1.set_ylim((0,1))
-ax1.set_xticks(np.arange(2, 5, step=1))
+ax1.set_ylabel('Mean abs. change in estimated cycle life\nfor top K protocols (cycles)')
+ax1.set_ylim((0,140))
+ax1.set_xticks(np.arange(1, 5, step=1))
 ax1.legend(legend,frameon=False)
+
+# Tau
+ax2.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
+for i in range(len(top_K_pols_list)-1):
+    ax2.plot(batches[1:],tau[i])
+ax2.plot(batches[1:],tau[i+1],'k')
+ax2.set_xlabel('Batch index (change from round n-1 to n)')
+ax2.set_ylabel('Change in ranking similarity\nfor top K protocols (Kendall\'s tau)')
+ax2.set_ylim((0,1))
+ax2.set_xticks(np.arange(2, 5, step=1))
+ax2.legend(legend,frameon=False)
 
 ## Histogram
 with plt.style.context(('classic')):
-    ax2.hist(data[-1], bins=12, range=(600,1200),color=[0.1,0.4,0.8])
-ax2.set_xlabel('OED-estimated cycle life')
-ax2.set_ylabel('Count')
-ax2.set_xlim([600,1200])
+    ax3.hist(data[-1], bins=12, range=(600,1200),color=[0.1,0.4,0.8])
+ax3.set_xlabel('OED-estimated cycle life')
+ax3.set_ylabel('Count')
+ax3.set_xlim([600,1200])
 
 ## Bounds
 ye = [(mean-lb)/(5*0.5**5),(ub-mean)/(5*0.5**5)]
-ax3.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8])
-ax3.set_xlim((-1,225))
-ax3.set_xlabel('Protocol index')
-ax3.set_ylabel('Upper and lower bounds on cycle life')
-ax3.set_xticks([], [])
+ax4.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8])
+ax4.set_xlim((-1,225))
+ax4.set_xlabel('Protocol index')
+ax4.set_ylabel('Upper and lower bounds on cycle life')
+ax4.set_xticks([], [])
 
 
 plt.tight_layout()
 plt.savefig('misc_results.png', bbox_inches='tight')
 plt.savefig('misc_results.pdf', bbox_inches='tight', format='pdf')
-
-#fig = plt.figure()
-#ax = fig.add_subplot(111)
-#ax.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
-#for i in range(len(top_K_pols_list)-1):
-#    plt.plot(batches,mean_per_change_topk[i])
-#plt.plot(batches,mean_per_change_topk[i+1],'k')
-#plt.xlabel('Batch index (change from round n-1 to n)')
-#plt.ylabel('Mean abs. change in estimated lifetime for top K policies (%)')
-#plt.ylim((0,14))
-#plt.xticks(np.arange(1, 5, step=1))
-#plt.legend(legend)
-#
-#plt.savefig('plots/percent_change_vs_batch.png', bbox_inches='tight')

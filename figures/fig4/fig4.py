@@ -95,7 +95,7 @@ c4 = default_colors[3]
 #custom_cycler = (cycler(color=    [c1 , c2, c2, c2, c3, c1, c1, c1, c4]) +
 #                 cycler(marker=   ['o','o','s','v','o','s','v','^','o']) +
 custom_cycler = (cycler(color=    [c1, c2, c2, c2, c3, c1, c1, c1, c3]) +
-                 cycler(marker=   ['o','o','s','v','o','s','v','^','s']) +
+                 cycler(marker=   ['v','^','<','>','o','p','h','8','s']) +
                  cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
 
 #### OED vs FINAL
@@ -190,7 +190,7 @@ yrange = ax3.get_ylim()[1] - ax3.get_ylim()[0]
 ax3.set_aspect(aspect=xrange/yrange)
 
 ax3.set_xlabel('Experimental time (hours)')
-ax3.set_ylabel('True cycle life of current best policy')
+ax3.set_ylabel('True cycle life of current best protocol')
 ax3.set_title('c',loc='left',weight='bold')
 
 plt.tight_layout()
