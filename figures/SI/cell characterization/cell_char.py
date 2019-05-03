@@ -185,7 +185,7 @@ for k, file in enumerate(file_list):
     ax[2][k].set_ylabel('Overpotential (V)')
     ax[2][k].legend(SOCs,loc='upper left',frameon=False)
     ax[2][k].set_xlim((3.5,8.1))
-    ax[2][k].set_ylim((0.1,0.4))
+    ax[2][k].set_ylim((0.1,0.5))
     for k2 in np.arange(4):
         # V = I*R + V0
         if k2<2:
