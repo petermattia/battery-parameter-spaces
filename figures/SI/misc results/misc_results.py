@@ -137,10 +137,10 @@ ax3.set_xlim([600,1200])
 
 ## Bounds
 ye = [(mean-lb)/(5*0.5**5),(ub-mean)/(5*0.5**5)]
-ax4.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8])
+ax4.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
 ax4.set_xlim((-1,225))
 ax4.set_xlabel('Protocol index')
-ax4.set_ylabel('Upper and lower bounds on cycle life')
+ax4.set_ylabel('True bounds on cycle life\nafter round 4')
 ax4.set_xticks([], [])
 
 
