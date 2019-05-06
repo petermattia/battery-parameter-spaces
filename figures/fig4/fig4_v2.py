@@ -146,10 +146,11 @@ y = np.exp(-0.5*(x-89))
 ax1.plot(x,y, linewidth=LW, color='black')
 
 # Plot protocols
-idx_subset = [2,3,0,5]
+idx_subset = [2,3,5,0]
 valpol_subset = validation_policies[idx_subset,:]
 color_subset  = [c2,c2,c1,c1]
-styles        = ['--',':','--',':']
+styles        = ['-','--','-','--']
+paths         = [0,4,0,4]
 labels        = ['OED 1','OED 2','Lit-inspired 1','Lit-inspired 2']
 
 for k, pol in enumerate(valpol_subset):
@@ -162,15 +163,25 @@ for k, pol in enumerate(valpol_subset):
     s = styles[k]
     l = labels[k]
     
+    CC = [CC2,CC3,CC4]
+    
     # Plot
     ax1.plot([0,20-tol], [CC1,CC1], linewidth=LW, color=c, ls=s,label=l,
-             path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
-    ax1.plot([20+tol,40-tol],[CC2,CC2], linewidth=LW, color=c, ls=s,
-             path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
-    ax1.plot([40+tol,60-tol],[CC3,CC3], linewidth=LW, color=c, ls=s,
-             path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
-    ax1.plot([60+tol,80-tol],[CC4,CC4], linewidth=LW, color=c, ls=s,
-             path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
+             path_effects=[pe.Stroke(linewidth=paths[k], foreground='k'), pe.Normal()])
+    for k2, CCstep in enumerate(CC):
+        ax1.plot([20*(k2+1)+tol,20*(k2+2)-tol],[CCstep,CCstep], linewidth=LW, color=c, ls=s,
+                 path_effects=[pe.Stroke(linewidth=paths[k], foreground='k'), pe.Normal()])
+        
+        """
+        ax1.plot([0,20-tol], [CC1,CC1], linewidth=LW, color=c, ls=s,label=l,
+                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
+        ax1.plot([20+tol,40-tol],[CC2,CC2], linewidth=LW, color=c, ls=s,
+                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
+        ax1.plot([40+tol,60-tol],[CC3,CC3], linewidth=LW, color=c, ls=s,
+                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
+        ax1.plot([60+tol,80-tol],[CC4,CC4], linewidth=LW, color=c, ls=s,
+                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
+        """
 
 ax1.legend(frameon=False)
 
