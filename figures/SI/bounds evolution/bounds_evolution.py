@@ -60,9 +60,10 @@ for k, mean in enumerate(means):
     ax.set_ylim((0,2000))
     ax.set_xlabel('Protocol index')
     if k==0:
-        ax.set_ylabel('Bounds on cycle life\nbefore round 1')
+        ax.set_ylabel('Bounds on cycle life\nbefore round 1, $\mathit{β_{0}σ_{0,i}}$')
     else:
-        ax.set_ylabel('Bounds on cycle life\nafter round {}'.format(k))
+        mathstr = '{β_{'+str(k)+'}σ_{'+str(k)+',i}}'
+        ax.set_ylabel('Bounds on cycle life\nafter round {}, $\mathit'.format(k)+mathstr+'$')
     ax.set_xticks([], [])
     ax.set_title(chr(97+k), loc='left', weight='bold')
 

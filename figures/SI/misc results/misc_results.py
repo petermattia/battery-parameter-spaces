@@ -112,7 +112,7 @@ for i in range(len(top_K_pols_list)-1):
     ax1.plot(batches,mean_change_topk[i])
 ax1.plot(batches,mean_change_topk[i+1],'k')
 ax1.set_xlabel('Batch index (change from round n-1 to n)')
-ax1.set_ylabel('Mean abs. change in estimated cycle life\nfor top K protocols (cycles)')
+ax1.set_ylabel('Mean abs. change in estimated\ncycle lifefor top K protocols (cycles)')
 ax1.set_ylim((0,140))
 ax1.set_xticks(np.arange(1, 5, step=1))
 ax1.legend(legend,frameon=False)
@@ -140,7 +140,7 @@ ye = [(mean-lb)/(5*0.5**5),(ub-mean)/(5*0.5**5)]
 ax4.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
 ax4.set_xlim((-1,225))
 ax4.set_xlabel('Protocol index')
-ax4.set_ylabel('True bounds on cycle life\nafter round 4')
+ax4.set_ylabel('Standard deviation\nof cycle life after round 4, $\mathit{σ_{4,i}}$')
 ax4.set_xticks([], [])
 
 
