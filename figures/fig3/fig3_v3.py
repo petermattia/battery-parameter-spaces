@@ -243,6 +243,21 @@ for k in np.arange(num_batches):
 
 ax7.bar(np.arange(num_batches),pol_reps,tick_label = ['0','1','2','3','4'],\
         align='center',color=[0.1,0.4,0.8])
+
+# Add labels to bar plot
+all_black_labels = True
+if all_black_labels:
+    for k, pol_rep in enumerate(pol_reps):
+        ax7.text(k, pol_rep+2, str(int(pol_rep)), horizontalalignment='center', fontsize=FS)
+        
+    ax7.set_ylim([0,130])
+else:
+    for k, pol_rep in enumerate(pol_reps[:-1]):
+        #ax7.text(k, pol_rep+2, str(int(pol_rep)), horizontalalignment='center', fontsize=FS)
+        ax7.text(k, pol_rep-7, str(int(pol_rep)), 
+                 color='white',horizontalalignment='center', fontsize=FS)
+    ax7.text(4, pol_reps[k+1]+2, str(int(pol_reps[k+1])), horizontalalignment='center', fontsize=FS)
+
 ax7.set_xlabel('Repititions per protocol',fontsize=FS)
 ax7.set_ylabel('Count',fontsize=FS)
 ax7.set_title('c', loc='left', weight='bold')
