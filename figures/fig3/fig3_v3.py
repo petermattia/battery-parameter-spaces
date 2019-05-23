@@ -258,7 +258,7 @@ else:
                  color='white',horizontalalignment='center', fontsize=FS)
     ax7.text(4, pol_reps[k+1]+2, str(int(pol_reps[k+1])), horizontalalignment='center', fontsize=FS)
 
-ax7.set_xlabel('Repititions per protocol',fontsize=FS)
+ax7.set_xlabel('Repetitions per protocol',fontsize=FS)
 ax7.set_ylabel('Count',fontsize=FS)
 ax7.set_title('c', loc='left', weight='bold')
 
