@@ -198,7 +198,7 @@ m.set_array([])
 
 cbar = plt.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('OED-estimated\ncycle life',fontsize=FS)
+cbar.ax.set_title('CL-estimated\ncycle life',fontsize=FS)
 
 
 ## ADD ARROWS
@@ -286,7 +286,7 @@ leglabel = 'ρ = {:.2}'.format(pearsonr(values,mean)[0])
 
 ax8.plot(values,mean,'o',label=leglabel,color=[0.1,0.4,0.8])
 ax8.set_xlabel(xlabel_mod,fontsize=FS)
-ax8.set_ylabel('OED-estimated cycle life after round 4',fontsize=FS)
+ax8.set_ylabel('CL-estimated cycle life after round 4',fontsize=FS)
 ax8.legend(loc='best',markerscale=0,frameon=False)
 ax8.set_title('d', loc='left', weight='bold')
 
