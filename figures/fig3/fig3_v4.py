@@ -105,14 +105,17 @@ for k, batch_idx in enumerate(batches_to_plot):
                        policy_subset[:,2],vmin=min_lifetime,vmax=max_lifetime,\
                        c=lifetime_subset.ravel(),zorder=2,s=point_size)
     
-    ax.set_xlabel('CC1',fontsize=FS), ax.set_xlim([3, 8])
-    ax.set_ylabel('CC2',fontsize=FS), ax.set_ylim([3, 8])
-    ax.set_zlim([3, 8])
+    ax.set_xlim([3, 8]), ax.set_ylim([3, 8]), ax.set_zlim([3, 8])
+    ax.set_xticks([4,6,8]), ax.set_xticklabels([4,6,8])
+    ax.set_yticks([4,6,8]), ax.set_yticklabels([4,6,8])
+    ax.set_zticks([4,6,8]), ax.set_zticklabels([4,6,8])
+    
     if k==0:
-        ax.set_zlabel('CC3',fontsize=FS) 
-    #ax.set_title('Before batch '+str(batch_idx))
-    if k==0:
+        ax.set_xlabel('CC1',fontsize=FS) 
+        ax.set_ylabel('CC2',fontsize=FS)
+        ax.set_zlabel('CC3',fontsize=FS,rotation=90)
         ax.set_title('a', loc='left', weight='bold')
+    #ax.set_title('Before batch '+str(batch_idx))
     
     ax.view_init(elev=el, azim=az)
 
@@ -178,11 +181,11 @@ for k, batch_idx in enumerate(batches_to_plot):
                vmin=min_lifetime, vmax=max_lifetime)
     
     ax.set_xlim([3, 8]), ax.set_ylim([3, 8]), ax.set_zlim([3, 8])
-    
-    ax.set_xlabel('CC1',fontsize=FS)
-    ax.set_ylabel('CC2',fontsize=FS)
+   
     if k == 0:
-        ax.set_zlabel('CC3',fontsize=FS)
+        ax.set_xlabel('CC1',fontsize=FS)
+        ax.set_ylabel('CC2',fontsize=FS)
+        ax.set_zlabel('CC3',fontsize=FS,rotation=90)
     #ax.set_title('Before batch '+str(batch_idx))
     
     
@@ -196,7 +199,7 @@ m.set_array([])
 
 cbar = plt.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('CL-estimated\ncycle life',fontsize=FS)
+cbar.ax.set_title('CLO-estimated\ncycle life',fontsize=FS)
 
 
 ## ADD ARROWS
@@ -284,7 +287,7 @@ leglabel = 'ρ = {:.2}'.format(pearsonr(values,mean)[0])
 
 ax8.plot(values,mean,'o',label=leglabel,color=[0.1,0.4,0.8])
 ax8.set_xlabel(xlabel_mod,fontsize=FS)
-ax8.set_ylabel('CL-estimated cycle life after round 4',fontsize=FS)
+ax8.set_ylabel('CLO-estimated cycle life after round 4',fontsize=FS)
 ax8.legend(loc='best',markerscale=0,frameon=False)
 ax8.set_title('d', loc='left', weight='bold')
 
