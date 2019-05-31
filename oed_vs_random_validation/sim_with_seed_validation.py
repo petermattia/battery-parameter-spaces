@@ -16,18 +16,30 @@ import math
 import random
 import numpy as np
 
-def sim(C1, C2, C3, variance=True, seed=0, early_pred=False):
+def sim(C1, C2, C3, variance=True, seed=0, early_pred=False, apply_correction=False):
 
     random.seed(seed*1000+C1*10+C2*20+C3*30) # deterministic for the same seed
 
     # STANDARD DEVIATION
-    if variance:
-        if early_pred:
-            sigma = math.sqrt(99**2 + 99**2) # Sampling variation + pred error. Estimated from batch9
+    if apply_correction:
+
+        if variance:
+            if early_pred:
+                sigma = math.sqrt(99.2**2+95.8**2) # Sampling variation + pred error. Estimated from batch9
+            else:
+                sigma = 99.2 # Sampling variation. Estimated from batch9
         else:
-            sigma = 99 # Sampling variation. Estimated from batch9
+            sigma = 0
+
     else:
-        sigma = 0
+
+        if variance:
+            if early_pred:
+                sigma = 164 # Sampling variation + pred error. Estimated from batch8
+            else:
+                sigma = 126 # Sampling variation. Estimated from batch8
+        else:
+            sigma = 0
 
     # DETERMINE C4
     C4 = 0.2/(1/6 - (0.2/C1 + 0.2/C2 + 0.2/C3))
