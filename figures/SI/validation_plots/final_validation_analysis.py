@@ -64,6 +64,23 @@ oed_means = oed_means[idx]
 
 ########## CALCULATIONS ##########
 
+## Temp fix
+#final_lifetimes[3][2] = 1056
+#final_means = np.round(np.nanmean(final_lifetimes,axis=1))
+
+# Standardization
+std_mean = np.mean(final_lifetimes)
+std_stdev = np.std(final_lifetimes)
+std_pred = np.nanstd(final_lifetimes - predicted_lifetimes)
+std_sampling = np.mean(np.std(final_lifetimes,axis=1))
+eta = np.sqrt(std_pred**2 + std_sampling**2)
+print('Standardization mean = ' + str(std_mean))
+print('Standardization stdev = '  + str(std_stdev))
+print('sigma_pred = '  + str(std_pred))
+print('sigma_sampling = '  + str(std_sampling))
+print('eta = '  + str(eta))
+print()
+
 # calculate early prediction error
 rmse = np.sqrt(np.nanmean(((predicted_lifetimes - final_lifetimes) ** 2)))
 print('RMSE = ' + str(rmse) + ' cycles')
