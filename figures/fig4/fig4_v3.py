@@ -212,54 +212,54 @@ with open('fig4_plot_data.pkl', 'rb') as infile:
         
 ax4.set_prop_cycle(plt.style.library['bmh']['axes.prop_cycle'])
 
-## Temp fix
-final_lifetimes[3][2] = 1056
-final_means = np.round(np.nanmean(final_lifetimes,axis=1))
-##
+# Dotted line for best protocol
+#ax4.plot([-1300,30000],[np.max(final_means),np.max(final_means)],color='k',linestyle='--',linewidth=3,
+#         label='Cycle life of best protocol')
 
-ax4.plot([-1300,30000],[np.max(final_means),np.max(final_means)],color='k',linestyle='--',linewidth=3,
-         label='Cycle life of best protocol')
-ax4.errorbar(data_dict['no_oed_no_ep_x'],data_dict['no_oed_no_ep_y'], 
-             xerr=data_dict['no_oed_no_ep_xerr'],yerr=data_dict['no_oed_no_ep_yerr'],
+## NOTE: We swtiched the x and y axes
+
+ax4.errorbar(data_dict['no_oed_no_ep_y'],data_dict['no_oed_no_ep_x'], 
+             yerr=data_dict['no_oed_no_ep_xerr'],xerr=data_dict['no_oed_no_ep_yerr'],
 	alpha=0.8, 
 	linewidth=2, 
 	marker='o', 
 	linestyle=':', 
 	#color=[0,112/256,184/256], 
-	label='Pure explor. w/o early pred')
-ax4.errorbar(data_dict['oed_no_ep_x'],data_dict['oed_no_ep_y'],
-             xerr=data_dict['oed_no_ep_xerr'],yerr=data_dict['oed_no_ep_yerr'],
+	label='CLO w/o early pred + random')
+ax4.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
+             yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
     alpha=0.8,
 	linewidth=2,
 	marker='o', 
 	linestyle=':', 
     #color=[227/256,86/256,0], 
-	label='Closed loop w/o early pred')
-ax4.errorbar(data_dict['no_oed_ep_x'],data_dict['no_oed_ep_y'], 
-             yerr=data_dict['no_oed_ep_yerr'],
+	label='CLO w/o early pred + MAB')
+ax4.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
+             xerr=data_dict['no_oed_ep_yerr'],
 	alpha=0.8, 
 	linewidth=2, 
 	marker='o', 
 	linestyle=':', 
     #color=[0,167/256,119/256], 
-	label='Closed loop w/o MAB')
-ax4.errorbar(data_dict['oed_ep_x'],data_dict['oed_ep_y'],yerr=data_dict['oed_ep_yerr'],
+	label='CLO w/ early pred + random')
+ax4.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
 	alpha=0.8, 
     linewidth=2, 
 	marker='o', 
 	linestyle=':', 
     #color=[227/256,86/256,0], 
-	label='Closed loop')
+	label='CLO w/ early pred + MAB')
 # plt.xticks(np.arange(max_budget+1))
 ax4.legend(frameon=False)
 
-ax4.set_xlim((-1100, 23500))
+ax4.set_ylim((-1100, 23500))
+ax4.set_xlim((ax4.get_xlim()[0],ax4.get_xlim()[1]-3))
 xrange = ax4.get_xlim()[1] - ax4.get_xlim()[0]
 yrange = ax4.get_ylim()[1] - ax4.get_ylim()[0]
 ax4.set_aspect(aspect=xrange/yrange)
 
-ax4.set_xlabel('Experimental time (hours)')
-ax4.set_ylabel('True cycle life of current best protocol')
+ax4.set_ylabel('Experimental time (hours)')
+ax4.set_xlabel('True cycle life of current best protocol')
 
 plt.tight_layout()
 plt.savefig('fig4_v3.png',bbox_inches='tight')

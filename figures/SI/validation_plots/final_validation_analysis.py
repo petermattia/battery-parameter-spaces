@@ -64,10 +64,6 @@ oed_means = oed_means[idx]
 
 ########## CALCULATIONS ##########
 
-## Temp fix
-#final_lifetimes[3][2] = 1056
-#final_means = np.round(np.nanmean(final_lifetimes,axis=1))
-
 # Standardization
 std_mean = np.mean(final_lifetimes)
 std_stdev = np.std(final_lifetimes)

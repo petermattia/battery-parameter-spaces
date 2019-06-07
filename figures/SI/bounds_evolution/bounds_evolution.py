@@ -37,6 +37,12 @@ for file in file_list:
         means.append(mean)
         ubs.append(ub)
         lbs.append(lb)
+        
+# Get folder path containing predictions
+file_list = sorted(glob.glob('./batch/[0-9].csv'))
+batch_data = []
+for k, file_path in enumerate(file_list):
+    batch_data.append(np.genfromtxt(file_path, delimiter=','))
 
 ## Find number of batches and policies
 n_batches  = len(means)
