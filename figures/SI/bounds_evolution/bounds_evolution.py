@@ -91,6 +91,9 @@ for k, mean in enumerate(means):
         ax.set_ylabel('Bounds on cycle life\nafter round {}, $\mathit'.format(k)+mathstr+'$')
     ax.set_xticks([], [])
     ax.set_title(chr(97+k), loc='left', weight='bold')
+    
+    if k==4:
+        plt.legend(['Unselected protocols','Selected protocols'],loc='upper right',frameon=False)
 
 plt.tight_layout()
 plt.savefig('bounds_evolution.png', bbox_inches='tight')
