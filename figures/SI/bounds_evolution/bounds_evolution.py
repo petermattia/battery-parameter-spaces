@@ -42,7 +42,14 @@ for file in file_list:
 file_list = sorted(glob.glob('./batch/[0-9].csv'))
 batch_data = []
 for k, file_path in enumerate(file_list):
-    batch_data.append(np.genfromtxt(file_path, delimiter=','))
+    batch = np.genfromtxt(file_path, delimiter=',')
+    # convert protocols to index of param_space
+    indices_batch = []
+    for p in batch:
+        idx = np.where((p[0]==param_space[:,0])*(p[1]==param_space[:,1])*(p[2]==param_space[:,2]))[0][0]
+        indices_batch.append(idx)
+    
+    batch_data.append(indices_batch)
 
 ## Find number of batches and policies
 n_batches  = len(means)
@@ -56,12 +63,24 @@ batches = np.arange(n_batches-1)+1
 
 ## Bounds
 for k, mean in enumerate(means):
-    ub = ubs[k]
-    lb = lbs[k]
-    ye = [(mean-lb)/(5*0.5**5),(ub-mean)/(5*0.5**5)]
+    # indices of selected protocols
+    indices = batch_data[k]
+    unselected_indices = np.setdiff1d(np.arange(224),indices)
     
-    ax = plt.subplot2grid((5, 2), (k, 0), colspan=2) 
-    ax.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
+    # y uncertainties for unselected protocols
+    ub = ubs[k][unselected_indices]
+    lb = lbs[k][unselected_indices]
+    ye = [(mean[unselected_indices]-lb)/(5*0.5**5),(ub-mean[unselected_indices])/(5*0.5**5)]
+    
+    # y uncertainties for selected protocols
+    ub = ubs[k][indices]
+    lb = lbs[k][indices]
+    ye2 = [(mean[indices]-lb)/(5*0.5**5),(ub-mean[indices])/(5*0.5**5)]
+    
+    ax = plt.subplot2grid((5, 2), (k, 0), colspan=2)
+    ax.errorbar(np.arange(224)[unselected_indices],mean[unselected_indices],yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
+    ax.errorbar(np.arange(224)[indices],mean[indices],yerr=ye2,fmt='o',color=[0.8,0.4,0.1],capsize=2)
+    
     ax.set_xlim((-1,225))
     ax.set_ylim((0,2000))
     ax.set_xlabel('Protocol index')
