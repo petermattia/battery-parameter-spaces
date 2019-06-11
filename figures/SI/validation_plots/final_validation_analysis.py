@@ -155,7 +155,7 @@ ax0 = plt.subplot(3,3,1)
 init_plot(ax0)
 for k in range(len(pred_means)):
     ax0.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
-plt.xlabel('Mean predicted cycle life',fontsize=FS)
+plt.xlabel('Mean early-predicted cycle life',fontsize=FS)
 plt.ylabel('CLO-estimated cycle life',fontsize=FS)
 plt.title(chr(97),loc='left', weight='bold',fontsize=FS)
 r = pearsonr(pred_means,oed_means)[0]
