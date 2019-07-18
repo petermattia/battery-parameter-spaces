@@ -16,6 +16,7 @@ import pickle
 from cycler import cycler
 from scipy.stats import kendalltau
 from scipy.stats import pearsonr
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 plt.close('all')
 
@@ -41,6 +42,13 @@ pred_data = np.genfromtxt(filename, delimiter=',',skip_header=1)
 
 validation_policies = pred_data[:,0:3]
 predicted_lifetimes = pred_data[:,3:]
+
+# Load prediction intervals
+filename = 'PI_lo.csv'
+PI_lo = np.genfromtxt(filename, delimiter=',',skip_header=1)[:,3:]
+
+filename = 'PI_hi.csv'
+PI_hi = np.genfromtxt(filename, delimiter=',',skip_header=1)[:,3:]
 
 # Load final results
 filename = 'final_results.csv'
@@ -144,13 +152,23 @@ custom_cycler1 = (cycler(color=   [c1, c1, c1, c1, c1,
                                    '', '', '', '', '',
                                    '', '', '', '', '']))
 
+zorders = [2,2,2,2,2,
+           3,3,3,3,3,
+           3,3,3,3,3,
+           3,3,3,3,3,
+           1,1,1,1,1,
+           2,2,2,2,2,
+           2,2,2,2,2,
+           2,2,2,2,2,
+           1,1,1,1,1]
+    
 ## Q(n)
 ax1.set_prop_cycle(custom_cycler1)
 CL = []
-for row in Qn:
+for k,row in enumerate(Qn):
     idx = np.where(row>0.88)[0]
     CL.append(len(idx)) # sanity check
-    ax1.plot(idx,row[idx],markersize=3)
+    ax1.plot(idx,row[idx],markersize=3,zorder=zorders[k])
 #ax1.legend(validation_policies)
 ax1.set_xlim([0,1500])
 ax1.set_ylim([0.88,1.1])
@@ -161,10 +179,21 @@ ax1.set_yticklabels(['0.90','0.95','1.00','1.05','1.10'])
 
 #### OED vs FINAL
 
+with_errorbars = False
+
 ## Lifetimes plot - raw
 ax2.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
 ax2.set_prop_cycle(custom_cycler)
-ax2.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),markersize=8)
+if with_errorbars:
+    # 95% prediction interval
+    pred_err_lo = predicted_lifetimes - PI_lo
+    pred_err_hi = PI_hi - predicted_lifetimes
+    
+    for protocol in zip(predicted_lifetimes, final_lifetimes, pred_err_lo, pred_err_hi):
+        ax2.errorbar(protocol[0],protocol[1],
+                 xerr=[protocol[2], protocol[3]], markersize=8)
+else:
+    ax2.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),markersize=8)
 #ax3.legend(validation_policies)
 ax2.set_xlim([0,upper_lim])
 ax2.set_ylim([0,upper_lim])
@@ -209,58 +238,73 @@ l = ax1.legend([(p[1], p[2], p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])],
 # Ablation plot
 with open('fig4_plot_data.pkl', 'rb') as infile:
         data_dict = pickle.load(infile)
-        
-ax4.set_prop_cycle(plt.style.library['bmh']['axes.prop_cycle'])
 
-# Dotted line for best protocol
-#ax4.plot([-1300,30000],[np.max(final_means),np.max(final_means)],color='k',linestyle='--',linewidth=3,
-#         label='Cycle life of best protocol')
+def plot_4c(ax):
+    ax.set_prop_cycle(plt.style.library['bmh']['axes.prop_cycle'])
+    
+    # Dotted line for best protocol
+    #ax4.plot([-1300,30000],[np.max(final_means),np.max(final_means)],color='k',linestyle='--',linewidth=3,
+    #         label='Cycle life of best protocol')
+    
+    ## NOTE: We swtiched the x and y axes
+    
+    ax.errorbar(data_dict['no_oed_no_ep_y'],data_dict['no_oed_no_ep_x'], 
+                 yerr=data_dict['no_oed_no_ep_xerr'],xerr=data_dict['no_oed_no_ep_yerr'],
+    	alpha=0.8, 
+    	linewidth=2, 
+    	marker='o', 
+    	linestyle=':',
+        capsize=4,
+    	#color=[0,112/256,184/256], 
+    	label='CLO w/o early pred + random')
+    ax.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
+                 yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
+        alpha=0.8,
+    	linewidth=2,
+    	marker='o', 
+    	linestyle=':', 
+        capsize=4,
+        #color=[227/256,86/256,0], 
+    	label='CLO w/o early pred + MAB')
+    ax.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
+                 xerr=data_dict['no_oed_ep_yerr'],
+    	alpha=0.8, 
+    	linewidth=2, 
+    	marker='o', 
+    	linestyle=':',
+        capsize=4,
+        #color=[0,167/256,119/256], 
+    	label='CLO w/ early pred + random')
+    ax.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
+    	alpha=0.8, 
+        linewidth=2, 
+    	marker='o', 
+    	linestyle=':',
+        capsize=4,
+        #color=[227/256,86/256,0], 
+    	label='CLO w/ early pred + MAB')
+    # plt.xticks(np.arange(max_budget+1))
 
-## NOTE: We swtiched the x and y axes
-
-ax4.errorbar(data_dict['no_oed_no_ep_y'],data_dict['no_oed_no_ep_x'], 
-             yerr=data_dict['no_oed_no_ep_xerr'],xerr=data_dict['no_oed_no_ep_yerr'],
-	alpha=0.8, 
-	linewidth=2, 
-	marker='o', 
-	linestyle=':', 
-	#color=[0,112/256,184/256], 
-	label='CLO w/o early pred + random')
-ax4.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
-             yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
-    alpha=0.8,
-	linewidth=2,
-	marker='o', 
-	linestyle=':', 
-    #color=[227/256,86/256,0], 
-	label='CLO w/o early pred + MAB')
-ax4.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
-             xerr=data_dict['no_oed_ep_yerr'],
-	alpha=0.8, 
-	linewidth=2, 
-	marker='o', 
-	linestyle=':', 
-    #color=[0,167/256,119/256], 
-	label='CLO w/ early pred + random')
-ax4.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
-	alpha=0.8, 
-    linewidth=2, 
-	marker='o', 
-	linestyle=':', 
-    #color=[227/256,86/256,0], 
-	label='CLO w/ early pred + MAB')
-# plt.xticks(np.arange(max_budget+1))
-ax4.legend(frameon=False)
-
-ax4.set_ylim((-1100, 23500))
+plot_4c(ax4)
 ax4.set_xlim((ax4.get_xlim()[0],ax4.get_xlim()[1]-3))
+ax4.set_ylim((-1100, 23500))
 xrange = ax4.get_xlim()[1] - ax4.get_xlim()[0]
 yrange = ax4.get_ylim()[1] - ax4.get_ylim()[0]
 ax4.set_aspect(aspect=xrange/yrange)
 
+ax4.legend(frameon=False)
 ax4.set_ylabel('Experimental time (hours)')
 ax4.set_xlabel('True cycle life of current best protocol')
 
+# Log inset
+ax_ins = inset_axes(ax4, width='100%', height='100%', loc='upper left',
+                    bbox_to_anchor=(0.12,0.28,0.5,0.38), bbox_transform=ax4.transAxes)
+plot_4c(ax_ins)
+ax_ins.set_xlim((825,900))
+ax_ins.set_ylim((100,30000))
+ax_ins.set_yscale('symlog')
+                   
+# tight layout and save
 plt.tight_layout()
 plt.savefig('fig4_v3.png',bbox_inches='tight')
 plt.savefig('fig4_v3.pdf',bbox_inches='tight',format='pdf')

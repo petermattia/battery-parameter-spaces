@@ -70,9 +70,11 @@ ax1.axvspan(60, 80, ymin=0,    ymax=0.48, color='blue', alpha=0.25)
 for k in [2,4,6,8]:
     ax1.plot([k*10,k*10],[0,10], linewidth=2, color='grey', linestyle=':')
     
+# CC labels
+label_height = 9.2
 for k in np.arange(4):
-    ax1.text(10+20*k,9,'CC'+str(k+1), horizontalalignment='center')
-ax1.text(90,9,'CC5-CV1', horizontalalignment='center')
+    ax1.text(10+20*k,label_height,'CC'+str(k+1), horizontalalignment='center')
+ax1.text(90,label_height,'CC5-CV1', horizontalalignment='center')
 
 # Add 1C charging
 ax1.plot([80,89],[1,1], linewidth=LW, color='black')
@@ -80,15 +82,28 @@ x = np.linspace(89,100,100)
 y = np.exp(-0.5*(x-89))
 ax1.plot(x,y, linewidth=LW, color='black')
 
-# Add text box
-ax1.plot([0.1,0.1],[0.25,0.75], linewidth=3, color='grey')
-ax1.plot([80,80],[0.25,0.75], linewidth=2, color='grey')
-ax1.plot([0,80],[0.5,0.5], linewidth=2, color='grey')
+# Charging time text box
+ct_label_height = 0.5
+ax1.plot([0.1,0.1],[ct_label_height-0.25,ct_label_height+0.25], linewidth=3, color='grey')
+ax1.plot([80,80],[ct_label_height-0.25,ct_label_height+0.25], linewidth=2, color='grey')
+ax1.plot([0,80],[ct_label_height,ct_label_height], linewidth=2, color='grey')
 
 textstr = 'Charging time to 80% SOC = 10 minutes'
 props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=2)
-ax1.text(0.4, 0.5/10, textstr,transform=ax1.transAxes, fontsize=FS,
+ax1.text(0.4, ct_label_height/10, textstr,transform=ax1.transAxes, fontsize=FS,
         verticalalignment='center', horizontalalignment='center',bbox=props)
+
+# Voltage label text box
+v_label_height = 8.4
+ax1.plot([0.1,0.1],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
+ax1.plot([99.9,99.9],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
+ax1.plot([0,100],[v_label_height,v_label_height], linewidth=2, color='grey')
+
+textstr = 'Max voltage = 3.6 V'
+props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=2)
+ax1.text(0.5, v_label_height/10, textstr,transform=ax1.transAxes, fontsize=FS,
+        verticalalignment='center', horizontalalignment='center',bbox=props)
+
 ax1.set_title('a', loc='left', weight='bold')
 
 ########## 2b ##########
