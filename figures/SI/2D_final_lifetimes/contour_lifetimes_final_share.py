@@ -118,7 +118,7 @@ m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('CLO-estimated\ncycle life',fontsize=FS)
+cbar.ax.set_title('CLO-estimated\ncycle life\nafter round 4',fontsize=FS)
 
 ## SAVE
 if CROPPED_BOUNDS:

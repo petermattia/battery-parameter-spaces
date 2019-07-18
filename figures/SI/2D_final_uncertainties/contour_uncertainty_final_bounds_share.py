@@ -116,7 +116,7 @@ m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('CLO bounds on\ncycle life',fontsize=FS)
+cbar.ax.set_title('CLO bounds on\ncycle life\nafter round 4',fontsize=FS)
 
 ## SAVE
 plt.savefig('final_bounds_uncertainty_sharexy.png', bbox_inches = 'tight')
