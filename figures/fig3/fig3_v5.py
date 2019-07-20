@@ -38,7 +38,7 @@ axes[2,2].set_axis_off()
 
 fig.set_size_inches(w=15,h=11)
 
-FS = 14
+FS = 16
 LW = 3
 
 rcParams['pdf.fonttype'] = 42

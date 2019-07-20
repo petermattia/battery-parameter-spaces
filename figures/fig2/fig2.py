@@ -95,9 +95,11 @@ ax1.text(0.4, ct_label_height/10, textstr,transform=ax1.transAxes, fontsize=FS,
 
 # Voltage label text box
 v_label_height = 8.4
-ax1.plot([0.1,0.1],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
-ax1.plot([99.9,99.9],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
-ax1.plot([0,100],[v_label_height,v_label_height], linewidth=2, color='grey')
+v_label_lines = False
+if v_label_lines:
+    ax1.plot([0.1,0.1],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
+    ax1.plot([99.9,99.9],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
+    ax1.plot([0,100],[v_label_height,v_label_height], linewidth=2, color='grey')
 
 textstr = 'Max voltage = 3.6 V'
 props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=2)
