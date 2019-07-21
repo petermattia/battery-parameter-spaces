@@ -88,7 +88,7 @@ rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
 
-fig, ax = plt.subplots(2,4,figsize=(16,12),sharey=True)
+fig, ax = plt.subplots(2,4,figsize=(12,9),sharey=True)
 #plt.style.use('classic')
 plt.set_cmap(colormap)
 minn, maxx = min_lifetime, max_lifetime
@@ -111,10 +111,12 @@ for k, gamma in enumerate(sims.gamma.unique()):
     temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=FS)
     
     temp_ax.annotate('γ=' + str(gamma), (15, 0.95), fontsize=FS,horizontalalignment='right')
+    
+    # Add xlabel/xticks
     if int(k/4)==1 or k==3:
-        temp_ax.set_xlabel('β',fontsize=FS)
-    else:
-        plt.setp(temp_ax.get_xticklabels(), visible=False)
+        temp_ax.set_xlabel(r'$\beta_0$',fontsize=FS)
+    #plt.setp(temp_ax.get_xticklabels(), visible=False)
+    
     if k%4 == 0:
         temp_ax.set_ylabel('ε',fontsize=FS)
     

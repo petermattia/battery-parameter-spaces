@@ -45,7 +45,7 @@ for k, channels in enumerate(num_channels):
                  marker='o',
                  linestyle=':',
                  color=u'#7A68A6',
-                 label='Closed loop w/o MAB')
+                 label='CLO w/ random')
     
     temp_ax.errorbar(np.array(num_rounds),
                      oed_performance_means[k][1:],
@@ -55,7 +55,7 @@ for k, channels in enumerate(num_channels):
                      marker='o',
                      linestyle=':',
                      color=u'#467821',
-                     label='Closed loop')
+                     label='CLO w/ MAB')
     
     temp_ax.set_title(chr(k+97), loc='left', weight='bold')
     #temp_ax.set_xlim((0.5, 4.5))
@@ -67,10 +67,15 @@ for k, channels in enumerate(num_channels):
                      fontsize=FS,horizontalalignment='right')
     if k==0:
         temp_ax.legend(loc='upper left',frameon=False)
+        
+    """
     if int(k/3)==1 or k==2:
         temp_ax.set_xlabel('Number of rounds of testing',fontsize=FS)
     else:
         plt.setp(temp_ax.get_xticklabels(), visible=False)
+    """
+    temp_ax.set_xlabel('Number of rounds of testing',fontsize=FS)
+        
     if k%3 == 0:
         temp_ax.set_ylabel('True cycle life of\ncurrent best protocol',fontsize=FS)
         
