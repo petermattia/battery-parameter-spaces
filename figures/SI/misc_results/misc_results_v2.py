@@ -176,7 +176,7 @@ ax5.legend(loc='best',markerscale=0,frameon=False)
 ax6.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
 ax6.set_xlim((-1,225))
 ax6.set_xlabel('Protocol index')
-ax6.set_ylabel('Mean and standard deviation\nof cycle life after round 4, $\mathit{σ_{4,i}}$')
+ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{μ_{4,i}±σ_{4,i}}$')
 ax6.set_xticks([], [])
 
 
