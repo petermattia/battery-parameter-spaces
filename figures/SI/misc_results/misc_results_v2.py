@@ -36,6 +36,12 @@ for file in file_list:
         param_space, ub, lb, mean = pickle.load(infile)
         data.append(mean)
 
+# Get folder path containing predictions
+pred_data = []
+file_list = sorted(glob.glob('./pred/[0-9].csv'))
+for k,file_path in enumerate(file_list):
+    pred_data.append(np.genfromtxt(file_path, delimiter=','))
+
 ## Find number of batches and policies
 n_batches  = len(data)
 n_policies = len(param_space)
@@ -172,13 +178,34 @@ ax5.set_ylabel('Standard deviation of cycle life\nafter round 4, $\mathit{σ_{4,
 ax5.set_xlim([600,1200])
 ax5.legend(loc='best',markerscale=0,frameon=False)
 
-## Bounds
-ax6.errorbar(np.arange(224),mean,yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
-ax6.set_xlim((-1,225))
-ax6.set_xlabel('Protocol index')
+## Bounds, colored by repetitions
+num_batches=5 # 4 batches, plus one
+
+isTested = np.zeros(len(policies))
+
+mean  = mean[top_pol_idx]
+ye[0] = ye[0][top_pol_idx]
+ye[1] = ye[1][top_pol_idx]
+
+for k, pol in enumerate(param_space[top_pol_idx]):
+    for batch in pred_data:
+        for row in batch:
+            if (pol==row[0:3]).all():
+                isTested[k] += 1
+
+colors = [cm(1.*i/num_batches) for i in range(num_batches)]
+colors[0] = (0,0,0,1)
+
+for k in np.arange(num_batches):
+    idx = np.where(isTested==k)
+    ye2 = [ye[0][idx],ye[1][idx]]
+    ax6.errorbar(np.arange(224)[idx],mean[idx],yerr=ye2,fmt='o',color=colors[k],capsize=2)
+    
+ax6.set_xlim((-1,224 ))
+ax6.set_xlabel('Protocol rank after round 4')
 ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{μ_{4,i}±σ_{4,i}}$')
 ax6.set_xticks([], [])
-
+ax6.legend([str(i) for i in np.arange(num_batches)],frameon=False)
 
 plt.tight_layout()
 plt.savefig('misc_results_v2.png', bbox_inches='tight')

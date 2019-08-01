@@ -61,6 +61,8 @@ plt.subplots(3,2,figsize=(9,12))
 
 batches = np.arange(n_batches-1)+1
 
+top_pol_idx = np.argsort(-mean)
+
 ## Bounds
 for k, mean in enumerate(means):
     # indices of selected protocols
