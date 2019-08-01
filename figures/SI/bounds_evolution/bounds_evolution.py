@@ -64,6 +64,7 @@ plt.subplots(3,2,figsize=(9,12))
 
 batches = np.arange(n_batches-1)+1
 
+### CHANGE THIS SETTING FOR TWO VERSIONS OF PLOT
 plot_bounds_with_beta = False
 
 ## Bounds
@@ -79,7 +80,7 @@ for k, mean in enumerate(means):
     lb = lbs[k][top_pol_idx][unselected_indices]
     if plot_bounds_with_beta:
         ye = [(mean[unselected_indices]-lb),(ub-mean[unselected_indices])]
-    else:
+    else: # divide by beta
         ye = [(mean[unselected_indices]-lb)/(5*0.5**k),(ub-mean[unselected_indices])/(5*0.5**k)]
     
     
@@ -88,7 +89,7 @@ for k, mean in enumerate(means):
     lb = lbs[k][top_pol_idx][indices]
     if plot_bounds_with_beta:
         ye2 = [(mean[indices]-lb),(ub-mean[indices])]
-    else:
+    else: # divide by beta
         ye2 = [(mean[indices]-lb)/(5*0.5**k),(ub-mean[indices])/(5*0.5**k)]
     
     ax = plt.subplot2grid((5, 2), (k, 0), colspan=2)
