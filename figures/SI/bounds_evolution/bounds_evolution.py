@@ -37,7 +37,10 @@ for file in file_list:
         means.append(mean)
         ubs.append(ub)
         lbs.append(lb)
-        
+    
+top_pol_idx = np.argsort(-mean)
+param_space = param_space[top_pol_idx]    
+
 # Get folder path containing predictions
 file_list = sorted(glob.glob('./batch/[0-9].csv'))
 batch_data = []
@@ -61,35 +64,53 @@ plt.subplots(3,2,figsize=(9,12))
 
 batches = np.arange(n_batches-1)+1
 
-top_pol_idx = np.argsort(-mean)
+plot_bounds_with_beta = False
 
 ## Bounds
 for k, mean in enumerate(means):
+    mean = mean[top_pol_idx]
+    
     # indices of selected protocols
     indices = batch_data[k]
     unselected_indices = np.setdiff1d(np.arange(224),indices)
     
     # y uncertainties for unselected protocols
-    ub = ubs[k][unselected_indices]
-    lb = lbs[k][unselected_indices]
-    ye = [(mean[unselected_indices]-lb)/(5*0.5**5),(ub-mean[unselected_indices])/(5*0.5**5)]
+    ub = ubs[k][top_pol_idx][unselected_indices]
+    lb = lbs[k][top_pol_idx][unselected_indices]
+    if plot_bounds_with_beta:
+        ye = [(mean[unselected_indices]-lb),(ub-mean[unselected_indices])]
+    else:
+        ye = [(mean[unselected_indices]-lb)/(5*0.5**k),(ub-mean[unselected_indices])/(5*0.5**k)]
+    
     
     # y uncertainties for selected protocols
-    ub = ubs[k][indices]
-    lb = lbs[k][indices]
-    ye2 = [(mean[indices]-lb)/(5*0.5**5),(ub-mean[indices])/(5*0.5**5)]
+    ub = ubs[k][top_pol_idx][indices]
+    lb = lbs[k][top_pol_idx][indices]
+    if plot_bounds_with_beta:
+        ye2 = [(mean[indices]-lb),(ub-mean[indices])]
+    else:
+        ye2 = [(mean[indices]-lb)/(5*0.5**k),(ub-mean[indices])/(5*0.5**k)]
     
     ax = plt.subplot2grid((5, 2), (k, 0), colspan=2)
     ax.errorbar(np.arange(224)[unselected_indices],mean[unselected_indices],yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
     ax.errorbar(np.arange(224)[indices],mean[indices],yerr=ye2,fmt='o',color=[0.8,0.4,0.1],capsize=2)
     
     ax.set_xlim((-1,225))
-    ax.set_ylim((0,2000))
-    ax.set_xlabel('Protocol index')
-    if k==0:
-        ax.set_ylabel('Est. cycle life before\nround 1, $\mathit{μ_{0,i}±β_{0}σ_{0,i}}$')
+    if plot_bounds_with_beta:
+        ax.set_ylim((500,1500))
     else:
-        mathstr = '{μ_{'+str(k)+',i}±β_{'+str(k)+'}σ_{'+str(k)+',i}}'
+        ax.set_ylim((647,1247))
+    ax.set_xlabel('Protocol rank after round 4')
+    if k==0:
+        if plot_bounds_with_beta:
+            ax.set_ylabel('Est. cycle life before\nround 1, $\mathit{μ_{0,i}±β_{0}σ_{0,i}}$')
+        else:
+            ax.set_ylabel('Est. cycle life before\nround 1, $\mathit{μ_{0,i}±σ_{0,i}}$')
+    else:
+        if plot_bounds_with_beta:
+            mathstr = '{μ_{'+str(k)+',i}±β_{'+str(k)+'}σ_{'+str(k)+',i}}'
+        else:
+            mathstr = '{μ_{'+str(k)+',i}±σ_{'+str(k)+',i}}'
         ax.set_ylabel('Est. cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$')
     ax.set_xticks([], [])
     ax.set_title(chr(97+k), loc='left', weight='bold')
@@ -98,5 +119,9 @@ for k, mean in enumerate(means):
         plt.legend(['Unselected protocols','Selected protocols'],loc='upper right',frameon=False)
 
 plt.tight_layout()
-plt.savefig('bounds_evolution.png', bbox_inches='tight')
-plt.savefig('bounds_evolution.pdf', bbox_inches='tight', format='pdf')
+if plot_bounds_with_beta:
+    plt.savefig('bounds_evolution_withbeta.png', bbox_inches='tight')
+    plt.savefig('bounds_evolution_withbeta.pdf', bbox_inches='tight', format='pdf')
+else:
+    plt.savefig('bounds_evolution_nobeta.png', bbox_inches='tight')
+    plt.savefig('bounds_evolution_nobeta.pdf', bbox_inches='tight', format='pdf')
