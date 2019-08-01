@@ -205,7 +205,7 @@ ax6.set_xlim((-1,224 ))
 ax6.set_xlabel('Protocol rank after round 4')
 ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{μ_{4,i}±σ_{4,i}}$')
 ax6.set_xticks([], [])
-ax6.legend([str(i) for i in np.arange(num_batches)],frameon=False)
+ax6.legend([str(i)+" repititions" for i in np.arange(num_batches)],frameon=False)
 
 plt.tight_layout()
 plt.savefig('misc_results_v2.png', bbox_inches='tight')
