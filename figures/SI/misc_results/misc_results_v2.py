@@ -196,16 +196,20 @@ for k, pol in enumerate(param_space[top_pol_idx]):
 colors = [cm(1.*i/num_batches) for i in range(num_batches)]
 colors[0] = (0,0,0,1)
 
+leg = [str(i)+" repititions" for i in np.arange(num_batches)]
+leg[1] = "1 repetition"
+
 for k in np.arange(num_batches):
     idx = np.where(isTested==k)
     ye2 = [ye[0][idx],ye[1][idx]]
-    ax6.errorbar(np.arange(224)[idx],mean[idx],yerr=ye2,fmt='o',color=colors[k],capsize=2)
-    
+    ax6.errorbar(np.arange(224)[idx],mean[idx],yerr=ye2,fmt='o',
+                 color=colors[k],capsize=2, label=leg[k])
+
 ax6.set_xlim((-1,224 ))
 ax6.set_xlabel('Protocol rank after round 4')
 ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{μ_{4,i}±σ_{4,i}}$')
 ax6.set_xticks([], [])
-ax6.legend([str(i)+" repititions" for i in np.arange(num_batches)],frameon=False)
+ax6.legend(frameon=False)
 
 plt.tight_layout()
 plt.savefig('misc_results_v2.png', bbox_inches='tight')
