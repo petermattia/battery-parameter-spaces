@@ -256,7 +256,7 @@ ax5.annotate('τ = {:.2}'.format(tau),(9.5,0.5),horizontalalignment='right')
 
 
 def make_legend(ax):
-    ax.legend([(p[1], p[2], p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])], 
+    ax.legend([(p[1], p[2], p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])],
                   ['CLO top 3', 'Lit-inspired', 'Other'],
                   numpoints=1, handlelength=2.5, frameon=False,
                    handler_map={tuple: HandlerTuple(ndivide=None)})

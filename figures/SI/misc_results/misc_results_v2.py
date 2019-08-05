@@ -112,7 +112,7 @@ for i in range(len(top_K_pols_list)-1):
     ax0.plot(batches,mean_per_change_topk[i])
 ax0.plot(batches,mean_per_change_topk[i+1],'k')
 ax0.set_xlabel('Batch index\n(change from round i-1 to i)')
-ax0.set_ylabel('Mean abs. change in estimated\ncycle life for top K policies (%)')
+ax0.set_ylabel('Mean change in estimated\ncycle life for top K policies (%)')
 ax0.set_ylim((0,14))
 ax0.set_xticks(np.arange(1, 5, step=1))
 ax0.legend(legend,frameon=False)
@@ -122,8 +122,8 @@ ax1.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols
 for i in range(len(top_K_pols_list)-1):
     ax1.plot(batches,mean_change_topk[i])
 ax1.plot(batches,mean_change_topk[i+1],'k')
-ax1.set_xlabel('Batch index\n(change from round n-1 to n)')
-ax1.set_ylabel('Mean abs. change in estimated\ncycle lifefor top K protocols (cycles)')
+ax1.set_xlabel('Batch index\n(change from round i-1 to i)')
+ax1.set_ylabel('Mean change in estimated\ncycle life for top K protocols (cycles)')
 ax1.set_ylim((0,140))
 ax1.set_xticks(np.arange(1, 5, step=1))
 ax1.legend(legend,frameon=False)
@@ -133,7 +133,7 @@ ax2.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols
 for i in range(len(top_K_pols_list)-1):
     ax2.plot(batches[1:],tau[i])
 ax2.plot(batches[1:],tau[i+1],'k')
-ax2.set_xlabel('Batch index\n(change from round n-1 to n)')
+ax2.set_xlabel('Batch index\n(change from round i-1 to i)')
 ax2.set_ylabel('Change in ranking similarity\nfor top K protocols (Kendall\'s tau)')
 ax2.set_ylim((0,1))
 ax2.set_xticks(np.arange(2, 5, step=1))
@@ -159,7 +159,7 @@ policies = np.asarray(policies) # cast to numpy array
 ## MODELS
 values = np.sum(policies**2,axis=1)
     
-xlabel_mod = r'$\mathdefault{sum(I^2)=\Sigma_{i=1}^{4}CC_i}$'
+xlabel_mod = r'$\mathdefault{sum(I^2)=\Sigma_{i=1}^{4}CC_i^2}$'
 leglabel = 'ρ = {:.2}'.format(pearsonr(values,mean)[0])
 
 ax4.plot(values,mean,'o',label=leglabel,color=[0.1,0.4,0.8])
@@ -196,7 +196,7 @@ for k, pol in enumerate(param_space[top_pol_idx]):
 colors = [cm(1.*i/num_batches) for i in range(num_batches)]
 colors[0] = (0,0,0,1)
 
-leg = [str(i)+" repititions" for i in np.arange(num_batches)]
+leg = [str(i)+" repetitions" for i in np.arange(num_batches)]
 leg[1] = "1 repetition"
 
 for k in np.arange(num_batches):
