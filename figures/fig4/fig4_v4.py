@@ -185,10 +185,10 @@ ax1.set_yticklabels(['0.90','0.95','1.00','1.05','1.10'])
 ax2.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
 ax2.set_prop_cycle(custom_cycler)
 for k in range(len(pred_means)):
-    ax2.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
-ax2.set_xlabel('Mean early-predicted cycle life\n(validation)',fontsize=FS)
-ax2.set_ylabel('CLO-estimated cycle life',fontsize=FS)
-r = pearsonr(pred_means,oed_means)[0]
+    ax2.errorbar(oed_means[k],pred_means[k],yerr=pred_sterr[k])
+ax2.set_xlabel('CLO-estimated cycle life',fontsize=FS)
+ax2.set_ylabel('Mean early-predicted cycle life\n(validation)',fontsize=FS)
+r = pearsonr(oed_means,pred_means)[0]
 ax2.set_xlim([0,upper_lim])
 ax2.set_ylim([0,upper_lim])
 ax2.set_aspect('equal', 'box')
@@ -218,8 +218,8 @@ ax3.set_ylim([0,upper_lim])
 ax3.set_aspect('equal', 'box')
 ax3.set_xticks(np.arange(0,1501,250))
 ax3.set_yticks(np.arange(0,1501,250)) # consistent with x
-ax3.set_xlabel('Predicted cycle life (validation)')
-ax3.set_ylabel('Observed cycle life (validation)')
+ax3.set_xlabel('Early-predicted cycle life (validation)')
+ax3.set_ylabel('Final cycle life (validation)')
 idx = ~np.isnan(predicted_lifetimes.ravel())
 r = pearsonr(predicted_lifetimes.ravel()[idx],final_lifetimes.ravel()[idx])[0]
 ax3.annotate('r = {:.2}'.format(r),(1450,75),horizontalalignment='right')
@@ -288,7 +288,7 @@ def plot_4c(ax):
     	linestyle=':',
         capsize=4,
     	#color=[0,112/256,184/256], 
-    	label='CLO w/o early pred + random')
+    	label='CLO w/o early pred\n + random')
     ax.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
                  yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
         alpha=0.8,
@@ -297,7 +297,7 @@ def plot_4c(ax):
     	linestyle=':', 
         capsize=4,
         #color=[227/256,86/256,0], 
-    	label='CLO w/o early pred + MAB')
+    	label='CLO w/o early pred\n + MAB')
     ax.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
                  xerr=data_dict['no_oed_ep_yerr'],
     	alpha=0.8, 
@@ -306,7 +306,7 @@ def plot_4c(ax):
     	linestyle=':',
         capsize=4,
         #color=[0,167/256,119/256], 
-    	label='CLO w/ early pred + random')
+    	label='CLO w/ early pred\n + random')
     ax.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
     	alpha=0.8, 
         linewidth=2, 
@@ -314,7 +314,7 @@ def plot_4c(ax):
     	linestyle=':',
         capsize=4,
         #color=[227/256,86/256,0], 
-    	label='CLO w/ early pred + MAB')
+    	label='CLO w/ early pred\n + MAB')
     # plt.xticks(np.arange(max_budget+1))
 
 plot_4c(ax6)
@@ -329,12 +329,14 @@ ax6.set_ylabel('Experimental time (hours)')
 ax6.set_xlabel('True cycle life of current best protocol')
 
 # Log inset
-ax_ins = inset_axes(ax6, width='100%', height='100%', loc='upper left',
-                    bbox_to_anchor=(0.12,0.28,0.5,0.38), bbox_transform=ax6.transAxes)
-plot_4c(ax_ins)
-ax_ins.set_xlim((825,900))
-ax_ins.set_ylim((100,30000))
-ax_ins.set_yscale('symlog')
+add_inset = False
+if add_inset:
+    ax_ins = inset_axes(ax6, width='100%', height='100%', loc='upper left',
+                        bbox_to_anchor=(0.12,0.28,0.5,0.38), bbox_transform=ax6.transAxes)
+    plot_4c(ax_ins)
+    ax_ins.set_xlim((825,900))
+    ax_ins.set_ylim((100,30000))
+    ax_ins.set_yscale('symlog')
                    
 # tight layout and save
 plt.tight_layout()
