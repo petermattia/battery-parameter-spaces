@@ -170,7 +170,7 @@ CL = []
 for k,row in enumerate(Qn):
     idx = np.where(row>0.88)[0]
     CL.append(len(idx)) # sanity check
-    ax1.plot(idx,row[idx],markersize=3,zorder=zorders[k])
+    ax1.plot(idx,row[idx],markersize=1.5,zorder=zorders[k])
 #ax1.legend(validation_policies)
 ax1.set_xlim([0,1500])
 ax1.set_ylim([0.88,1.1])
@@ -182,8 +182,9 @@ ax1.set_yticklabels(['0.90','0.95','1.00','1.05','1.10'])
 ## b. 
 ax2.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
 ax2.set_prop_cycle(custom_cycler)
+p = [None]*9
 for k in range(len(pred_means)):
-    ax2.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
+    p[k] = ax2.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
 ax2.set_xlabel('Mean early-predicted cycle life\n(validation)',fontsize=FS)
 ax2.set_ylabel('CLO-estimated cycle life',fontsize=FS)
 r = pearsonr(oed_means,pred_means)[0]
@@ -210,7 +211,6 @@ if with_errorbars:
                  xerr=[protocol[2], protocol[3]], markersize=8)
 else:
     ax3.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),markersize=8)
-#ax3.legend(validation_policies)
 ax3.set_xlim([0,upper_lim])
 ax3.set_ylim([0,upper_lim])
 ax3.set_aspect('equal', 'box')
@@ -224,10 +224,13 @@ ax3.annotate('r = {:.2}'.format(r),(1450,75),horizontalalignment='right')
 
 
 ## d
-colors = [c2, c2, c2, c3, c1, c1, c1, c1, c3]
 final_idx = np.argsort(-final_means)
 final_means_sorted = final_means[final_idx]
 final_sterr_sorted = final_sterr[final_idx]
+final_lifetimes_sorted = final_lifetimes[final_idx]
+
+colors = [c2, c2, c2, c3, c1, c1, c1, c1, c3]
+
 for k,i in enumerate(final_idx):
     if k in [0,4,8]: # legend hack
         ax4.barh(9-k,final_means_sorted[k],xerr=final_sterr_sorted[k], 
@@ -238,23 +241,36 @@ for k,i in enumerate(final_idx):
     
     CC1, CC2, CC3 = validation_policies[final_idx][k]
     CC4 = 0.2/(1/6 - (0.2/CC1 + 0.2/CC2 + 0.2/CC3))
-    protocol_life_str = '{0}C-{1}C-{2}C-{3:.3f}C: {4:.0f} cycles'.format(CC1, CC2, CC3, CC4,
+    protocol_life_str = '{0}C-{1}C-{2}C-{3:.3f}C: {4:.0f}'.format(CC1, CC2, CC3, CC4,
            final_means_sorted[k])
-    ax4.annotate(protocol_life_str,(10,9-k),verticalalignment='center')
+    if k==0:
+        ax4.annotate(protocol_life_str+" cycles",(10,9-k),verticalalignment='center')
+    else:
+        ax4.annotate(protocol_life_str,(10,9-k),verticalalignment='center')
+
+
+custom_cycler2 = (cycler(color=   [c2, c2, c2, c3, c1, c1, c1, c1, c3]) +
+                 cycler(marker=   ['>','<','^','o','p','v','h','8','s']) +
+                 cycler(linestyle=['' , '', '', '', '', '', '', '', '']))
+
+ax4.set_prop_cycle(custom_cycler2)
+for k in range(len(final_lifetimes)):
+    final_lifetimes_vector = final_lifetimes_sorted[k][~np.isnan(final_lifetimes_sorted[k])]
+    ax4.plot(final_lifetimes_vector,(9-k)*np.ones((5,1)), markersize=8,
+             markeredgecolor='k',label='_nolegend_',)
+
 ax4.set_xlabel('Final cycle life (validation)',fontsize=FS)
 ax4.set_ylabel('Validation protocol',fontsize=FS)
-ax4.set_xlim([0,1100])
+ax4.set_xlim([0,1200])
 ax4.get_yaxis().set_ticks([])
 ax4.legend(['CLO top 3', 'Lit-inspired', 'Other'],frameon=False)
 
-#for k in range(len(pred_ranks)):
-#    p[k], = ax4.plot(oed_ranks[k],final_ranks[k],markersize=8)
-
 def make_legend(ax):
-    ax.legend([(p[1], p[2], p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])],
-                  ['CLO top 3', 'Lit-inspired', 'Other'],
-                  numpoints=1, handlelength=2.5, frameon=False,
-                   handler_map={tuple: HandlerTuple(ndivide=None)})
+    handles = [(p[1][0], p[2][0], p[3][0]),(p[0][0],p[5][0],p[6][0],p[7][0]),
+               (p[4][0],p[8][0])]
+    ax.legend(handles,['CLO top 3', 'Lit-inspired', 'Other'],
+              numpoints=1, handlelength=2.5, frameon=False,
+              handler_map={tuple: HandlerTuple(ndivide=None)})
 
 make_legend(ax1)
 make_legend(ax2)
