@@ -95,19 +95,17 @@ final_ranks = np.max(final_ranks) - final_ranks + 1 # swap order and use 1-index
 ########## PLOTS ##########
 
 fig = plt.subplots(2,3,figsize=(12,8))
-ax1 = plt.subplot(231)
-ax2 = plt.subplot(232)
-ax3 = plt.subplot(233)
-ax4 = plt.subplot(234)
-ax5 = plt.subplot(235)
-ax6 = plt.subplot(236)
+ax1 = plt.subplot2grid((2, 3), (0, 0))
+ax2 = plt.subplot2grid((2, 3), (0, 1))
+ax3 = plt.subplot2grid((2, 3), (0, 2))
+ax4 = plt.subplot2grid((2, 3), (1, 0), colspan=2)
+ax5 = plt.subplot2grid((2, 3), (1, 2))
 
 ax1.set_title('a',loc='left', weight='bold')
 ax2.set_title('b',loc='left', weight='bold')
 ax3.set_title('c',loc='left', weight='bold')
 ax4.set_title('d',loc='left', weight='bold')
 ax5.set_title('e',loc='left', weight='bold')
-ax6.set_title('f',loc='left', weight='bold')
 
 default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 c1 = default_colors[0]
@@ -185,9 +183,9 @@ ax1.set_yticklabels(['0.90','0.95','1.00','1.05','1.10'])
 ax2.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
 ax2.set_prop_cycle(custom_cycler)
 for k in range(len(pred_means)):
-    ax2.errorbar(oed_means[k],pred_means[k],yerr=pred_sterr[k])
-ax2.set_xlabel('CLO-estimated cycle life',fontsize=FS)
-ax2.set_ylabel('Mean early-predicted cycle life\n(validation)',fontsize=FS)
+    ax2.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
+ax2.set_xlabel('Mean early-predicted cycle life\n(validation)',fontsize=FS)
+ax2.set_ylabel('CLO-estimated cycle life',fontsize=FS)
 r = pearsonr(oed_means,pred_means)[0]
 ax2.set_xlim([0,upper_lim])
 ax2.set_ylim([0,upper_lim])
@@ -226,34 +224,31 @@ ax3.annotate('r = {:.2}'.format(r),(1450,75),horizontalalignment='right')
 
 
 ## d
-ax4.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
-ax4.set_prop_cycle(custom_cycler)
-for k in range(len(oed_means)):
-    ax4.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
-ax4.set_xlabel('CLO-estimated cycle life',fontsize=FS)
-ax4.set_ylabel('Mean cycle life (validation)',fontsize=FS)
-r = pearsonr(oed_means,final_means)[0]
-ax4.set_xlim([0,upper_lim])
-ax4.set_ylim([0,upper_lim])
-ax4.set_aspect('equal', 'box')
-ax4.set_xticks(np.arange(0,1501,250))
-ax4.set_yticks(np.arange(0,1501,250)) # consistent with x
-ax4.annotate('r = {:.2}'.format(r),(1450,75),horizontalalignment='right')
+colors = [c2, c2, c2, c3, c1, c1, c1, c1, c3]
+final_idx = np.argsort(-final_means)
+final_means_sorted = final_means[final_idx]
+final_sterr_sorted = final_sterr[final_idx]
+for k,i in enumerate(final_idx):
+    if k in [0,4,8]: # legend hack
+        ax4.barh(9-k,final_means_sorted[k],xerr=final_sterr_sorted[k], 
+                 color=colors[k])
+    else:
+        ax4.barh(9-k,final_means_sorted[k],xerr=final_sterr_sorted[k],
+                 color=colors[k],label='_nolegend_')
+    
+    CC1, CC2, CC3 = validation_policies[final_idx][k]
+    CC4 = 0.2/(1/6 - (0.2/CC1 + 0.2/CC2 + 0.2/CC3))
+    protocol_life_str = '{0}C-{1}C-{2}C-{3:.3f}C: {4:.0f} cycles'.format(CC1, CC2, CC3, CC4,
+           final_means_sorted[k])
+    ax4.annotate(protocol_life_str,(10,9-k),verticalalignment='center')
+ax4.set_xlabel('Final cycle life (validation)',fontsize=FS)
+ax4.set_ylabel('Validation protocol',fontsize=FS)
+ax4.set_xlim([0,1100])
+ax4.get_yaxis().set_ticks([])
+ax4.legend(['CLO top 3', 'Lit-inspired', 'Other'],frameon=False)
 
-## e. Rankings plot
-ax5.plot((-1,11),(-1,11), ls="--", c=".3",label='_nolegend_')
-ax5.set_prop_cycle(custom_cycler)
-p = [None]*9
-for k in range(len(pred_ranks)):
-    p[k], = ax5.plot(oed_ranks[k],final_ranks[k],markersize=8)
-ax5.set_xlim([0,10])
-ax5.set_ylim([0,10])
-ax5.set_aspect('equal', 'box')
-ax5.set_xlabel('Estimated ranking from CLO')
-ax5.set_ylabel('Final ranking (validation)')
-tau = kendalltau(oed_ranks,final_ranks)[0]
-ax5.annotate('τ = {:.2}'.format(tau),(9.5,0.5),horizontalalignment='right')
-
+#for k in range(len(pred_ranks)):
+#    p[k], = ax4.plot(oed_ranks[k],final_ranks[k],markersize=8)
 
 def make_legend(ax):
     ax.legend([(p[1], p[2], p[3]),(p[0],p[5],p[6],p[7]),(p[4],p[8])],
@@ -264,8 +259,6 @@ def make_legend(ax):
 make_legend(ax1)
 make_legend(ax2)
 make_legend(ax3)
-make_legend(ax4)
-make_legend(ax5)
 
 # Ablation plot
 with open('fig4_plot_data.pkl', 'rb') as infile:
@@ -317,22 +310,22 @@ def plot_4c(ax):
     	label='CLO w/ early pred\n + MAB')
     # plt.xticks(np.arange(max_budget+1))
 
-plot_4c(ax6)
-ax6.set_xlim((ax6.get_xlim()[0],ax6.get_xlim()[1]-3))
-ax6.set_ylim((-1100, 23500))
-xrange = ax6.get_xlim()[1] - ax6.get_xlim()[0]
-yrange = ax6.get_ylim()[1] - ax6.get_ylim()[0]
-ax6.set_aspect(aspect=xrange/yrange)
+plot_4c(ax5)
+ax5.set_xlim((ax5.get_xlim()[0],ax5.get_xlim()[1]-3))
+ax5.set_ylim((-1100, 23500))
+xrange = ax5.get_xlim()[1] - ax5.get_xlim()[0]
+yrange = ax5.get_ylim()[1] - ax5.get_ylim()[0]
+ax5.set_aspect(aspect=xrange/yrange)
 
-ax6.legend(frameon=False)
-ax6.set_ylabel('Experimental time (hours)')
-ax6.set_xlabel('True cycle life of current best protocol')
+ax5.legend(frameon=False)
+ax5.set_ylabel('Experimental time (hours)')
+ax5.set_xlabel('True cycle life of current best protocol')
 
 # Log inset
 add_inset = False
 if add_inset:
-    ax_ins = inset_axes(ax6, width='100%', height='100%', loc='upper left',
-                        bbox_to_anchor=(0.12,0.28,0.5,0.38), bbox_transform=ax6.transAxes)
+    ax_ins = inset_axes(ax5, width='100%', height='100%', loc='upper left',
+                        bbox_to_anchor=(0.12,0.28,0.5,0.38), bbox_transform=ax5.transAxes)
     plot_4c(ax_ins)
     ax_ins.set_xlim((825,900))
     ax_ins.set_ylim((100,30000))
@@ -340,5 +333,5 @@ if add_inset:
                    
 # tight layout and save
 plt.tight_layout()
-plt.savefig('fig4_v4.png',bbox_inches='tight')
-plt.savefig('fig4_v4.pdf',bbox_inches='tight',format='pdf')
+plt.savefig('fig4_v5.png',bbox_inches='tight')
+plt.savefig('fig4_v5.pdf',bbox_inches='tight',format='pdf')
