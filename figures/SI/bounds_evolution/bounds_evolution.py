@@ -39,7 +39,7 @@ for file in file_list:
         lbs.append(lb)
     
 top_pol_idx = np.argsort(-mean)
-param_space = param_space[top_pol_idx]    
+param_space = param_space[top_pol_idx]
 
 # Get folder path containing predictions
 file_list = sorted(glob.glob('./batch/[0-9].csv'))
