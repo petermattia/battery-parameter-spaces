@@ -63,6 +63,7 @@ ax0.annotate("Cell B", xy=(70, 1.054), xytext=(70, 1.0542),  color=c2)
 
 ax0b.text(-0.15, 0.35, '• ' + 'max(' + r'$Q_{discharge}$'+ ')' + r'$ - Q_{discharge,2}$')
 ax0b.text(-0.15, 0.55, '• ' + r'$Q_{discharge,2}$')
+ax0b.text(-0.15, 0.75, 'Capacity features')
 ax0b.axis('off')
 
 ax0c.annotate("", xy=(0.6, 0.25), xytext=(-0.1, 0.4), arrowprops=dict(arrowstyle="->"))
@@ -73,8 +74,8 @@ QV100a = data[0][:,1][~np.isnan(data[0][:,1])]
 QV10a  = data[0][:,2][~np.isnan(data[0][:,2])]
 QV100b = data[1][:,1][~np.isnan(data[1][:,1])]
 QV10b  = data[1][:,2][~np.isnan(data[1][:,2])]
-ax1.plot(QV10a ,np.linspace(3.5,2.0,1000),'k', label='Cycle 10')
-ax1.plot(QV100a,np.linspace(3.5,2.0,1000),'--k',label='Cycle 100')
+ax1.plot(QV10b ,np.linspace(3.5,2.0,1000),'k', label='Cycle 10')
+ax1.plot(QV100b,np.linspace(3.5,2.0,1000),'--k',label='Cycle 100')
 ax1.set_xlabel('Discharge capacity (Ah)')
 ax1.set_ylabel('Voltage (V)')
 ax1.set_ylim((2.0,3.5))
@@ -93,11 +94,12 @@ ax2.annotate("Cell A", xy=(0.002, 3.22), xytext=(0.002, 3.22), color=c1)
 ax2.annotate("Cell B", xy=(-0.02, 3.22), xytext=(-0.02, 3.22), color=c2)
 ax2.set_xlim((-0.045, 0.025))
 
-ax2b.text(-0.15, 0.25, '• ' + 'log' + r'$_{10}(|$'+ 'skew' + r'$(\Delta Q_{100-10}(V))|)$')
-ax2b.text(-0.15, 0.45, '• ' + 'log' + r'$_{10}(|$'+ 'var' + r'$(\Delta Q_{100-10}(V))|)$')
-ax2b.text(-0.15, 0.65, '• ' + 'log' + r'$_{10}(|$'+ 'min' + r'$(\Delta Q_{100-10}(V))|)$')
+ax2b.text(-0.15, 0.15, '• ' + 'log' + r'$_{10}(|$'+ 'skew' + r'$(\Delta Q_{100-10}(V))|)$')
+ax2b.text(-0.15, 0.35, '• ' + 'log' + r'$_{10}(|$'+ 'var' + r'$(\Delta Q_{100-10}(V))|)$')
+ax2b.text(-0.15, 0.55, '• ' + 'log' + r'$_{10}(|$'+ 'min' + r'$(\Delta Q_{100-10}(V))|)$')
+ax2b.text(-0.15, 0.75, 'Voltage features')
 ax2b.axis('off')
-ax2b.annotate("", xy=(0.8, 1.0), xytext=(0.55, 0.8), arrowprops=dict(arrowstyle="->"))
+ax2b.annotate("", xy=(0.9, 1.0), xytext=(0.65, 0.8), arrowprops=dict(arrowstyle="->"))
 
 
 
