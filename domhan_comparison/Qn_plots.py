@@ -41,6 +41,9 @@ if comparison_plots:
 def pow3(x, a, b, c):
     return a/(b-x)**c
 
+def logpow(x, a, b, c):
+    return a*(b/x-1)**c
+
 def pow4(x, a, b, c, d):
     return a/(b-x)**c + d
 
@@ -83,6 +86,10 @@ bounds4=([-np.inf, 750, -np.inf, -np.inf], [np.inf, np.inf, np.inf, np.inf])
 # pow3
 popt,pcov = curve_fit(pow3, x, y, bounds=bounds3)
 plt.plot(x,pow3(x,popt[0],popt[1],popt[2]), label='pow3')
+
+# logpow
+popt,pcov = curve_fit(logpow, x, y, bounds=bounds3)
+plt.plot(x,logpow(x,popt[0],popt[1],popt[2]), label='logpow')
 
 # pow4
 popt,pcov = curve_fit(pow4, x, y, bounds=bounds4)
