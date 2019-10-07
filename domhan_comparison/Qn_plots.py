@@ -68,7 +68,7 @@ def exp2(x, a, b, c, d): ## not in Domhan
 def pow2(x, a, b, c): ## not in Domhan
     return a * x**b + c
 
-
+# Sample dataset
 y = 1.1 - valid[2,:][~np.isnan(valid[2,:])]
 x = np.arange(len(y))+1
 
@@ -104,7 +104,7 @@ popt,pcov = curve_fit(exp3, x, y, bounds=bounds3)
 plt.plot(x,exp3(x,popt[0],popt[1],popt[2]), label='exp3')
 
 # Janoschek
-popt,pcov = curve_fit(Janoschek, x, y, bounds=bounds4, maxfev=5000)
+popt,pcov = curve_fit(Janoschek, x, y, bounds=bounds4, maxfev=5000) # had trouble converging
 plt.plot(x,Janoschek(x,popt[0],popt[1],popt[2],popt[3]), label='Janoschek')
 
 # ilog2
@@ -121,7 +121,7 @@ plt.plot(x,exp2(x,popt[0],popt[1],popt[2],popt[3]), label='exp2')
 
 # pow2
 bounds_pow=([-np.inf, 0, -np.inf], [np.inf, np.inf, np.inf])
-popt,pcov = curve_fit(pow2, x, y, bounds=bounds_pow, maxfev=5000)
+popt,pcov = curve_fit(pow2, x, y, bounds=bounds_pow, maxfev=5000) # had trouble converging
 plt.plot(x,pow2(x,popt[0],popt[1],popt[2]), label='pow2')
 
 plt.legend(frameon=False)
