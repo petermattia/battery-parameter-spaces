@@ -23,6 +23,7 @@ if comparison_plots:
     # Compare datasets
     plt.plot(train.T,color='tab:blue')
     plt.plot(valid.T,color='tab:red')
+    plt.show()
 
 # Filter data <0.88
 train[np.where(train<0.88)] = np.NaN
@@ -33,6 +34,7 @@ if comparison_plots:
     plt.figure()
     plt.plot(train.T,color='tab:blue')
     plt.plot(valid.T,color='tab:red')
+    plt.show()
 
 # Test functional forms
 # From Fig 1 of Domhan et al: 
@@ -69,8 +71,13 @@ def pow2(x, a, b, c): ## not in Domhan
     return a * x**b + c
 
 # Sample dataset
-y = 1.1 - valid[2,:][~np.isnan(valid[2,:])]
+y_v = 1.1 - valid[2,:][~np.isnan(valid[2,:])]
+x_v = np.arange(len(y_v))+1
+
+y = 1.1 - train[2,:][~np.isnan(train[2,:])]
 x = np.arange(len(y))+1
+# import pdb
+# pdb.set_trace()
 
 plt.figure()
 plt.plot(x, y, 'ok', label='data')
@@ -79,9 +86,9 @@ plt.xlabel('Cycle number')
 plt.ylabel('1.1 Ah - capacity (Ah)')
 
 # Pre-set bounds for functions to help convergence. Primarily set lower bounds on 'b'
-bounds2=([-np.inf, 750], [np.inf, np.inf])
-bounds3=([-np.inf, 750, -np.inf], [np.inf, np.inf, np.inf])
-bounds4=([-np.inf, 750, -np.inf, -np.inf], [np.inf, np.inf, np.inf, np.inf])
+bounds2=([-np.inf, 1075], [np.inf, np.inf])
+bounds3=([-np.inf, 1075, -np.inf], [np.inf, np.inf, np.inf])
+bounds4=([-np.inf, 1075, -np.inf, -np.inf], [np.inf, np.inf, np.inf, np.inf])
 
 # pow3
 popt,pcov = curve_fit(pow3, x, y, bounds=bounds3)
@@ -89,6 +96,7 @@ plt.plot(x,pow3(x,popt[0],popt[1],popt[2]), label='pow3')
 
 # logpow
 popt,pcov = curve_fit(logpow, x, y, bounds=bounds3)
+print(popt[0],popt[1],popt[2])
 plt.plot(x,logpow(x,popt[0],popt[1],popt[2]), label='logpow')
 
 # pow4
