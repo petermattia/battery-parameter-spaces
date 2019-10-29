@@ -106,60 +106,69 @@ ax2b.annotate("", xy=(0.9, 1.0), xytext=(0.65, 0.8), arrowprops=dict(arrowstyle=
 ### GP plots, adapted from:
 # https://scikit-learn.org/0.17/auto_examples/gaussian_process/plot_gp_regression.html
 
-# GP before
-
-
 # Observations and noise
-def plot_GP(n_points, ax):
+def plot_GP(X, ax, label_align):
     def f(x):
         return 10 * x * np.sin(x) + 1200
     
-    np.random.seed(0)
-    X = np.linspace(0.1, 9.9, n_points)
     #X = np.concatenate((np.linspace(0.1, 4.9, 5),np.linspace(5.0, 9.9, 10)))
     X = np.atleast_2d(X).T
     y = f(X).ravel()
-    dy = 10 + 10.0 * np.random.random(y.shape)
+    dy = 20.0 * np.random.random(y.shape)
     noise = np.random.normal(0, dy)
-    #y += noise
+    y += noise
     
     # Mesh the input space for evaluations of the real function, the prediction and
     # its MSE
     x = np.atleast_2d(np.linspace(0, 10, 1000)).T
     
     # Instanciate a Gaussian Process model
-    gp = GaussianProcessRegressor(normalize_y=True, alpha=1e-5)
+    gp = GaussianProcessRegressor(normalize_y=True)
     
     # Fit to data using Maximum Likelihood Estimation of the parameters
     gp.fit(X, y)
     
     # Make the prediction on the meshed x-axis
     y_pred, std = gp.predict(x, return_std=True)
-    #std *= 100
+    std *= 100
     
     mse = np.mean((y_pred-f(X))**2)
     print(mse)
     
     # Plot the function, the prediction and the 95% confidence interval based on
     # the MSE
-    ax.plot(x, f(x), 'r:', label=u'$f(x)$')
-    ax.errorbar(X.ravel(), y, dy, fmt='r.', markersize=10, label=u'Observations')
-    ax.plot(x, y_pred, 'b-', label=u'Prediction')
+    ax.plot(x, f(x), ':', color='tab:red', label=u'$f(x)$')
+    ax.errorbar(X.ravel(), y, dy, fmt='.', color='tab:purple', markersize=10,
+                label=u'Observed data')
+    ax.plot(x, y_pred, '-', color='tab:blue', label=u'Prediction')
     ax.fill(np.concatenate([x, x[::-1]]),
             np.concatenate([y_pred - 1.9600 * std,
                            (y_pred + 1.9600 * std)[::-1]]),
-            alpha=.5, fc='b', ec='None', label='95% confidence interval')
+            alpha=.5, fc='tab:blue', ec='None')
     
-    ax.set_xlabel('Charging protocol paramter (e.g. CC1)',fontsize=FS)
+    ub = y_pred + 1.9600 * std
+    ax.plot(x, ub, '--', label='Upper confidence bound\n(UCB)')
+    max_acq_idx = np.argmax(ub)
+    
+    ax.plot(x[max_acq_idx], ub[max_acq_idx],'v')
+    ax.annotate('max(UCB)', (x[max_acq_idx], ub[max_acq_idx]),
+                xytext=(0, 5),textcoords="offset points",ha=label_align)
+    
+    ax.set_xlabel(r'Charging protocol parameter, $x$ (e.g. CC1)',fontsize=FS)
     ax.set_ylabel('Cycle life (cycles)',fontsize=FS)
-    ax.set_ylim((1000,1601))
-    ax.legend(frameon=False)
-
+    ax.set_xlim((0,10))
+    ax.set_ylim((1000,1751))
+    ax.legend(ncol = 2, frameon=False)
+    
+    return x[max_acq_idx] #return new point
 
 # GP before
-plot_GP(5,ax4)
+np.random.seed(3)
+X = 10*np.random.random(3)
+new_x = plot_GP(X,ax4, 'center')
 # GP after
-plot_GP(20,ax5)
+X = np.append(X, new_x)
+new_x = plot_GP(X,ax5, 'left')
 
 plt.tight_layout()
 
