@@ -63,7 +63,7 @@ ax0.annotate("Cell B", xy=(70, 1.054), xytext=(70, 1.0542),  color=c2)
 
 ax0b.text(-0.15, 0.35, '• ' + 'max(' + r'$Q_{discharge}$'+ ')' + r'$ - Q_{discharge,2}$')
 ax0b.text(-0.15, 0.55, '• ' + r'$Q_{discharge,2}$')
-ax0b.text(-0.15, 0.75, 'Capacity features')
+ax0b.text(-0.15, 0.70, 'Capacity features\n(from first 100 cycles)')
 ax0b.axis('off')
 
 ax0c.annotate("", xy=(0.6, 0.25), xytext=(-0.1, 0.4), arrowprops=dict(arrowstyle="->"))
@@ -97,7 +97,7 @@ ax2.set_xlim((-0.045, 0.025))
 ax2b.text(-0.15, 0.15, '• ' + 'log' + r'$_{10}(|$'+ 'skew' + r'$(\Delta Q_{100-10}(V))|)$')
 ax2b.text(-0.15, 0.35, '• ' + 'log' + r'$_{10}(|$'+ 'var' + r'$(\Delta Q_{100-10}(V))|)$')
 ax2b.text(-0.15, 0.55, '• ' + 'log' + r'$_{10}(|$'+ 'min' + r'$(\Delta Q_{100-10}(V))|)$')
-ax2b.text(-0.15, 0.75, 'Voltage features')
+ax2b.text(-0.15, 0.70, 'Voltage features\n(from first 100 cycles)')
 ax2b.axis('off')
 ax2b.annotate("", xy=(0.9, 1.0), xytext=(0.65, 0.8), arrowprops=dict(arrowstyle="->"))
 
@@ -157,10 +157,21 @@ def plot_GP(X, ax, label_align):
     ax.set_xlabel(r'Charging protocol parameter, $x$ (e.g. CC1)',fontsize=FS)
     ax.set_ylabel('Cycle life (cycles)',fontsize=FS)
     ax.set_xlim((0,10))
-    ax.set_ylim((1000,1751))
-    ax.legend(ncol = 2, frameon=False)
+    ax.set_ylim((1000,1801))
+    leg = ax.legend(ncol = 2, frameon=False, loc='upper center')
     
-    return x[max_acq_idx] #return new point
+    # Move legend up
+    # https://stackoverflow.com/questions/23238041/move-and-resize-legends-box-in-matplotlib
+    
+    bb = leg.get_bbox_to_anchor().inverse_transformed(ax.transAxes)
+    
+    # Change to location of the legend. 
+    yOffset = 0.04
+    bb.y0 += yOffset
+    bb.y1 += yOffset
+    leg.set_bbox_to_anchor(bb, transform = ax.transAxes)
+    
+    return x[max_acq_idx][0] #return new point
 
 # GP before
 np.random.seed(3)
@@ -168,7 +179,11 @@ X = 10*np.random.random(3)
 new_x = plot_GP(X,ax4, 'center')
 # GP after
 X = np.append(X, new_x)
-new_x = plot_GP(X,ax5, 'left')
+new_x2 = plot_GP(X,ax5, 'left')
+ax5.plot(new_x, 1300,'kv')
+ax5.annotate('new\ndata', (new_x, 1407), 
+             xytext=(0, 5),textcoords="offset points",ha='center')
+ax5.plot((new_x, new_x), (1300, 1407),'k-')
 
 plt.tight_layout()
 
@@ -177,14 +192,17 @@ ax3 = plt.axes([0.75, 0.65, 0.2, 0.25])
 ax3.set_prop_cycle(plt.style.library['bmh']['axes.prop_cycle'])
 idx1 = np.where(data[0][:,0]<0.88)[0][0]
 idx2 = np.where(data[1][:,0]<0.88)[0][0]
-ax3.plot(data[0][:idx1,0], label='Cell A')
-ax3.plot(data[1][:idx2,0], label='Cell B')
+ax3.plot(data[0][:idx1,0], ls=':', label='Cell A')
+ax3.plot(data[1][:idx2,0], ls=':', label='Cell B')
+ax3.plot(data[0][:100,0], ls='-', color=c1)
+ax3.plot(data[1][:100,0], ls='-', color=c2)
 ax3.set_xlim((0,1100))
-ax3.axhline(0.88,color='tab:red',ls=':')
+ax3.set_ylim((0.88,1.06))
+#ax3.axhline(0.88,color='k',ls=':')
 ax3.set_xlabel('Cycle number')
 ax3.set_ylabel('Discharge capacity (Ah)')
 ax3.annotate("Cell A\n{} cycles".format(idx1), xy=(idx1-500, 0.885), xytext=(idx1-500, 0.885), color=c1)
-ax3.annotate("Cell B\n{} cycles".format(idx2), xy=(idx2-500, 0.885), xytext=(idx2-500, 0.885), color=c2)
+ax3.annotate("Cell B\n{} cycles".format(idx2), xy=(idx2-500, 0.885), xytext=(idx2-450, 0.885), color=c2)
 
 plt.savefig('ML_methods.png', bbox_inches='tight')
 plt.savefig('ML_methods.pdf', bbox_inches='tight', format='pdf')
