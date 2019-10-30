@@ -15,6 +15,7 @@ from cycler import cycler
 from scipy.stats import kendalltau
 from scipy.stats import pearsonr
 import pandas as pd
+from sklearn.metrics import mean_squared_error
 
 plt.close('all')
 
@@ -28,9 +29,16 @@ rcParams['axes.labelsize'] = FS
 rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
-upper_lim = 1500
+upper_lim = 2001
 
 ########## LOAD DATA ##########
+# Load severson data
+lifetime_filename = 'y_pred_Severson_train.csv'
+Severson_train_preds = np.genfromtxt(lifetime_filename, delimiter=',')
+
+lifetime_filename = 'y_pred_Severson_test1.csv'
+Severson_test1_preds = np.genfromtxt(lifetime_filename, delimiter=',')
+
 # Load predictions
 lifetime_filename = 'y_test1.csv'
 lifetimes = pd.read_csv(lifetime_filename, sep=',', header=None).to_numpy()
@@ -62,14 +70,17 @@ klein_heldout_preds = np.array([float(i) for i in klein_heldout_preds.split()])
 klein_heldout_true = '1852 2237 1709  636 1054  880  862  691  534 1014  854  842  917  876 757  703  648  625 1051  651  599  335  480  561  458  485  487  502 513  495  471  509  481  519  499  535  465  499  466  457  429  713'
 klein_heldout_true = np.array([float(i) for i in klein_heldout_true.split()])
 
-def format_lifetimes_plot(r):
+def rmse(y_actual, y_predicted):
+    return np.sqrt(mean_squared_error(y_actual, y_predicted))
+
+def format_lifetimes_plot():
     plt.xlim([0,upper_lim])
     plt.ylim([0,upper_lim])
     ax0.set_aspect('equal', 'box')
     ax0.set_xticks([0,750,1500])
     ax0.set_yticks([0,750,1500])
     #plt.legend(validation_pol_leg, bbox_to_anchor=(1.01, 0.85))
-    plt.annotate('r = {:.2}'.format(r),(75,1250))
+    #plt.annotate('r = {:.2}'.format(r),(75,1250))
 
 def init_plot(ax):
     ax.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
@@ -78,21 +89,35 @@ def init_plot(ax):
 fig = plt.figure(figsize=(11,10))
 ax0 = plt.subplot(1,2,1)
 init_plot(ax0)
-plt.scatter(klein_train_true, klein_train_preds)
+
+rmse_klein = rmse(klein_train_preds, klein_train_true)
+rmse_severson = rmse(Severson_train_preds, klein_train_true)
+
+plt.scatter(klein_train_true, klein_train_preds,
+            label='Klein et al, rmse = {:.0f} cycles'.format(rmse_klein))
+plt.scatter(klein_train_true, Severson_train_preds, marker='s',
+            label='Severson et al, rmse = {:.0f} cycles'.format(rmse_severson))
 plt.xlabel('True final cycle lives', fontsize=FS)
 plt.ylabel('Predicted final cycle lives', fontsize=FS)
 plt.title('Train Set', loc='left', weight='bold', fontsize=FS)
-r = pearsonr(klein_train_preds, klein_train_true)[0]
-format_lifetimes_plot(r)
+plt.legend(frameon=False)
+format_lifetimes_plot()
+
+rmse_klein = rmse(klein_heldout_true, klein_heldout_preds)
+rmse_severson = rmse(klein_heldout_true, Severson_test1_preds)
 
 ax0 = plt.subplot(1,2,2)
 init_plot(ax0)
-plt.scatter(klein_heldout_true, klein_heldout_preds)
+plt.scatter(klein_heldout_true, klein_heldout_preds,
+            label='Klein et al, rmse = {:.0f} cycles'.format(rmse_klein))
+plt.scatter(klein_heldout_true, Severson_test1_preds, marker='s',
+            label='Severson et al, rmse = {:.0f} cycles'.format(rmse_severson))
 plt.xlabel('True final cycle lives', fontsize=FS)
 plt.ylabel('Predicted final cycle lives', fontsize=FS)
 plt.title('Held-Out Set', loc='left', weight='bold', fontsize=FS)
-r = pearsonr(klein_heldout_preds, klein_heldout_true)[0]
-format_lifetimes_plot(r)
+plt.legend(frameon=False)
+#r = pearsonr(klein_heldout_preds, klein_heldout_true)[0]
+format_lifetimes_plot()
 
 
 plt.tight_layout()
