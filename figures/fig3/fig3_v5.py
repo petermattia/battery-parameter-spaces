@@ -9,6 +9,8 @@ For manual axis sizing: See lines:
     - ax = fig.add_axes([0.27+0.3*(k-1),0.55,0.4,0.4],projection='3d')
     - 
 """
+import glob
+import pickle
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,10 +23,20 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import seaborn as sns
 import matplotlib.patheffects as pe
 
-import glob
-import pickle
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+FS = 7
+LW = 0.5
+figsize = (MAX_WIDTH, MAX_WIDTH)
 
-fig, axes = plt.subplots(3,3,figsize=(16,16))
+rcParams['pdf.fonttype'] = 42
+rcParams['ps.fonttype'] = 42
+rcParams['font.size'] = FS
+rcParams['axes.labelsize'] = FS
+rcParams['xtick.labelsize'] = FS
+rcParams['ytick.labelsize'] = FS
+rcParams['font.sans-serif'] = ['Arial']
+
+fig, axes = plt.subplots(3,3,figsize=figsize)
 axes[0,0].set_axis_off()
 axes[0,1].set_axis_off()
 axes[0,2].set_axis_off()
@@ -35,31 +47,16 @@ axes[2,0].set_axis_off()
 axes[2,1].set_axis_off()
 axes[2,2].set_axis_off()
 
-
-fig.set_size_inches(w=15,h=11)
-
-FS = 16
-LW = 3
-
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
-
-
 def text(x1,y1,x2,y2,k):
     ax.annotate("Round "+str(k+1), xy=(x2, y1), xycoords='figure fraction',
                 xytext=(x1, y1), textcoords='figure fraction',
-                size=20, va="center", ha="center",
+                size=FS, va="center", ha="center",
                 bbox=dict(boxstyle="round", fc="w"))
 
 def arrow(x1,y1,x2,y2):
     ax.annotate("", xy=(x2, y1), xycoords='figure fraction',
                 xytext=(x1, y1), textcoords='figure fraction',
-                size=20, va="center", ha="center",
+                size=10, va="center", ha="center",
                 bbox=dict(boxstyle="round4", fc="w"),
                 arrowprops=dict(arrowstyle="-|>",
                                 connectionstyle="arc3,rad=-1",
@@ -71,7 +68,7 @@ batches_to_plot = [0,1,2,3]
 
 colormap = 'winter_r'
 el, az = 30, 240
-point_size = 50
+point_size = 25
 num_policies = 224
 seed = 0
 ##############################################################################
@@ -90,10 +87,10 @@ for k,file_path in enumerate(file_list):
 ## MAKE SUBPLOTS
 for k, batch_idx in enumerate(batches_to_plot):
     with sns.axes_style('white'):
-        ax = fig.add_axes([0.26+0.21*(k-1),0.82,0.29,0.29],projection='3d')
+        ax = fig.add_axes([0.26+0.21*(k-1),0.77,0.29/1.4,0.29/1.4],projection='3d')
         #ax = fig.add_subplot(1, len(batches_to_plot), k+1, projection='3d')
         #ax = plt.subplot(2, len(batches_to_plot), k+1, projection='3d')
-    ax.set_aspect('equal')
+    #ax.set_aspect('equal')
     
     ## PLOT POLICIES
     policy_subset = data[k][:,0:4]
@@ -114,17 +111,16 @@ for k, batch_idx in enumerate(batches_to_plot):
         ax.set_xlabel('CC1',fontsize=FS) 
         ax.set_ylabel('CC2',fontsize=FS)
         ax.set_zlabel('CC3',fontsize=FS,rotation=90)
-        ax.set_title('a', loc='left', weight='bold')
+        ax.set_title('a', loc='left', weight='bold', fontsize=8)
     #ax.set_title('Before batch '+str(batch_idx))
     
     ax.view_init(elev=el, azim=az)
-
 
 # ADD COLORBAR
 #plt.tight_layout()
 #plt.subplots_adjust(left=0.02,right=0.92)
 
-cbar_ax = fig.add_axes([0.92, 0.82, 0.02, 0.3]) # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.92, 0.75, 0.02, 0.22]) # [left, bottom, width, height]
 norm = matplotlib.colors.Normalize(min_lifetime, max_lifetime)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
@@ -141,7 +137,7 @@ batches_to_plot = [0,1,2,3,4]
 
 colormap = 'plasma_r'
 el, az = 30, 240
-point_size = 50
+point_size = 25
 seed = 0
 ##############################################################################
 
@@ -163,12 +159,12 @@ for file in file_list:
 for k, batch_idx in enumerate(batches_to_plot):
     with sns.axes_style('white'):
         if k==0:
-            ax = fig.add_axes([0.05,0.48,0.24,0.24],projection='3d')
-            ax.set_title('b', loc='left', weight='bold')
+            ax = fig.add_axes([0.05,0.48,0.24/1.4,0.24/1.4],projection='3d')
+            ax.set_title('b', loc='left', weight='bold', fontsize=8)
         else:
-            ax = fig.add_axes([0.05+0.165*k,0.48,0.24,0.24],projection='3d')
+            ax = fig.add_axes([0.05+0.165*k,0.48,0.24/1.4,0.24/1.4],projection='3d')
         #ax = plt.subplot(2, len(batches_to_plot), k+1, projection='3d')
-    ax.set_aspect('equal')
+    #ax.set_aspect('equal')
     
     ## PLOT POLICIES
     CC1 = param_space[:,0]
@@ -188,11 +184,10 @@ for k, batch_idx in enumerate(batches_to_plot):
         ax.set_zlabel('CC3',fontsize=FS,rotation=90)
     #ax.set_title('Before batch '+str(batch_idx))
     
-    
     ax.view_init(elev=el, azim=az)
 
 # ADD COLORBAR
-cbar_ax = fig.add_axes([0.92, 0.45, 0.02, 0.3]) # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.92, 0.45, 0.02, 0.22]) # [left, bottom, width, height]
 norm = matplotlib.colors.Normalize(min_lifetime, max_lifetime)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
@@ -204,10 +199,10 @@ cbar.ax.set_title('CLO-estimated\ncycle life',fontsize=FS)
 
 ## ADD ARROWS
 margin = 0.18
-arrow(0.15,0.61,0.3,0.5)
-arrow(0.33,0.61,0.48,0.5)
-arrow(0.51,0.61,0.66,0.5)
-arrow(0.69,0.61,0.84,0.5)
+arrow(0.15,0.62,0.3,0.4)
+arrow(0.33,0.62,0.48,0.4)
+arrow(0.51,0.62,0.66,0.4)
+arrow(0.69,0.62,0.84,0.4)
 
 #arrow(0.15+0.18,0.61,0.25+0.18,0.61)
 #arrow(0.15+2*0.18,0.61,0.25+2*0.18,0.61)
@@ -219,16 +214,22 @@ for k in np.arange(4):
 ########## 3c ##########
 num_batches=5 # 4 batches, plus one
 
-ax7 = fig.add_axes([0.1,0.05,0.35,0.35])
-ax8 = fig.add_axes([0.6,0.05,0.35,0.35])
+ax7 = fig.add_axes([0.05,0.15,4/3*0.25,0.25])
+ax8 = fig.add_axes([0.55,0.15,4/3*0.25,0.25])
 
+ax7.set_title('c', loc='left', weight='bold', fontsize=8)
+ax8.set_title('d', loc='left', weight='bold', fontsize=8)
+
+# Load all protocols
+policies = np.genfromtxt('policies_all.csv', delimiter=',')
+
+# Load actual protocols run
 data = []
 file_list = sorted(glob.glob('./pred/[0-9].csv'))
 for k,file_path in enumerate(file_list):
     data.append(np.genfromtxt(file_path, delimiter=','))
 
-policies = np.genfromtxt('policies_all.csv', delimiter=',')
-
+# Count number of times each protocol is run
 isTested = np.zeros(len(policies))
 
 for k, pol in enumerate(policies):
@@ -242,8 +243,8 @@ pol_reps = np.zeros(num_batches)
 for k in np.arange(num_batches):
     pol_reps[k] = sum(isTested==k)
 
-ax7.bar(np.arange(num_batches),pol_reps,tick_label = ['0','1','2','3','4'],\
-        align='center',color=[0.1,0.4,0.8])
+ax7.bar(np.arange(num_batches), pol_reps, tick_label = ['0','1','2','3','4'],
+        align='center', color=[0.1,0.4,0.8])
 
 # Add labels to bar plot
 all_black_labels = True
@@ -261,7 +262,6 @@ else:
 
 ax7.set_xlabel('Repetitions per protocol',fontsize=FS)
 ax7.set_ylabel('Count',fontsize=FS)
-ax7.set_title('c', loc='left', weight='bold')
 
 ########## 3d ##########
 filename = 'predictions.csv'
@@ -298,10 +298,10 @@ for c3 in C3list:
 """
     
 # Add bands
-ax8.axvspan(0,      20-tol/2, ymin=0.36, ymax=0.8,  facecolor='red', alpha=0.25, edgecolor=None)
-ax8.axvspan(20+tol/2, 40-tol/2, ymin=0.36, ymax=0.7,  facecolor='red', alpha=0.25, edgecolor=None)
-ax8.axvspan(40+tol/2, 60-tol/2, ymin=0.36, ymax=0.56, facecolor='red', alpha=0.25, edgecolor=None)
-ax8.axvspan(60+tol/2, 80-tol/2, ymin=0,    ymax=0.48, facecolor='blue', alpha=0.25, edgecolor=None)
+ax8.axvspan(0,      20-tol/2, ymin=0.36, ymax=0.8,  facecolor='red', alpha=0.25, lw=0)
+ax8.axvspan(20+tol/2, 40-tol/2, ymin=0.36, ymax=0.7,  facecolor='red', alpha=0.25, lw=0)
+ax8.axvspan(40+tol/2, 60-tol/2, ymin=0.36, ymax=0.56, facecolor='red', alpha=0.25, lw=0)
+ax8.axvspan(60+tol/2, 80-tol/2, ymin=0,    ymax=0.48, facecolor='blue', alpha=0.25, lw=0)
 
 # Add 1C charging
 ax8.plot([80,89],[1,1], linewidth=LW, color='black')
@@ -350,7 +350,6 @@ for k, pol in enumerate(valpol_subset):
         """
 
 ax8.legend(frameon=False)
-ax8.set_title('d', loc='left', weight='bold')
 
 #plt.tight_layout()
 plt.savefig('fig3_v5.png',bbox_inches='tight')

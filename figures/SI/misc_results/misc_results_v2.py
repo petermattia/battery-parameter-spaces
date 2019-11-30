@@ -13,11 +13,12 @@ from matplotlib import rcParams
 import glob
 import pickle
 from scipy.stats import rankdata, kendalltau, pearsonr
-
+from cycler import cycler
 
 plt.close('all')
 
-FS = 14
+FS = 7
+LW = 0.75
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -26,6 +27,8 @@ rcParams['axes.labelsize'] = FS
 rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
+rcParams['mathtext.fontset'] = 'custom'
+rcParams['mathtext.rm'] = 'Arial'
 
 # IMPORT RESULTS
 # Get pickle files of bounds
@@ -81,8 +84,10 @@ for k1, n in enumerate(top_K_pols_list):
         tau[k1,k2-1] = kendalltau(ranks1,ranks2)[0]
 
 ## plot
+MAX_WIDTH = 183 # mm
+figsize=(MAX_WIDTH / 25.4, MAX_WIDTH / 25.4)
 batches = np.arange(n_batches-1)+1
-plt.subplots(3,3,figsize=(12,11))
+plt.subplots(3,3,figsize=figsize)
 
 ax0 = plt.subplot2grid((3, 3), (0, 0))  
 ax1 = plt.subplot2grid((3, 3), (0, 1))  
@@ -92,13 +97,13 @@ ax4 = plt.subplot2grid((3, 3), (1, 1))
 ax5 = plt.subplot2grid((3, 3), (1, 2))
 ax6 = plt.subplot2grid((3, 3), (2, 0), colspan=3)
 
-ax0.set_title('a', loc='left', weight='bold')
-ax1.set_title('b', loc='left', weight='bold')
-ax2.set_title('c', loc='left', weight='bold')
-ax3.set_title('d', loc='left', weight='bold')
-ax4.set_title('e', loc='left', weight='bold')
-ax5.set_title('f', loc='left', weight='bold')
-ax6.set_title('g', loc='left', weight='bold')
+ax0.set_title('a', loc='left', weight='bold', fontsize=8)
+ax1.set_title('b', loc='left', weight='bold', fontsize=8)
+ax2.set_title('c', loc='left', weight='bold', fontsize=8)
+ax3.set_title('d', loc='left', weight='bold', fontsize=8)
+ax4.set_title('e', loc='left', weight='bold', fontsize=8)
+ax5.set_title('f', loc='left', weight='bold', fontsize=8)
+ax6.set_title('g', loc='left', weight='bold', fontsize=8)
 
 ## plot
 batches = np.arange(n_batches-1)+1
@@ -107,10 +112,12 @@ cm = plt.get_cmap('winter')
 
 legend = ['K = ' + str(k) for k in top_K_pols_list]
 
-ax0.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
+color_cycler = (cycler(color=[cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))]))
+
+ax0.set_prop_cycle(color_cycler)
 for i in range(len(top_K_pols_list)-1):
-    ax0.plot(batches,mean_per_change_topk[i])
-ax0.plot(batches,mean_per_change_topk[i+1],'k')
+    ax0.plot(batches,mean_per_change_topk[i], lw=LW)
+ax0.plot(batches,mean_per_change_topk[i+1],'k', lw=LW)
 ax0.set_xlabel('Batch index\n(change from round i-1 to i)')
 ax0.set_ylabel('Mean change in estimated\ncycle life for top K policies (%)')
 ax0.set_ylim((0,14))
@@ -118,10 +125,10 @@ ax0.set_xticks(np.arange(1, 5, step=1))
 ax0.legend(legend,frameon=False)
 
 # Abs. change
-ax1.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
+ax1.set_prop_cycle(color_cycler)
 for i in range(len(top_K_pols_list)-1):
-    ax1.plot(batches,mean_change_topk[i])
-ax1.plot(batches,mean_change_topk[i+1],'k')
+    ax1.plot(batches,mean_change_topk[i], lw=LW)
+ax1.plot(batches,mean_change_topk[i+1],'k', lw=LW)
 ax1.set_xlabel('Batch index\n(change from round i-1 to i)')
 ax1.set_ylabel('Mean change in estimated\ncycle life for top K protocols (cycles)')
 ax1.set_ylim((0,140))
@@ -129,10 +136,10 @@ ax1.set_xticks(np.arange(1, 5, step=1))
 ax1.legend(legend,frameon=False)
 
 # Tau
-ax2.set_color_cycle([cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))])
+ax2.set_prop_cycle(color_cycler)
 for i in range(len(top_K_pols_list)-1):
-    ax2.plot(batches[1:],tau[i])
-ax2.plot(batches[1:],tau[i+1],'k')
+    ax2.plot(batches[1:],tau[i], lw=LW)
+ax2.plot(batches[1:],tau[i+1],'k', lw=LW)
 ax2.set_xlabel('Batch index\n(change from round i-1 to i)')
 ax2.set_ylabel('Change in ranking similarity\nfor top K protocols (Kendall\'s tau)')
 ax2.set_ylim((0,1))
@@ -162,7 +169,7 @@ values = np.sum(policies**2,axis=1)
 xlabel_mod = r'$\mathdefault{sum(I^2)=\Sigma_{i=1}^{4}CC_i^2}$'
 leglabel = 'ρ = {:.2}'.format(pearsonr(values,mean)[0])
 
-ax4.plot(values,mean,'o',label=leglabel,color=[0.1,0.4,0.8])
+ax4.plot(values,mean,'o',label=leglabel,color=[0.1,0.4,0.8], lw=LW,markersize=4)
 ax4.set_xlabel(xlabel_mod,fontsize=FS)
 ax4.set_ylabel('CLO-estimated cycle life\nafter round 4',fontsize=FS)
 ax4.legend(loc='best',markerscale=0,frameon=False)
@@ -172,7 +179,7 @@ ye = [(mean-lb)/(5*0.5**5),(ub-mean)/(5*0.5**5)]
 leglabel = 'ρ = {:.2}'.format(pearsonr(mean,ye[0])[0])
 
 with plt.style.context(('classic')):
-    ax5.plot(mean,ye[0],'o',label=leglabel,color=[0.1,0.4,0.8])
+    ax5.plot(mean,ye[0],'o',label=leglabel,color=[0.1,0.4,0.8],markersize=4)
 ax5.set_xlabel('CLO-estimated cycle life\nafter round 4, $\mathit{μ_{4,i}}$')
 ax5.set_ylabel('Standard deviation of cycle life\nafter round 4, $\mathit{σ_{4,i}}$')
 ax5.set_xlim([600,1200])
@@ -203,9 +210,9 @@ for k in np.arange(num_batches):
     idx = np.where(isTested==k)
     ye2 = [ye[0][idx],ye[1][idx]]
     ax6.errorbar(np.arange(224)[idx],mean[idx],yerr=ye2,fmt='o',
-                 color=colors[k],capsize=2, label=leg[k])
+                 color=colors[k],capsize=2, label=leg[k],markersize=4)
 
-ax6.set_xlim((-1,224 ))
+ax6.set_xlim((-1,224))
 ax6.set_xlabel('Protocol rank after round 4')
 ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{μ_{4,i}±σ_{4,i}}$')
 ax6.set_xticks([], [])

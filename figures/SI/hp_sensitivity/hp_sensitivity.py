@@ -12,6 +12,10 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
+rcParams['font.sans-serif'] = 'Arial'
+rcParams['mathtext.fontset'] = 'custom'
+rcParams['mathtext.rm'] = 'Arial'
+
 lifetime_key = 'l4'
 
 #sims = pd.read_csv('log.csv', names=['beta','gamma','epsilon','seed',lifetime_key])
@@ -75,7 +79,7 @@ max_lifetime = np.amax(means)
 
 ## INITIALIZE PLOT
 # SETTINGS
-FS = 14
+FS = 7
 colormap = 'plasma_r'
 lower_lifetime_lim = 1000
 
@@ -88,7 +92,10 @@ rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
 
-fig, ax = plt.subplots(2,4,figsize=(12,9),sharey=True)
+MAX_WIDTH = 183 # mm
+figsize=(MAX_WIDTH / 25.4, 3/4 * MAX_WIDTH / 25.4)
+
+fig, ax = plt.subplots(2,4,figsize=figsize,sharey=True)
 #plt.style.use('classic')
 plt.set_cmap(colormap)
 minn, maxx = min_lifetime, max_lifetime
@@ -106,9 +113,9 @@ for k, gamma in enumerate(sims.gamma.unique()):
     ## PLOT COMBINATIONS
     [X,Y] = np.meshgrid(sims.beta.unique(),sims.epsilon.unique())
     temp_ax.scatter(X.ravel(),Y.ravel(),vmin=minn,vmax=maxx,
-                c=means[:,k,:].ravel(),zorder=2,s=100)
+                c=means[:,k,:].ravel(),zorder=2,s=50)
     
-    temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=FS)
+    temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=8)
     
     temp_ax.annotate('γ=' + str(gamma), (15, 0.95), fontsize=FS,horizontalalignment='right')
     

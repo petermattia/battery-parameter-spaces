@@ -16,13 +16,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import seaborn as sns
 
-fig = plt.subplots(1,2,figsize=(16,6))
-ax1 = plt.subplot(121)
-with sns.axes_style('white'):
-    ax2 = plt.subplot(122, projection='3d')
-
-FS = 14
-LW = 3
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+FS = 7
+LW = 0.5
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -32,8 +28,14 @@ rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
 
+fig = plt.subplots(1,2,figsize=(MAX_WIDTH, 3/8 * MAX_WIDTH))
+ax1 = plt.subplot(121)
+with sns.axes_style('white'):
+    ax2 = plt.subplot(122, projection='3d')
 
 ########## 2a ##########
+ax1.set_title('a', loc='left', weight='bold', fontsize=8)
+ax2.set_title('b', loc='left', weight='bold', fontsize=8)
 
 # Initialize axis limits
 ax1.set_xlabel('State of charge (%)')
@@ -41,17 +43,27 @@ ax1.set_ylabel('Current (C rate)')
 ax1.set_xlim([0,100])
 ax1.set_ylim([0,10])
 
+# Add bands
+ax1.axvspan(0,  20, ymin=0.36, ymax=0.8,  color='red', alpha=0.25, lw=0)
+ax1.axvspan(20, 40, ymin=0.36, ymax=0.7,  color='red', alpha=0.25, lw=0)
+ax1.axvspan(40, 60, ymin=0.36, ymax=0.56, color='red', alpha=0.25, lw=0)
+ax1.axvspan(60, 80, ymin=0,    ymax=0.48, color='blue', alpha=0.25, lw=0)
+
+# Dotted lines for SOC bands
+for k in [2,4,6,8]:
+    ax1.plot([k*10,k*10],[0,10], linewidth=LW, color='grey', linestyle=':')
+    
 # Add grey lines
 C1list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6.0, 7.0, 8.0]
 C2list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6.0, 7.0]
 C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 
 for c1 in C1list:
-    ax1.plot([0,20], [c1,c1], linewidth=2, color='grey')
+    ax1.plot([0,20], [c1,c1], linewidth=LW, color='grey')
 for c2 in C2list:
-    ax1.plot([20,40],[c2,c2], linewidth=2, color='grey')
+    ax1.plot([20,40],[c2,c2], linewidth=LW, color='grey')
 for c3 in C3list:
-    ax1.plot([40,60],[c3,c3], linewidth=2, color='grey')
+    ax1.plot([40,60],[c3,c3], linewidth=LW, color='grey')
     
 # Add example policy
 c1, c2, c3, c4 = 7.0, 4.8, 5.2, 3.45
@@ -59,16 +71,6 @@ ax1.plot([0,20], [c1,c1], linewidth=LW, color='red')
 ax1.plot([20,40],[c2,c2], linewidth=LW, color='red')
 ax1.plot([40,60],[c3,c3], linewidth=LW, color='red')
 ax1.plot([60,80],[c4,c4], linewidth=LW, color='blue')
-
-# Add bands
-ax1.axvspan(0,  20, ymin=0.36, ymax=0.8,  color='red', alpha=0.25)
-ax1.axvspan(20, 40, ymin=0.36, ymax=0.7,  color='red', alpha=0.25)
-ax1.axvspan(40, 60, ymin=0.36, ymax=0.56, color='red', alpha=0.25)
-ax1.axvspan(60, 80, ymin=0,    ymax=0.48, color='blue', alpha=0.25)
-
-# Dotted lines for SOC bands
-for k in [2,4,6,8]:
-    ax1.plot([k*10,k*10],[0,10], linewidth=2, color='grey', linestyle=':')
     
 # CC labels
 label_height = 9.2
@@ -84,12 +86,12 @@ ax1.plot(x,y, linewidth=LW, color='black')
 
 # Charging time text box
 ct_label_height = 0.5
-ax1.plot([0.1,0.1],[ct_label_height-0.25,ct_label_height+0.25], linewidth=3, color='grey')
-ax1.plot([80,80],[ct_label_height-0.25,ct_label_height+0.25], linewidth=2, color='grey')
-ax1.plot([0,80],[ct_label_height,ct_label_height], linewidth=2, color='grey')
+ax1.plot([0.1,0.1],[ct_label_height-0.25,ct_label_height+0.25], linewidth=LW+0.25, color='grey')
+ax1.plot([80,80],[ct_label_height-0.25,ct_label_height+0.25], linewidth=LW, color='grey')
+ax1.plot([0,80],[ct_label_height,ct_label_height], linewidth=LW, color='grey')
 
 textstr = 'Charging time to 80% SOC = 10 minutes'
-props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=2)
+props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=LW)
 ax1.text(0.4, ct_label_height/10, textstr,transform=ax1.transAxes, fontsize=FS,
         verticalalignment='center', horizontalalignment='center',bbox=props)
 
@@ -97,23 +99,21 @@ ax1.text(0.4, ct_label_height/10, textstr,transform=ax1.transAxes, fontsize=FS,
 v_label_height = 8.4
 v_label_lines = False
 if v_label_lines:
-    ax1.plot([0.1,0.1],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
-    ax1.plot([99.9,99.9],[v_label_height-0.25,v_label_height+0.25], linewidth=3, color='grey')
-    ax1.plot([0,100],[v_label_height,v_label_height], linewidth=2, color='grey')
+    ax1.plot([1.5,1.5],[v_label_height-0.25,v_label_height+0.25], linewidth=LW+0.25, color='grey')
+    ax1.plot([99.9,99.9],[v_label_height-0.25,v_label_height+0.25], linewidth=LW+0.25, color='grey')
+    ax1.plot([0,100],[v_label_height,v_label_height], linewidth=LW, color='grey')
 
 textstr = 'Max voltage = 3.6 V'
-props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=2)
+props = dict(boxstyle='round', facecolor='white', edgecolor='grey',alpha=1,linewidth=LW)
 ax1.text(0.5, v_label_height/10, textstr,transform=ax1.transAxes, fontsize=FS,
         verticalalignment='center', horizontalalignment='center',bbox=props)
-
-ax1.set_title('a', loc='left', weight='bold')
 
 ########## 2b ##########
 ##############################################################################
 # PLOTTING PARAMETERS
 colormap = 'viridis'
 el, az = 30, 240
-point_size = 70
+point_size = 25
 seed = 0
 ##############################################################################
 
@@ -129,8 +129,7 @@ max_CC4 = np.max(CC4)
 
 ## INITIALIZE PLOT
 # SETTINGS
-ax2.set_aspect('equal')
-ax2.set_title('b',loc='left', weight='bold')
+#ax2.set_aspect('equal')
 
 ## PLOT POLICIES
 with plt.style.context(('classic')):
@@ -154,6 +153,40 @@ with plt.style.context(('classic')):
     cbar = plt.colorbar(m, cax=cbar_ax)
     cbar.ax.tick_params(labelsize=FS,length=0)
     cbar.ax.set_title('CC4',fontsize=FS)
+
+def set_axes_equal(ax):
+    """
+    Adapted from:
+    https://stackoverflow.com/questions/13685386/matplotlib-equal-unit-length-with-equal-aspect-ratio-z-axis-is-not-equal-to
+    
+    Make axes of 3D plot have equal scale so that spheres appear as spheres,
+    cubes as cubes, etc..  This is one possible solution to Matplotlib's
+    ax.set_aspect('equal') and ax.axis('equal') not working for 3D.
+
+    Input
+      ax: a matplotlib axis, e.g., as output from plt.gca().
+    """
+
+    x_limits = ax.get_xlim3d()
+    y_limits = ax.get_ylim3d()
+    z_limits = ax.get_zlim3d()
+
+    x_range = abs(x_limits[1] - x_limits[0])
+    x_middle = np.mean(x_limits)
+    y_range = abs(y_limits[1] - y_limits[0])
+    y_middle = np.mean(y_limits)
+    z_range = abs(z_limits[1] - z_limits[0])
+    z_middle = np.mean(z_limits)
+
+    # The plot bounding box is a sphere in the sense of the infinity
+    # norm, hence I call half the max range the plot radius.
+    plot_radius = 0.5*max([x_range, y_range, z_range])
+
+    ax.set_xlim3d([x_middle - plot_radius, x_middle + plot_radius])
+    ax.set_ylim3d([y_middle - plot_radius, y_middle + plot_radius])
+    ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])
+
+set_axes_equal(ax2)
 
 #plt.tight_layout()
 plt.savefig('fig2.png',bbox_inches='tight')

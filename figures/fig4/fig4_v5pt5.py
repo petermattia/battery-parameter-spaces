@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
 import matplotlib.patheffects as pe
+from matplotlib.legend_handler import HandlerErrorbar
 import glob
 import pickle
 from cycler import cycler
@@ -20,9 +21,11 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 plt.close('all')
 
-FS = 12
-LW = 3
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+FS = 7
+LW = 0.5
 upper_lim = 1400
+figsize = (MAX_WIDTH, 2/3 * MAX_WIDTH)
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -31,6 +34,19 @@ rcParams['axes.labelsize'] = FS
 rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
+
+fig = plt.subplots(2,3,figsize=figsize)
+ax1 = plt.subplot2grid((2, 3), (0, 0))
+ax2 = plt.subplot2grid((2, 3), (0, 1))
+ax3 = plt.subplot2grid((2, 3), (0, 2))
+ax4 = plt.subplot2grid((2, 3), (1, 0), colspan=2)
+ax5 = plt.subplot2grid((2, 3), (1, 2))
+
+ax1.set_title('a',loc='left', weight='bold')
+ax2.set_title('b',loc='left', weight='bold')
+ax3.set_title('c',loc='left', weight='bold')
+ax4.set_title('d',loc='left', weight='bold')
+ax5.set_title('e',loc='left', weight='bold')
 
 ########## LOAD DATA ##########
 # Load echem
@@ -93,19 +109,6 @@ final_ranks[final_means.argsort()] = np.arange(len(final_means))
 final_ranks = np.max(final_ranks) - final_ranks + 1 # swap order and use 1-indexing
 
 ########## PLOTS ##########
-
-fig = plt.subplots(2,3,figsize=(12,8))
-ax1 = plt.subplot2grid((2, 3), (0, 0))
-ax2 = plt.subplot2grid((2, 3), (0, 1))
-ax3 = plt.subplot2grid((2, 3), (0, 2))
-ax4 = plt.subplot2grid((2, 3), (1, 0), colspan=2)
-ax5 = plt.subplot2grid((2, 3), (1, 2))
-
-ax1.set_title('a',loc='left', weight='bold')
-ax2.set_title('b',loc='left', weight='bold')
-ax3.set_title('c',loc='left', weight='bold')
-ax4.set_title('d',loc='left', weight='bold')
-ax5.set_title('e',loc='left', weight='bold')
 
 default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 c1 = default_colors[0]
@@ -170,7 +173,7 @@ CL = []
 for k,row in enumerate(Qn):
     idx = np.where(row>0.88)[0]
     CL.append(len(idx)) # sanity check
-    ax1.plot(idx,row[idx],markersize=1.5,zorder=zorders[k])
+    ax1.plot(idx,row[idx],markersize=1,zorder=zorders[k])
 #ax1.legend(validation_policies)
 ax1.set_xlim([0,1500])
 ax1.set_ylim([0.88,1.1])
@@ -180,7 +183,8 @@ ax1.set_yticks([0.9,0.95,1.0,1.05,1.1])
 ax1.set_yticklabels(['0.90','0.95','1.00','1.05','1.10'])
 
 ## b. 
-ax2.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',label='_nolegend_')
+ax2.plot((-100,upper_lim+100),(-100,upper_lim+100), ls='--', c='.3',
+         label='_nolegend_',markersize=3)
 ax2.set_prop_cycle(custom_cycler)
 p = [None]*9
 for k in range(len(pred_means)):
@@ -208,9 +212,9 @@ if with_errorbars:
     
     for protocol in zip(predicted_lifetimes, final_lifetimes, pred_err_lo, pred_err_hi):
         ax3.errorbar(protocol[0],protocol[1],
-                 xerr=[protocol[2], protocol[3]], markersize=8)
+                 xerr=[protocol[2], protocol[3]], markersize=4)
 else:
-    ax3.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),markersize=8)
+    ax3.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes),markersize=4)
 ax3.set_xlim([0,upper_lim])
 ax3.set_ylim([0,upper_lim])
 ax3.set_aspect('equal', 'box')
@@ -253,7 +257,7 @@ for k,pol in enumerate(validation_policies):
 ax4.set_prop_cycle(custom_cycler)
 for k, row in enumerate(final_lifetimes):
     print(k,row)
-    ax4.plot(row,(9-final_idx[k])*np.ones((5,1)), markersize=8,
+    ax4.plot(row,(9-final_idx[k])*np.ones((5,1)), markersize=6,
              markeredgecolor='k',label='_nolegend_',)
 
 ax4.set_xlabel('Final cycle life (validation)',fontsize=FS)
@@ -266,7 +270,7 @@ def make_legend(ax):
     handles = [(p[1][0], p[2][0], p[3][0]),(p[0][0],p[5][0],p[6][0],p[7][0]),
                (p[4][0],p[8][0])]
     ax.legend(handles,['CLO top 3', 'Lit-inspired', 'Other'],
-              numpoints=1, handlelength=2.5, frameon=False,
+              numpoints=1, handlelength=3.5, frameon=False,
               handler_map={tuple: HandlerTuple(ndivide=None)})
 
 make_legend(ax1)
@@ -286,51 +290,56 @@ def plot_4c(ax):
     
     ## NOTE: We swtiched the x and y axes
     
-    ax.errorbar(data_dict['no_oed_no_ep_y'],data_dict['no_oed_no_ep_x'], 
+    cap_size = 3
+    
+    h = ax.errorbar(data_dict['no_oed_no_ep_y'],data_dict['no_oed_no_ep_x'], 
                  yerr=data_dict['no_oed_no_ep_xerr'],xerr=data_dict['no_oed_no_ep_yerr'],
     	alpha=0.8, 
-    	linewidth=2, 
+    	linewidth=LW,
     	marker='o', 
     	linestyle=':',
-        capsize=4,
+        capsize=cap_size,
     	#color=[0,112/256,184/256], 
     	label='CLO w/o early pred\n + random')
     ax.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
                  yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
         alpha=0.8,
-    	linewidth=2,
+    	linewidth=LW,
     	marker='o', 
     	linestyle=':', 
-        capsize=4,
+        capsize=cap_size,
         #color=[227/256,86/256,0], 
     	label='CLO w/o early pred\n + MAB')
     ax.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
                  xerr=data_dict['no_oed_ep_yerr'],
     	alpha=0.8, 
-    	linewidth=2, 
+    	linewidth=LW,
     	marker='o', 
     	linestyle=':',
-        capsize=4,
+        capsize=cap_size,
         #color=[0,167/256,119/256], 
     	label='CLO w/ early pred\n + random')
     ax.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
     	alpha=0.8, 
-        linewidth=2, 
+        linewidth=LW,
     	marker='o', 
     	linestyle=':',
-        capsize=4,
+        capsize=cap_size,
         #color=[227/256,86/256,0], 
     	label='CLO w/ early pred\n + MAB')
     # plt.xticks(np.arange(max_budget+1))
+    
+    return h
 
-plot_4c(ax5)
+h = plot_4c(ax5)
 ax5.set_xlim((ax5.get_xlim()[0],ax5.get_xlim()[1]-3))
 ax5.set_ylim((-1100, 23500))
 xrange = ax5.get_xlim()[1] - ax5.get_xlim()[0]
 yrange = ax5.get_ylim()[1] - ax5.get_ylim()[0]
 ax5.set_aspect(aspect=xrange/yrange)
 
-ax5.legend(frameon=False)
+ax5.legend(frameon=False,
+           handler_map={type(h): HandlerErrorbar(xerr_size=0.6)})
 ax5.set_ylabel('Experimental time (hours)')
 ax5.set_xlabel('True cycle life of current best protocol')
 

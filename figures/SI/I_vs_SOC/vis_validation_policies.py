@@ -13,7 +13,7 @@ import numpy as np
 import glob
 import pickle
 
-FS = 12
+FS = 7
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -23,7 +23,11 @@ rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
 
-fig, ax = plt.subplots(3,3,figsize=(8,8), sharex=True, sharey=True)
+MAX_WIDTH = 183 # mm
+
+figsize=(MAX_WIDTH / 25.4, MAX_WIDTH / 25.4)
+
+fig, ax = plt.subplots(3,3,figsize=figsize, sharex=True, sharey=True)
 
 filename = 'validation_pols.csv'
 pols = np.genfromtxt(filename, delimiter=',',skip_header=1)
@@ -78,7 +82,7 @@ for k, p in enumerate(pols):
         ax_temp.set_xlabel('State of charge (%)',fontsize=FS)
     if k%3 == 0:
         ax_temp.set_ylabel('Current (C rate)',fontsize=FS)
-    ax_temp.set_title(chr(k+97), loc='left', weight='bold')
+    ax_temp.set_title(chr(k+97), loc='left', weight='bold', fontsize=9)
     
 
 plt.tight_layout()

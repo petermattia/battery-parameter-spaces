@@ -14,8 +14,9 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import pickle
 
-FS = 14
-LW = 2
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+FS = 7
+LW = 1
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -33,7 +34,9 @@ with open(file, 'rb') as infile:
 num_channels = [1, 8, 16, 24, 48]
 num_rounds = [1, 2, 3, 4]
 
-fig, ax = plt.subplots(2,3,figsize=(12,8),sharey=True)
+figsize=(MAX_WIDTH, 2/3 * MAX_WIDTH)
+
+fig, ax = plt.subplots(2,3,figsize=figsize,sharey=True)
 
 for k, channels in enumerate(num_channels):
     temp_ax = ax[int(k/3)][k%3]
@@ -57,7 +60,7 @@ for k, channels in enumerate(num_channels):
                      color=u'#467821',
                      label='CLO w/ MAB')
     
-    temp_ax.set_title(chr(k+97), loc='left', weight='bold')
+    temp_ax.set_title(chr(k+97), loc='left', weight='bold', fontsize=8)
     #temp_ax.set_xlim((0.5, 4.5))
     temp_ax.set_ylim((700,1200))
     annotation_text = ' channels'
@@ -77,7 +80,7 @@ for k, channels in enumerate(num_channels):
     temp_ax.set_xlabel('Number of rounds of testing',fontsize=FS)
         
     if k%3 == 0:
-        temp_ax.set_ylabel('True cycle life of\ncurrent best protocol',fontsize=FS)
+        temp_ax.set_ylabel('True cycle life of current best protocol',fontsize=FS)
         
 ax[-1, -1].axis('off')
 

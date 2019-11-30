@@ -17,8 +17,11 @@ from scipy.stats import pearsonr
 
 plt.close('all')
 
-FS = 14
-LW = 3
+MAX_WIDTH = 183/25.4 # mm -> inches
+FS = 7
+LW = 1
+
+figsize=(MAX_WIDTH, MAX_WIDTH)
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -117,7 +120,7 @@ final_ranks = np.max(final_ranks) - final_ranks + 1 # swap order and use 1-index
 
 ########## PLOTS ##########
 
-fig = plt.figure(figsize=(11,10))
+fig = plt.figure(figsize=figsize)
 
 default_colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 c1 = default_colors[0]
@@ -139,7 +142,7 @@ def format_lifetimes_plot(r):
     ax0.set_xticks([0,750,1500])
     ax0.set_yticks([0,750,1500])
     #plt.legend(validation_pol_leg, bbox_to_anchor=(1.01, 0.85))
-    plt.annotate('r = {:.2}'.format(r),(75,1250))
+    plt.annotate('r = {:.2}'.format(r),(75,1350))
 
 def format_rankings_plot(tau):
     plt.xlim([0,10])
@@ -147,7 +150,7 @@ def format_rankings_plot(tau):
     ax0.set_yticks([0,5,10]) # consistent with x
     ax0.set_aspect('equal', 'box')
     #plt.legend(validation_pol_leg, bbox_to_anchor=(1.01, 0.85))
-    plt.annotate('τ = {:.2}'.format(tau),(0.5,8.33))
+    plt.annotate('τ = {:.2}'.format(tau),(0.5,9))
 
 ax0 = plt.subplot(3,3,1)
 #### PRED vs OED
@@ -193,7 +196,7 @@ init_plot(ax0)
 for k in range(len(pred_means)):
     plt.errorbar(pred_means[k],final_means[k],xerr=pred_sterr[k],yerr=final_sterr[k])
 plt.xlabel('Mean early-predicted cycle life\n(validation)',fontsize=FS)
-plt.ylabel('Mean final cycle life\n(validation)',fontsize=FS)
+plt.ylabel('Mean final cycle life (validation)',fontsize=FS)
 plt.title(chr(100),loc='left', weight='bold',fontsize=FS)
 r = pearsonr(pred_means,final_means)[0]
 format_lifetimes_plot(r)
@@ -240,7 +243,7 @@ init_plot(ax0)
 for k in range(len(oed_means)):
     plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
 plt.xlabel('CLO-estimated cycle life',fontsize=FS)
-plt.ylabel('Mean final cycle life\n(validation)',fontsize=FS)
+plt.ylabel('Mean final cycle life (validation)',fontsize=FS)
 plt.title(chr(103),loc='left', weight='bold',fontsize=FS)
 r = pearsonr(oed_means,final_means)[0]
 format_lifetimes_plot(r)
@@ -273,6 +276,6 @@ format_rankings_plot(tau)
 plt.tight_layout()
 ax0 = plt.subplot(3,3,5)
 #plt.legend(validation_pol_leg,loc=9, bbox_to_anchor=(3.8, 1.2),frameon=True)
-plt.legend(validation_pol_leg,loc=9, bbox_to_anchor=(0.5, -1.9),frameon=True,ncol=3)
+plt.legend(validation_pol_leg,loc=9, bbox_to_anchor=(0.5, -1.7),frameon=True,ncol=3)
 plt.savefig('validation_ablation.png',bbox_inches='tight')
 plt.savefig('validation_ablation.pdf',bbox_inches='tight',format='pdf')

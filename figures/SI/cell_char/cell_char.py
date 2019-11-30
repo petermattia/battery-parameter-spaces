@@ -11,9 +11,11 @@ import glob
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib import rcParams
+from cycler import cycler
 
-FS = 10
-LW = 3
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+FS = 7
+LW = 0.5
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -23,12 +25,12 @@ rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
 
-f, ax = plt.subplots(3, 2, figsize=(6.5,9))
+f, ax = plt.subplots(3, 2, figsize=(MAX_WIDTH, 3/4*3/2*MAX_WIDTH))
 
 for k in range(6):
     k1 = int(k/2)
     k2 = k%2
-    ax[k1][k2].set_title(chr(97+k1*2+k2), loc='left', weight='bold')
+    ax[k1][k2].set_title(chr(97+k1*2+k2), loc='left', weight='bold', fontsize=8)
 
 ########## a,c ##########
 file = sorted(glob.glob('2018*.csv'))[1]
@@ -67,19 +69,20 @@ for k in range(n_cycles):
     I_leg.append(str(int(np.mean(I_cycle[k]))) + 'C') # find charge C rate
 
 cmap = plt.get_cmap('Reds')
-ax[0][0].set_color_cycle([cmap(1.*i/n_cycles) for i in range(n_cycles)])
-ax[1][0].set_color_cycle([cmap(1.*i/n_cycles) for i in range(n_cycles)])
+color_cycler = (cycler(color=[cmap(1.*i/(n_cycles+3)) for i in range(3, n_cycles+3)]))
+ax[0][0].set_prop_cycle(color_cycler)
+ax[1][0].set_prop_cycle(color_cycler)
     
 for k in range(n_cycles):
     ax[0][0].plot(Qc_cycle[k], V_cycle[k],'-')
 
-ax[0][0].legend(I_leg,ncol=2,frameon=False)
+for k in range(n_cycles):
+    ax[1][0].plot(Qc_cycle[k], T_cycle[k],'-')
 
 ax[0][0].set_yticks(np.arange(2,3.51,0.5))
 ax[1][0].set_ylim([30,40])
-
-for k in range(n_cycles):
-    ax[1][0].plot(Qc_cycle[k], T_cycle[k],'-')
+ax[0][0].legend(I_leg,ncol=2,frameon=False)
+ax[1][0].legend(I_leg,ncol=2,frameon=False)
     
 ax[0][0].set_xlabel('Capacity (Ah)')
 ax[0][0].set_ylabel('Voltage (V)')
@@ -124,8 +127,9 @@ for k in range(n_cycles):
     I_leg.append(str(-int(np.round(np.mean(I_cycle[k])))) + 'C') # find discharge C rate
     
 cmap = plt.get_cmap('Blues')
-ax[0][1].set_color_cycle([cmap(1.*i/n_cycles) for i in range(n_cycles)])
-ax[1][1].set_color_cycle([cmap(1.*i/n_cycles) for i in range(n_cycles)])
+color_cycler = (cycler(color=[cmap(1.*i/(n_cycles+3)) for i in range(3, n_cycles+3)]))
+ax[0][1].set_prop_cycle(color_cycler)
+ax[1][1].set_prop_cycle(color_cycler)
 
 for k in range(n_cycles):
     ax[0][1].plot(Qd_cycle[k], V_cycle[k],'-')
@@ -133,6 +137,7 @@ for k in range(n_cycles):
 for k in range(n_cycles):
     ax[1][1].plot(Qd_cycle[k], T_cycle[k],'-')
 
+ax[0][1].legend(I_leg,ncol=2,frameon=False)
 ax[1][1].legend(I_leg,ncol=2,frameon=False)
 ax[0][1].set_yticks(np.arange(2,3.51,0.5))
 ax[1][1].set_ylim([30,80])
@@ -196,7 +201,7 @@ for k, file in enumerate(file_list):
 
         ## annotate
         SOC_str = '{}% SOC: η = {:0.3f}I+{:0.3f}'.format(20*(k2+1),R[k][k2][0], R[k][k2][1])
-        ax[2][k].annotate(SOC_str,(8,0.185-0.025*k2),ha='right')
+        ax[2][k].annotate(SOC_str,(8,0.205-0.03*k2),ha='right')
 
 
 # Resistance vs soc

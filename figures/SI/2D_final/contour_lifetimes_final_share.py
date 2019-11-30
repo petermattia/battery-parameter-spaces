@@ -28,8 +28,9 @@ C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 one_step = 4.8
 margin = 0.2 # plotting margin
 
-FS = 14
-LW = 3
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+FS = 7
+LW = 0.5
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -38,6 +39,10 @@ rcParams['axes.labelsize'] = FS
 rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
 rcParams['font.sans-serif'] = ['Arial']
+rcParams['mathtext.fontset'] = 'custom'
+rcParams['mathtext.rm'] = 'Arial'
+
+figsize=(MAX_WIDTH, 0.5 * MAX_WIDTH)
 
 colormap = 'plasma_r'
 
@@ -53,7 +58,7 @@ with open(file, 'rb') as infile:
 
 ## INITIALIZE CONTOUR PLOT
 # SETTINGS
-fig, ax = plt.subplots(2,3,figsize=(16,8),sharex=True,sharey=True)
+fig, ax = plt.subplots(2,3,figsize=figsize,sharex=True,sharey=True)
 #plt.style.use('classic')
 plt.set_cmap(colormap)
 if CROPPED_BOUNDS:
@@ -68,6 +73,8 @@ C2_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
 
 fig.subplots_adjust(right=0.8)
 fig.subplots_adjust(top=0.93)
+
+SCALAR = 5 # divide
 
 # FUNCTION FOR LOOPING THROUGH CCC3
 for k, c3 in enumerate(C3list):
@@ -89,10 +96,10 @@ for k, c3 in enumerate(C3list):
     lifetime_subset = mean[idx_subset]
     bounds_subset = bounds[idx_subset]
     temp_ax.scatter(policy_subset[:,0],policy_subset[:,1],vmin=minn,vmax=maxx,
-                c=lifetime_subset.ravel(),zorder=2,s=bounds_subset)
+                c=lifetime_subset.ravel(),zorder=2,s=bounds_subset/SCALAR)
 
     ## LABELS
-    temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=FS)
+    temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=8)
     temp_ax.annotate('CC3=' + str(c3) + '\n' + str(len(policy_subset)) + ' protocols',\
               (3.52, 3.52), fontsize=FS)
     if int(k/3)==1:
@@ -113,10 +120,10 @@ cbar.ax.set_title('CLO-estimated\ncycle life\nafter round 4',fontsize=FS)
 
 # ADD LEGEND, based on: 
 # https://blogs.oii.ox.ac.uk/bright/2014/08/12/point-size-legends-in-matplotlib-and-basemap-plots/
-l1 = plt.scatter([],[], c='k', s=50, edgecolors='none')
-l2 = plt.scatter([],[], c='k', s=100, edgecolors='none')
-l3 = plt.scatter([],[], c='k', s=200, edgecolors='none')
-l4 = plt.scatter([],[], c='k', s=300, edgecolors='none')
+l1 = plt.scatter([],[], c='k', s=50/SCALAR, edgecolors='none')
+l2 = plt.scatter([],[], c='k', s=100/SCALAR, edgecolors='none')
+l3 = plt.scatter([],[], c='k', s=200/SCALAR, edgecolors='none')
+l4 = plt.scatter([],[], c='k', s=300/SCALAR, edgecolors='none')
 title = 'Std. dev. of\ncycle life\nafter round 4,\n$\mathit{σ_{4,i}}$'
 labels = ['50','100','200','300']
 leg = plt.legend([l1, l2, l3, l4], labels, frameon=False, fontsize=FS,

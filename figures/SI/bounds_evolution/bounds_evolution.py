@@ -12,10 +12,14 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import glob
 import pickle
+from matplotlib.legend_handler import HandlerErrorbar
 
 plt.close('all')
 
-FS = 14
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+FS = 7
+LW = 0.5
+figsize=(MAX_WIDTH, 4/3 * MAX_WIDTH)
 
 rcParams['pdf.fonttype'] = 42
 rcParams['ps.fonttype'] = 42
@@ -23,7 +27,9 @@ rcParams['font.size'] = FS
 rcParams['axes.labelsize'] = FS
 rcParams['xtick.labelsize'] = FS
 rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
+rcParams['font.sans-serif'] = 'Arial'
+rcParams['mathtext.fontset'] = 'custom'
+rcParams['mathtext.rm'] = 'Arial'
 
 # IMPORT RESULTS
 # Get pickle files of bounds
@@ -60,7 +66,8 @@ n_policies = len(param_space)
 
 ## plot
 batches = np.arange(n_batches-1)+1
-plt.subplots(3,2,figsize=(9,12))
+
+plt.subplots(3,2,figsize=figsize)
 
 batches = np.arange(n_batches-1)+1
 
@@ -83,7 +90,6 @@ for k, mean in enumerate(means):
     else: # divide by beta
         ye = [(mean[unselected_indices]-lb)/(5*0.5**k),(ub-mean[unselected_indices])/(5*0.5**k)]
     
-    
     # y uncertainties for selected protocols
     ub = ubs[k][top_pol_idx][indices]
     lb = lbs[k][top_pol_idx][indices]
@@ -93,8 +99,8 @@ for k, mean in enumerate(means):
         ye2 = [(mean[indices]-lb)/(5*0.5**k),(ub-mean[indices])/(5*0.5**k)]
     
     ax = plt.subplot2grid((5, 2), (k, 0), colspan=2)
-    ax.errorbar(np.arange(224)[unselected_indices],mean[unselected_indices],yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
-    ax.errorbar(np.arange(224)[indices],mean[indices],yerr=ye2,fmt='o',color=[0.8,0.4,0.1],capsize=2)
+    h1 = ax.errorbar(np.arange(224)[unselected_indices],mean[unselected_indices],yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
+    h2 = ax.errorbar(np.arange(224)[indices],mean[indices],yerr=ye2,fmt='o',color=[0.8,0.4,0.1],capsize=2)
     
     ax.set_xlim((-1,225))
     if plot_bounds_with_beta:
@@ -104,20 +110,22 @@ for k, mean in enumerate(means):
     ax.set_xlabel('Protocol rank after round 4')
     if k==0:
         if plot_bounds_with_beta:
-            ax.set_ylabel('Est. cycle life before\nround 1, $\mathit{μ_{0,i}±β_{0}σ_{0,i}}$')
+            ax.set_ylabel('Estimated cycle life before\nround 1, $\mathit{μ_{0,i}±β_{0}σ_{0,i}}$')
         else:
-            ax.set_ylabel('Est. cycle life before\nround 1, $\mathit{μ_{0,i}±σ_{0,i}}$')
+            ax.set_ylabel('Estimated cycle life before\nround 1, $\mathit{μ_{0,i}±σ_{0,i}}$')
     else:
         if plot_bounds_with_beta:
             mathstr = '{μ_{'+str(k)+',i}±β_{'+str(k)+'}σ_{'+str(k)+',i}}'
         else:
             mathstr = '{μ_{'+str(k)+',i}±σ_{'+str(k)+',i}}'
-        ax.set_ylabel('Est. cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$')
+        ax.set_ylabel('Estimated cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$')
     ax.set_xticks([], [])
-    ax.set_title(chr(97+k), loc='left', weight='bold')
+    ax.set_title(chr(97+k), loc='left', weight='bold', fontsize=8)
     
     if k==4:
-        plt.legend(['Unselected protocols','Selected protocols'],loc='upper right',frameon=False)
+        plt.legend(['Unselected protocols','Selected protocols'],
+                   loc='upper right',frameon=False,
+                   handler_map={type(h1): HandlerErrorbar(xerr_size=0.6)})
 
 plt.tight_layout()
 if plot_bounds_with_beta:
