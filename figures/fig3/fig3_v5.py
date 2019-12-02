@@ -11,30 +11,17 @@ For manual axis sizing: See lines:
 """
 import glob
 import pickle
-
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
-
 import matplotlib
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import seaborn as sns
 import matplotlib.patheffects as pe
+import seaborn as sns
 
 MAX_WIDTH = 183 / 25.4 # mm -> inches
-FS = 7
-LW = 0.5
 figsize = (MAX_WIDTH, MAX_WIDTH)
-
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
 
 fig, axes = plt.subplots(3,3,figsize=figsize)
 axes[0,0].set_axis_off()
@@ -47,28 +34,13 @@ axes[2,0].set_axis_off()
 axes[2,1].set_axis_off()
 axes[2,2].set_axis_off()
 
-def text(x1,y1,x2,y2,k):
-    ax.annotate("Round "+str(k+1), xy=(x2, y1), xycoords='figure fraction',
-                xytext=(x1, y1), textcoords='figure fraction',
-                size=FS, va="center", ha="center",
-                bbox=dict(boxstyle="round", fc="w"))
-
-def arrow(x1,y1,x2,y2):
-    ax.annotate("", xy=(x2, y1), xycoords='figure fraction',
-                xytext=(x1, y1), textcoords='figure fraction',
-                size=10, va="center", ha="center",
-                bbox=dict(boxstyle="round4", fc="w"),
-                arrowprops=dict(arrowstyle="-|>",
-                                connectionstyle="arc3,rad=-1",
-                                relpos=(1., 0.),fc="k"))
-
 ##############################################################################
 # PLOTTING PARAMETERS
 batches_to_plot = [0,1,2,3]
 
 colormap = 'winter_r'
 el, az = 30, 240
-point_size = 25
+point_size = 20
 num_policies = 224
 seed = 0
 ##############################################################################
@@ -106,11 +78,12 @@ for k, batch_idx in enumerate(batches_to_plot):
     ax.set_xticks([4,6,8]), ax.set_xticklabels([4,6,8])
     ax.set_yticks([4,6,8]), ax.set_yticklabels([4,6,8])
     ax.set_zticks([4,6,8]), ax.set_zticklabels([4,6,8])
+    ax.tick_params(axis='both', which='major', pad=-1)
     
     if k==0:
-        ax.set_xlabel('CC1',fontsize=FS) 
-        ax.set_ylabel('CC2',fontsize=FS)
-        ax.set_zlabel('CC3',fontsize=FS,rotation=90)
+        ax.set_xlabel('CC1', labelpad=-1) 
+        ax.set_ylabel('CC2', labelpad=-1)
+        ax.set_zlabel('CC3', labelpad=-1, rotation=90)
         ax.set_title('a', loc='left', weight='bold', fontsize=8)
     #ax.set_title('Before batch '+str(batch_idx))
     
@@ -126,8 +99,8 @@ m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 
 cbar = plt.colorbar(m, cax=cbar_ax)
-cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('Predicted\ncycle life',fontsize=FS)
+cbar.ax.tick_params(labelsize=7,length=0)
+cbar.ax.set_title('Predicted\ncycle life',fontsize=7)
 
 
 ########## 3b ##########
@@ -137,7 +110,7 @@ batches_to_plot = [0,1,2,3,4]
 
 colormap = 'plasma_r'
 el, az = 30, 240
-point_size = 25
+point_size = 20
 seed = 0
 ##############################################################################
 
@@ -164,7 +137,6 @@ for k, batch_idx in enumerate(batches_to_plot):
         else:
             ax = fig.add_axes([0.05+0.165*k,0.48,0.24/1.4,0.24/1.4],projection='3d')
         #ax = plt.subplot(2, len(batches_to_plot), k+1, projection='3d')
-    #ax.set_aspect('equal')
     
     ## PLOT POLICIES
     CC1 = param_space[:,0]
@@ -177,12 +149,12 @@ for k, batch_idx in enumerate(batches_to_plot):
                vmin=min_lifetime, vmax=max_lifetime)
     
     ax.set_xlim([3, 8]), ax.set_ylim([3, 8]), ax.set_zlim([3, 8])
+    ax.tick_params(axis='both', which='major', pad=-1)
    
     if k == 0:
-        ax.set_xlabel('CC1',fontsize=FS)
-        ax.set_ylabel('CC2',fontsize=FS)
-        ax.set_zlabel('CC3',fontsize=FS,rotation=90)
-    #ax.set_title('Before batch '+str(batch_idx))
+        ax.set_xlabel('CC1', labelpad=-1)
+        ax.set_ylabel('CC2', labelpad=-1)
+        ax.set_zlabel('CC3', labelpad=-1, rotation=90)
     
     ax.view_init(elev=el, azim=az)
 
@@ -193,22 +165,31 @@ m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 
 cbar = plt.colorbar(m, cax=cbar_ax)
-cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('CLO-estimated\ncycle life',fontsize=FS)
+cbar.ax.tick_params(labelsize=7,length=0)
+cbar.ax.set_title('CLO-estimated\ncycle life',fontsize=7)
 
+## ADD ARROWS AND TEXT
+def text(x1,x2,y,k):
+    ax.annotate("Round "+str(k+1), xy=(x2, y), xycoords='figure fraction',
+                xytext=(x1, y), textcoords='figure fraction',
+                va="center", ha="center",
+                bbox=dict(boxstyle="round", fc="w"))
 
-## ADD ARROWS
-margin = 0.18
-arrow(0.15,0.62,0.3,0.4)
-arrow(0.33,0.62,0.48,0.4)
-arrow(0.51,0.62,0.66,0.4)
-arrow(0.69,0.62,0.84,0.4)
+def arrow(x1,x2,y):
+    ax.annotate("", xy=(x2, y), xycoords='figure fraction',
+                xytext=(x1, y), textcoords='figure fraction',
+                va="center", ha="center",
+                arrowprops=dict(arrowstyle="-|>",
+                                connectionstyle="arc3,rad=-1",
+                                relpos=(1., 0.),fc="k"))
 
-#arrow(0.15+0.18,0.61,0.25+0.18,0.61)
-#arrow(0.15+2*0.18,0.61,0.25+2*0.18,0.61)
-#arrow(0.15+3*0.18,0.61,0.25+3*0.18,0.61)
+margin = 0.165
+def arrow_with_text(x1, x2, y, k):
+    arrow(x1 - 0.9*margin/2, x1 + 0.9*margin/2, y - 0.075)
+    text(x1, x2, y, k)
+
 for k in np.arange(4):
-    text(0.16+0.22*k,0.67,0.18+0.22*k,0.67,k)
+    arrow_with_text(0.225+margin*k, 0.18+0.22*k, 0.675, k)
 
 
 ########## 3c ##########
@@ -250,18 +231,17 @@ ax7.bar(np.arange(num_batches), pol_reps, tick_label = ['0','1','2','3','4'],
 all_black_labels = True
 if all_black_labels:
     for k, pol_rep in enumerate(pol_reps):
-        ax7.text(k, pol_rep+2, str(int(pol_rep)), horizontalalignment='center', fontsize=FS)
+        ax7.text(k, pol_rep+2, str(int(pol_rep)), horizontalalignment='center')
         
     ax7.set_ylim([0,130])
 else:
     for k, pol_rep in enumerate(pol_reps[:-1]):
-        #ax7.text(k, pol_rep+2, str(int(pol_rep)), horizontalalignment='center', fontsize=FS)
         ax7.text(k, pol_rep-7, str(int(pol_rep)), 
-                 color='white',horizontalalignment='center', fontsize=FS)
-    ax7.text(4, pol_reps[k+1]+2, str(int(pol_reps[k+1])), horizontalalignment='center', fontsize=FS)
+                 color='white',horizontalalignment='center')
+    ax7.text(4, pol_reps[k+1]+2, str(int(pol_reps[k+1])), horizontalalignment='center')
 
-ax7.set_xlabel('Repetitions per protocol',fontsize=FS)
-ax7.set_ylabel('Count',fontsize=FS)
+ax7.set_xlabel('Repetitions per protocol')
+ax7.set_ylabel('Count')
 
 ########## 3d ##########
 filename = 'predictions.csv'
@@ -271,37 +251,26 @@ validation_policies = pred_data[:,0:3]
 
 ### I vs SOC
 
-LW = 3
-tol = 0.5
+LW = 1
+tol = 0
 
 # Initialize axis limits
 ax8.set_xlim([0,100])
 ax8.set_ylim([0,10])
 
-ax8.set_xlabel('State of charge (%)',fontsize=FS)
-ax8.set_ylabel('Current (C rate)',fontsize=FS)
+ax8.set_xlabel('State of charge (%)')
+ax8.set_ylabel('Current (C rate)')
 
 ax8.set_xticks(np.arange(0,101,20))
 
-"""
-# Add grey lines
-C1list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6.0, 7.0, 8.0]
-C2list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6, 6.0, 7.0]
-C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
+red_band = np.array([255,191,191])/255
+blue_band = np.array([207,191,255])/255
 
-for c1 in C1list:
-    ax1.plot([0,20-tol], [c1,c1], linewidth=2, color='grey')
-for c2 in C2list:
-    ax1.plot([20+tol,40-tol],[c2,c2], linewidth=2, color='grey')
-for c3 in C3list:
-    ax1.plot([40+tol,60-tol],[c3,c3], linewidth=2, color='grey')
-"""
-    
 # Add bands
-ax8.axvspan(0,      20-tol/2, ymin=0.36, ymax=0.8,  facecolor='red', alpha=0.25, lw=0)
-ax8.axvspan(20+tol/2, 40-tol/2, ymin=0.36, ymax=0.7,  facecolor='red', alpha=0.25, lw=0)
-ax8.axvspan(40+tol/2, 60-tol/2, ymin=0.36, ymax=0.56, facecolor='red', alpha=0.25, lw=0)
-ax8.axvspan(60+tol/2, 80-tol/2, ymin=0,    ymax=0.48, facecolor='blue', alpha=0.25, lw=0)
+ax8.axvspan(0,      20-tol/2, ymin=0.36, ymax=0.8,  facecolor=red_band, lw=0)
+ax8.axvspan(20+tol/2, 40-tol/2, ymin=0.36, ymax=0.7,  facecolor=red_band, lw=0)
+ax8.axvspan(40+tol/2, 60-tol/2, ymin=0.36, ymax=0.56, facecolor=red_band, lw=0)
+ax8.axvspan(60+tol/2, 80-tol/2, ymin=0,    ymax=0.48, facecolor=blue_band, lw=0)
 
 # Add 1C charging
 ax8.plot([80,89],[1,1], linewidth=LW, color='black')
@@ -314,7 +283,7 @@ idx_subset = [2,3,1]
 valpol_subset = validation_policies[idx_subset,:]
 color_subset  = ['rebeccapurple','darkviolet','violet']
 styles        = ['-','--','-.']
-paths         = [4,4,4]
+paths         = [1,1,1]
 labels        = ['CLO 1: 4.8C-5.2C-5.2C-4.160C',
                  'CLO 2: 5.2C-5.2C-4.8C-4.160C',
                  'CLO 3: 4.4C-5.6C-5.2C-4.252C']
@@ -337,20 +306,9 @@ for k, pol in enumerate(valpol_subset):
     for k2, CCstep in enumerate(CC):
         ax8.plot([20*(k2+1)+tol,20*(k2+2)-tol],[CCstep,CCstep], linewidth=LW, color=c, ls=s,
                  path_effects=[pe.Stroke(linewidth=paths[k], foreground='k'), pe.Normal()])
-        
-        """
-        ax1.plot([0,20-tol], [CC1,CC1], linewidth=LW, color=c, ls=s,label=l,
-                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
-        ax1.plot([20+tol,40-tol],[CC2,CC2], linewidth=LW, color=c, ls=s,
-                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
-        ax1.plot([40+tol,60-tol],[CC3,CC3], linewidth=LW, color=c, ls=s,
-                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
-        ax1.plot([60+tol,80-tol],[CC4,CC4], linewidth=LW, color=c, ls=s,
-                 path_effects=[pe.Stroke(linewidth=4, foreground='k'), pe.Normal()])
-        """
 
-ax8.legend(frameon=False)
+ax8.legend()
 
 #plt.tight_layout()
-plt.savefig('fig3_v5.png',bbox_inches='tight')
-plt.savefig('fig3_v5.pdf',bbox_inches='tight',format='pdf')
+plt.savefig('fig3_v5.png',dpi=300)
+plt.savefig('fig3_v5.pdf',format='pdf')

@@ -8,7 +8,6 @@ Created on Tue Jan 29 22:09:03 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
 import matplotlib.patheffects as pe
 from matplotlib.legend_handler import HandlerErrorbar
@@ -22,18 +21,8 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 plt.close('all')
 
 MAX_WIDTH = 183 / 25.4 # mm -> inches
-FS = 7
-LW = 0.5
 upper_lim = 1400
 figsize = (MAX_WIDTH, 2/3 * MAX_WIDTH)
-
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
 
 fig = plt.subplots(2,3,figsize=figsize)
 ax1 = plt.subplot2grid((2, 3), (0, 0))
@@ -189,15 +178,15 @@ ax2.set_prop_cycle(custom_cycler)
 p = [None]*9
 for k in range(len(pred_means)):
     p[k] = ax2.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
-ax2.set_xlabel('Mean early-predicted cycle life\n(validation)',fontsize=FS)
-ax2.set_ylabel('CLO-estimated cycle life',fontsize=FS)
+ax2.set_xlabel('Mean early-predicted cycle life\n(validation)')
+ax2.set_ylabel('CLO-estimated cycle life')
 r = pearsonr(oed_means,pred_means)[0]
 ax2.set_xlim([0,upper_lim])
 ax2.set_ylim([0,upper_lim])
 ax2.set_aspect('equal', 'box')
 ax2.set_xticks(np.arange(0,1501,250))
 ax2.set_yticks(np.arange(0,1501,250)) # consistent with x
-ax2.annotate('r = {:.2}'.format(r),(1450,75),horizontalalignment='right')
+ax2.annotate(r'$r =${:.2}'.format(r),(1450,75),horizontalalignment='right')
 
 
 with_errorbars = False
@@ -224,7 +213,7 @@ ax3.set_xlabel('Early-predicted cycle life (validation)')
 ax3.set_ylabel('Final cycle life (validation)')
 idx = ~np.isnan(predicted_lifetimes.ravel())
 r = pearsonr(predicted_lifetimes.ravel()[idx],final_lifetimes.ravel()[idx])[0]
-ax3.annotate('r = {:.2}'.format(r),(1450,75),horizontalalignment='right')
+ax3.annotate(r'$r =${:.2}'.format(r),(1450,75),horizontalalignment='right')
 
 
 ## d. bar plot
@@ -260,8 +249,8 @@ for k, row in enumerate(final_lifetimes):
     ax4.plot(row,(9-final_idx[k])*np.ones((5,1)), markersize=6,
              markeredgecolor='k',label='_nolegend_',)
 
-ax4.set_xlabel('Final cycle life (validation)',fontsize=FS)
-ax4.set_ylabel('Validation protocol\n(sorted by CLO ranking)',fontsize=FS)
+ax4.set_xlabel('Final cycle life (validation)')
+ax4.set_ylabel('Validation protocol\n(sorted by CLO ranking)')
 ax4.set_xlim([0,1200])
 ax4.get_yaxis().set_ticks([])
 ax4.legend(['CLO top 3', 'Lit-inspired', 'Other'],frameon=False)
@@ -294,8 +283,7 @@ def plot_4c(ax):
     
     h = ax.errorbar(data_dict['no_oed_no_ep_y'],data_dict['no_oed_no_ep_x'], 
                  yerr=data_dict['no_oed_no_ep_xerr'],xerr=data_dict['no_oed_no_ep_yerr'],
-    	alpha=0.8, 
-    	linewidth=LW,
+    	alpha=0.8,
     	marker='o', 
     	linestyle=':',
         capsize=cap_size,
@@ -304,7 +292,6 @@ def plot_4c(ax):
     ax.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
                  yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
         alpha=0.8,
-    	linewidth=LW,
     	marker='o', 
     	linestyle=':', 
         capsize=cap_size,
@@ -312,16 +299,14 @@ def plot_4c(ax):
     	label='CLO w/o early pred\n + MAB')
     ax.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
                  xerr=data_dict['no_oed_ep_yerr'],
-    	alpha=0.8, 
-    	linewidth=LW,
-    	marker='o', 
+    	alpha=0.8,
+    	marker='o',
     	linestyle=':',
         capsize=cap_size,
         #color=[0,167/256,119/256], 
     	label='CLO w/ early pred\n + random')
     ax.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
-    	alpha=0.8, 
-        linewidth=LW,
+    	alpha=0.8,
     	marker='o', 
     	linestyle=':',
         capsize=cap_size,
@@ -355,5 +340,5 @@ if add_inset:
                    
 # tight layout and save
 plt.tight_layout()
-plt.savefig('fig4_v5pt5.png',bbox_inches='tight')
-plt.savefig('fig4_v5pt5.pdf',bbox_inches='tight',format='pdf')
+plt.savefig('fig4_v5pt5.png',dpi=300)
+plt.savefig('fig4_v5pt5.pdf',format='pdf')

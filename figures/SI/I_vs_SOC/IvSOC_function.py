@@ -39,14 +39,13 @@ def plot_policy(CC1, CC2, CC3, ax,life_dict):
     ax.plot([60+tol,80-tol],[CC4,CC4], linewidth=LW+0.5, color='blue')
     
     # Add bands
+    red_band = np.array([255,191,191])/255
+    blue_band = np.array([207,191,255])/255
     
-    r_band = np.array([255,191,191])/255
-    b_band = np.array([207,191,255])/255
-    
-    ax.axvspan(0,        20-tol/2, ymin=0.36, ymax=0.8,  facecolor=r_band, lw=0)
-    ax.axvspan(20+tol/2, 40-tol/2, ymin=0.36, ymax=0.7,  facecolor=r_band, lw=0)
-    ax.axvspan(40+tol/2, 60-tol/2, ymin=0.36, ymax=0.56, facecolor=r_band, lw=0)
-    ax.axvspan(60+tol/2, 80-tol/2, ymin=0,    ymax=0.48, facecolor=b_band, lw=0)
+    ax.axvspan(0,        20-tol/2, ymin=0.36, ymax=0.8,  facecolor=red_band, lw=0)
+    ax.axvspan(20+tol/2, 40-tol/2, ymin=0.36, ymax=0.7,  facecolor=red_band, lw=0)
+    ax.axvspan(40+tol/2, 60-tol/2, ymin=0.36, ymax=0.56, facecolor=red_band, lw=0)
+    ax.axvspan(60+tol/2, 80-tol/2, ymin=0,    ymax=0.48, facecolor=blue_band, lw=0)
     
     # Add 1C charging
     ax.plot([80,89],[1,1], linewidth=LW+0.5, color='black')
