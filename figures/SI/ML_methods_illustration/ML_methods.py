@@ -130,7 +130,7 @@ def plot_GP(X, ax, label_align):
     # Plot the function, the prediction and the 95% confidence interval based on
     # the MSE
     ax.plot(x, f(x), ':', color='tab:red', label=u'$f(x)$')
-    ax.errorbar(X.ravel(), y, dy, fmt='.', color='tab:purple', markersize=10,
+    ax.errorbar(X.ravel(), y, dy, fmt='.', color='tab:purple', markersize=7,
                 label=u'Observed data')
     ax.plot(x, y_pred, '-', color='tab:blue', label=u'Prediction')
     ax.fill(np.concatenate([x, x[::-1]]),
@@ -142,7 +142,7 @@ def plot_GP(X, ax, label_align):
     ax.plot(x, ub, '--', label='Upper confidence bound\n(UCB)')
     max_acq_idx = np.argmax(ub)
     
-    ax.plot(x[max_acq_idx], ub[max_acq_idx],'v')
+    ax.plot(x[max_acq_idx], ub[max_acq_idx],'v', markersize=4)
     ax.annotate('max(UCB)', (x[max_acq_idx], ub[max_acq_idx]),
                 xytext=(0, 5),textcoords="offset points",ha=label_align)
     
@@ -172,10 +172,10 @@ new_x = plot_GP(X,ax4, 'center')
 # GP after
 X = np.append(X, new_x)
 new_x2 = plot_GP(X,ax5, 'left')
-ax5.plot(new_x, 1300,'kv')
-ax5.annotate('new\ndata', (new_x, 1407), 
+ax5.annotate('new\ndata', (new_x, 1400), 
              xytext=(0, 5),textcoords="offset points",ha='center')
-ax5.plot((new_x, new_x), (1300, 1407),'k-')
+ax5.plot(new_x, 1300,'kv', markersize=3) # arrow base
+ax5.plot((new_x, new_x), (1310, 1420),'k-') # arrow stem
 
 plt.tight_layout()
 

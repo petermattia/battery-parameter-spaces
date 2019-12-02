@@ -85,8 +85,10 @@ for k, mean in enumerate(means):
         ye2 = [(mean[indices]-lb)/(5*0.5**k),(ub-mean[indices])/(5*0.5**k)]
     
     ax = plt.subplot2grid((5, 2), (k, 0), colspan=2)
-    h1 = ax.errorbar(np.arange(224)[unselected_indices],mean[unselected_indices],yerr=ye,fmt='o',color=[0.1,0.4,0.8],capsize=2)
-    h2 = ax.errorbar(np.arange(224)[indices],mean[indices],yerr=ye2,fmt='o',color=[0.8,0.4,0.1],capsize=2)
+    h1 = ax.errorbar(np.arange(224)[unselected_indices]+1, mean[unselected_indices],
+                     yerr=ye, fmt='o', color=[0.1,0.4,0.8], capsize=2)
+    h2 = ax.errorbar(np.arange(224)[indices] +1, mean[indices],
+                     yerr=ye2, fmt='o', color=[0.8,0.4,0.1], capsize=2)
     
     ax.set_xlim((-1,225))
     if plot_bounds_with_beta:
@@ -96,16 +98,16 @@ for k, mean in enumerate(means):
     ax.set_xlabel('Protocol rank after round 4')
     if k==0:
         if plot_bounds_with_beta:
-            ax.set_ylabel('Estimated cycle life before\nround 1, $\mu_{0,i} \pm \beta_{0}\sigma_{0,i}$')
+            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \beta_{0}\sigma_{0,i}$')
         else:
-            ax.set_ylabel('Estimated cycle life before\nround 1, $\mu_{0,i} \pm \sigma_{0,i}$')
+            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \sigma_{0,i}$')
     else:
         if plot_bounds_with_beta:
             mathstr = '{\mu_{'+str(k)+',i} \pm \beta_{'+str(k)+'}\sigma_{'+str(k)+',i}}'
         else:
             mathstr = '{\mu_{'+str(k)+',i} \pm \sigma_{'+str(k)+',i}}'
-        ax.set_ylabel('Estimated cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$')
-    ax.set_xticks([], [])
+        ax.set_ylabel('CLO-estimated cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$')
+    #ax.set_xticks([], [])
     ax.set_title(chr(97+k), loc='left')
     
     if k==4:
