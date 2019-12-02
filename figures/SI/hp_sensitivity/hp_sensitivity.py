@@ -10,11 +10,14 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 
-rcParams['font.sans-serif'] = 'Arial'
-rcParams['mathtext.fontset'] = 'custom'
-rcParams['mathtext.rm'] = 'Arial'
+# SETTINGS
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+figsize=(MAX_WIDTH, 3/4 * MAX_WIDTH)
+
+## PLOT
+colormap = 'plasma_r'
+lower_lifetime_lim = 1000
 
 lifetime_key = 'l4'
 
@@ -78,22 +81,6 @@ max_lifetime = np.amax(means)
 
 
 ## INITIALIZE PLOT
-# SETTINGS
-FS = 7
-colormap = 'plasma_r'
-lower_lifetime_lim = 1000
-
-## PLOT
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
-
-MAX_WIDTH = 183 # mm
-figsize=(MAX_WIDTH / 25.4, 3/4 * MAX_WIDTH / 25.4)
 
 fig, ax = plt.subplots(2,4,figsize=figsize,sharey=True)
 #plt.style.use('classic')
@@ -115,17 +102,17 @@ for k, gamma in enumerate(sims.gamma.unique()):
     temp_ax.scatter(X.ravel(),Y.ravel(),vmin=minn,vmax=maxx,
                 c=means[:,k,:].ravel(),zorder=2,s=50)
     
-    temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=8)
+    temp_ax.set_title(chr(k+97),loc='left', fontweight='bold')
     
-    temp_ax.annotate('γ=' + str(gamma), (15, 0.95), fontsize=FS,horizontalalignment='right')
+    temp_ax.annotate(r'$\gamma = $' + str(gamma), (15, 0.95), horizontalalignment='right')
     
     # Add xlabel/xticks
     if int(k/4)==1 or k==3:
-        temp_ax.set_xlabel(r'$\beta_0$',fontsize=FS)
+        temp_ax.set_xlabel(r'$\beta_0$')
     #plt.setp(temp_ax.get_xticklabels(), visible=False)
     
     if k%4 == 0:
-        temp_ax.set_ylabel('ε',fontsize=FS)
+        temp_ax.set_ylabel(r'$\epsilon$')
     
     temp_ax.set_xlim((0.1, 20))
     temp_ax.set_ylim((0.4,1.0))
@@ -139,9 +126,9 @@ norm = matplotlib.colors.Normalize(minn, maxx)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
-cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('Cycle life\nof best protocol\n(simulated)',fontsize=FS)
+cbar.ax.tick_params(labelsize=7,length=0)
+cbar.ax.set_title('Cycle life\nof best protocol\n(simulated)',fontsize=7)
 
 ## SAVE
-plt.savefig('hyperparameter_sensitivity.png', bbox_inches = 'tight')
-plt.savefig('hyperparameter_sensitivity.pdf', bbox_inches = 'tight',format='pdf')
+plt.savefig('hyperparameter_sensitivity.png', pi=300)
+plt.savefig('hyperparameter_sensitivity.eps', format='eps')

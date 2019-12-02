@@ -9,27 +9,16 @@ Created on Tue Feb 20 07:29:14 2018
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 import glob
 import pickle
-from matplotlib.legend_handler import HandlerErrorbar
 
 plt.close('all')
 
 MAX_WIDTH = 183 / 25.4 # mm -> inches
-FS = 7
-LW = 0.5
 figsize=(MAX_WIDTH, 4/3 * MAX_WIDTH)
 
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = 'Arial'
-rcParams['mathtext.fontset'] = 'custom'
-rcParams['mathtext.rm'] = 'Arial'
+### CHANGE THIS SETTING FOR TWO VERSIONS OF PLOT
+plot_bounds_with_beta = False
 
 # IMPORT RESULTS
 # Get pickle files of bounds
@@ -71,9 +60,6 @@ plt.subplots(3,2,figsize=figsize)
 
 batches = np.arange(n_batches-1)+1
 
-### CHANGE THIS SETTING FOR TWO VERSIONS OF PLOT
-plot_bounds_with_beta = False
-
 ## Bounds
 for k, mean in enumerate(means):
     mean = mean[top_pol_idx]
@@ -110,27 +96,26 @@ for k, mean in enumerate(means):
     ax.set_xlabel('Protocol rank after round 4')
     if k==0:
         if plot_bounds_with_beta:
-            ax.set_ylabel('Estimated cycle life before\nround 1, $\mathit{μ_{0,i}±β_{0}σ_{0,i}}$')
+            ax.set_ylabel('Estimated cycle life before\nround 1, $\mu_{0,i} \pm \beta_{0}\sigma_{0,i}$')
         else:
-            ax.set_ylabel('Estimated cycle life before\nround 1, $\mathit{μ_{0,i}±σ_{0,i}}$')
+            ax.set_ylabel('Estimated cycle life before\nround 1, $\mu_{0,i} \pm \sigma_{0,i}$')
     else:
         if plot_bounds_with_beta:
-            mathstr = '{μ_{'+str(k)+',i}±β_{'+str(k)+'}σ_{'+str(k)+',i}}'
+            mathstr = '{\mu_{'+str(k)+',i} \pm \beta_{'+str(k)+'}\sigma_{'+str(k)+',i}}'
         else:
-            mathstr = '{μ_{'+str(k)+',i}±σ_{'+str(k)+',i}}'
+            mathstr = '{\mu_{'+str(k)+',i} \pm \sigma_{'+str(k)+',i}}'
         ax.set_ylabel('Estimated cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$')
     ax.set_xticks([], [])
-    ax.set_title(chr(97+k), loc='left', weight='bold', fontsize=8)
+    ax.set_title(chr(97+k), loc='left')
     
     if k==4:
         plt.legend(['Unselected protocols','Selected protocols'],
-                   loc='upper right',frameon=False,
-                   handler_map={type(h1): HandlerErrorbar(xerr_size=0.6)})
+                   loc='upper right')
 
 plt.tight_layout()
 if plot_bounds_with_beta:
-    plt.savefig('bounds_evolution_withbeta.png', bbox_inches='tight')
-    plt.savefig('bounds_evolution_withbeta.pdf', bbox_inches='tight', format='pdf')
+    plt.savefig('bounds_evolution_withbeta.png', dpi=300)
+    plt.savefig('bounds_evolution_withbeta.eps', format='eps')
 else:
-    plt.savefig('bounds_evolution_nobeta.png', bbox_inches='tight')
-    plt.savefig('bounds_evolution_nobeta.pdf', bbox_inches='tight', format='pdf')
+    plt.savefig('bounds_evolution_nobeta.png', dpi=300)
+    plt.savefig('bounds_evolution_nobeta.eps', format='eps')

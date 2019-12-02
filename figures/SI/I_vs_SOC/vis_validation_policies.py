@@ -8,23 +8,11 @@ Created on Thu Oct 25 08:57:12 2018
 
 from IvSOC_function import plot_policy
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 import numpy as np
 import glob
 import pickle
 
-FS = 7
-
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
-
 MAX_WIDTH = 183 # mm
-
 figsize=(MAX_WIDTH / 25.4, MAX_WIDTH / 25.4)
 
 fig, ax = plt.subplots(3,3,figsize=figsize, sharex=True, sharey=True)
@@ -79,12 +67,11 @@ for k, p in enumerate(pols):
     ax_temp = ax[int(k/3)][k%3]
     plot_policy(p[0],p[1],p[2],ax_temp,life_dict)
     if int(k/3) == 2:
-        ax_temp.set_xlabel('State of charge (%)',fontsize=FS)
+        ax_temp.set_xlabel('State of charge (%)')
     if k%3 == 0:
-        ax_temp.set_ylabel('Current (C rate)',fontsize=FS)
-    ax_temp.set_title(chr(k+97), loc='left', weight='bold', fontsize=9)
+        ax_temp.set_ylabel('Current (C rate)')
+    ax_temp.set_title(chr(k+97), loc='left', weight='bold')
     
-
 plt.tight_layout()
-plt.savefig('val_pols.png',bbox_inches='tight')
-plt.savefig('val_pols.pdf',bbox_inches='tight',format='pdf')
+plt.savefig('val_pols.png',dpi=300)
+plt.savefig('val_pols.eps',format='eps')

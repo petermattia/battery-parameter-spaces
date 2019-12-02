@@ -11,20 +11,10 @@ to random searching. The results were generated on a cluster
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 import pickle
 
 MAX_WIDTH = 183 / 25.4 # mm -> inches
-FS = 7
-LW = 1
-
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
+figsize=(MAX_WIDTH, 2/3 * MAX_WIDTH)
 
 file = 'sim_ablation.pkl'
 with open(file, 'rb') as infile:
@@ -34,15 +24,12 @@ with open(file, 'rb') as infile:
 num_channels = [1, 8, 16, 24, 48]
 num_rounds = [1, 2, 3, 4]
 
-figsize=(MAX_WIDTH, 2/3 * MAX_WIDTH)
-
 fig, ax = plt.subplots(2,3,figsize=figsize,sharey=True)
 
 for k, channels in enumerate(num_channels):
     temp_ax = ax[int(k/3)][k%3]
     temp_ax.errorbar(np.array(num_rounds),
                  random_performance_means[k],
-                 linewidth = LW,
                  yerr=1.96*np.vstack((random_performance_stds[k], 
                                       random_performance_stds[k])),
                  marker='o',
@@ -52,7 +39,6 @@ for k, channels in enumerate(num_channels):
     
     temp_ax.errorbar(np.array(num_rounds),
                      oed_performance_means[k][1:],
-                     linewidth = LW,
                      yerr=1.96*np.vstack((oed_performance_stds[k][1:], 
                                           oed_performance_stds[k][1:])),
                      marker='o',
@@ -62,29 +48,25 @@ for k, channels in enumerate(num_channels):
     
     temp_ax.set_title(chr(k+97), loc='left', weight='bold', fontsize=8)
     #temp_ax.set_xlim((0.5, 4.5))
+    temp_ax.set_xticks(np.arange(1, 5))
     temp_ax.set_ylim((700,1200))
     annotation_text = ' channels'
     if k==0:
         annotation_text = ' channel'
     temp_ax.annotate(str(channels) + annotation_text, (4.1, 720),
-                     fontsize=FS,horizontalalignment='right')
+                     horizontalalignment='right')
     if k==0:
-        temp_ax.legend(loc='upper left',frameon=False)
+        temp_ax.legend(loc='upper left')
         
-    """
-    if int(k/3)==1 or k==2:
-        temp_ax.set_xlabel('Number of rounds of testing',fontsize=FS)
-    else:
-        plt.setp(temp_ax.get_xticklabels(), visible=False)
-    """
-    temp_ax.set_xlabel('Number of rounds of testing',fontsize=FS)
+    
+    temp_ax.set_xlabel('Number of rounds of testing')
         
     if k%3 == 0:
-        temp_ax.set_ylabel('True cycle life of current best protocol',fontsize=FS)
+        temp_ax.set_ylabel('True cycle life of current best protocol')
         
 ax[-1, -1].axis('off')
 
 ## SAVE
 plt.tight_layout()
-plt.savefig('sim_ablation.png', bbox_inches = 'tight')
-plt.savefig('sim_ablation.pdf', bbox_inches = 'tight', format='pdf')
+plt.savefig('sim_ablation.png', dpi=300)
+plt.savefig('sim_ablation.eps', format='eps')

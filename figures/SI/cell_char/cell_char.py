@@ -14,23 +14,16 @@ from matplotlib import rcParams
 from cycler import cycler
 
 MAX_WIDTH = 183 / 25.4 # mm -> inches
-FS = 7
-LW = 0.5
+figsize = (MAX_WIDTH, 3/4*3/2*MAX_WIDTH)
 
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
+rcParams['lines.linewidth'] = 1
 
-f, ax = plt.subplots(3, 2, figsize=(MAX_WIDTH, 3/4*3/2*MAX_WIDTH))
+f, ax = plt.subplots(3, 2, figsize=figsize)
 
 for k in range(6):
     k1 = int(k/2)
     k2 = k%2
-    ax[k1][k2].set_title(chr(97+k1*2+k2), loc='left', weight='bold', fontsize=8)
+    ax[k1][k2].set_title(chr(97+k1*2+k2), loc='left', fontweight='bold')
 
 ########## a,c ##########
 file = sorted(glob.glob('2018*.csv'))[1]
@@ -212,5 +205,5 @@ Rstd  =  np.std(R, axis=0)
 R_tot = np.mean(Rmean[:,0],axis=0)
 
 plt.tight_layout()
-plt.savefig('cell_char.png',bbox_inches='tight')
-plt.savefig('cell_char.pdf',bbox_inches='tight',format='pdf')
+plt.savefig('cell_char.png', dpi=300)
+plt.savefig('cell_char.eps', format='eps')

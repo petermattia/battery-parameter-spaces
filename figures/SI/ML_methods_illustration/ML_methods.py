@@ -9,23 +9,15 @@ Created on Tue Feb 20 07:29:14 2018
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 import glob
 from sklearn.gaussian_process import GaussianProcessRegressor
 
 plt.close('all')
 
-FS = 14
+MAX_WIDTH = 183 / 25.4 # mm -> inches
+figsize=(MAX_WIDTH, 5/6*MAX_WIDTH)
 
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
-
-plt.figure(figsize=(12,10))
+plt.figure(figsize=figsize)
 
 ax0 = plt.subplot2grid((3, 4), (0, 0))
 ax0b = plt.subplot2grid((3, 4), (0, 1))
@@ -79,7 +71,7 @@ ax1.plot(QV100b,np.linspace(3.5,2.0,1000),'--k',label='Cycle 100')
 ax1.set_xlabel('Discharge capacity (Ah)')
 ax1.set_ylabel('Voltage (V)')
 ax1.set_ylim((2.0,3.5))
-ax1.legend(frameon=False,fontsize=FS)
+ax1.legend()
 ax1.set_xlim((0,1.1))
 
 # Voltage difference
@@ -144,7 +136,7 @@ def plot_GP(X, ax, label_align):
     ax.fill(np.concatenate([x, x[::-1]]),
             np.concatenate([y_pred - 1.9600 * std,
                            (y_pred + 1.9600 * std)[::-1]]),
-            alpha=.5, fc='tab:blue', ec='None')
+            fc=np.array([151,199,226])/255, ec='None')
     
     ub = y_pred + 1.9600 * std
     ax.plot(x, ub, '--', label='Upper confidence bound\n(UCB)')
@@ -154,8 +146,8 @@ def plot_GP(X, ax, label_align):
     ax.annotate('max(UCB)', (x[max_acq_idx], ub[max_acq_idx]),
                 xytext=(0, 5),textcoords="offset points",ha=label_align)
     
-    ax.set_xlabel(r'Charging protocol parameter, $x$ (e.g. CC1)',fontsize=FS)
-    ax.set_ylabel('Cycle life (cycles)',fontsize=FS)
+    ax.set_xlabel(r'Charging protocol parameter, $x$ (e.g. CC1)')
+    ax.set_ylabel('Cycle life (cycles)')
     ax.set_xlim((0,10))
     ax.set_ylim((1000,1801))
     leg = ax.legend(ncol = 2, frameon=False, loc='upper center')
@@ -204,5 +196,5 @@ ax3.set_ylabel('Discharge capacity (Ah)')
 ax3.annotate("Cell A\n{} cycles".format(idx1), xy=(idx1-500, 0.885), xytext=(idx1-500, 0.885), color=c1)
 ax3.annotate("Cell B\n{} cycles".format(idx2), xy=(idx2-500, 0.885), xytext=(idx2-450, 0.885), color=c2)
 
-plt.savefig('ML_methods.png', bbox_inches='tight')
-plt.savefig('ML_methods.pdf', bbox_inches='tight', format='pdf')
+plt.savefig('ML_methods.png', dpi=300)
+plt.savefig('ML_methods.eps', format='eps')

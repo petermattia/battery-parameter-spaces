@@ -9,17 +9,14 @@ Created on Tue Feb 20 07:29:14 2018
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
 import matplotlib
 import pickle
 
 plt.close('all')
 
-CROPPED_BOUNDS = False
-
 ##############################################################################
-# PARAMETERS TO CREATE POLICY SPACE
-min_policy_bound, max_policy_bound = 3.6, 8
+# PARAMETERS TO CREATE PROTOCOL SPACE
+min_protocol_bound, max_protocol_bound = 3.6, 8
 C3list = [3.6, 4.0, 4.4, 4.8, 5.2, 5.6]
 
 C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
@@ -28,21 +25,12 @@ C4_LIMITS = [0.1, 4.81] # Lower and upper limits specifying valid C4s
 one_step = 4.8
 margin = 0.2 # plotting margin
 
+SCALAR = 5 # divide
+
 MAX_WIDTH = 183 / 25.4 # mm -> inches
-FS = 7
-LW = 0.5
-
-rcParams['pdf.fonttype'] = 42
-rcParams['ps.fonttype'] = 42
-rcParams['font.size'] = FS
-rcParams['axes.labelsize'] = FS
-rcParams['xtick.labelsize'] = FS
-rcParams['ytick.labelsize'] = FS
-rcParams['font.sans-serif'] = ['Arial']
-rcParams['mathtext.fontset'] = 'custom'
-rcParams['mathtext.rm'] = 'Arial'
-
 figsize=(MAX_WIDTH, 0.5 * MAX_WIDTH)
+
+CROPPED_BOUNDS = False
 
 colormap = 'plasma_r'
 
@@ -67,14 +55,12 @@ else:
     minn, maxx = min_lifetime, max_lifetime
 
 # Calculate C4(CC1, CC2) values for contour lines
-C1_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
-C2_grid = np.arange(min_policy_bound-margin,max_policy_bound + margin,0.01)
+C1_grid = np.arange(min_protocol_bound-margin,max_protocol_bound + margin,0.01)
+C2_grid = np.arange(min_protocol_bound-margin,max_protocol_bound + margin,0.01)
 [X,Y] = np.meshgrid(C1_grid,C2_grid)
 
 fig.subplots_adjust(right=0.8)
 fig.subplots_adjust(top=0.93)
-
-SCALAR = 5 # divide
 
 # FUNCTION FOR LOOPING THROUGH CCC3
 for k, c3 in enumerate(C3list):
@@ -92,22 +78,24 @@ for k, c3 in enumerate(C3list):
 
     ## PLOT PROTOCOLS
     idx_subset = np.where(param_space[:,2]==c3)
-    policy_subset = param_space[idx_subset]
+    protocol_subset = param_space[idx_subset]
     lifetime_subset = mean[idx_subset]
     bounds_subset = bounds[idx_subset]
-    temp_ax.scatter(policy_subset[:,0],policy_subset[:,1],vmin=minn,vmax=maxx,
-                c=lifetime_subset.ravel(),zorder=2,s=bounds_subset/SCALAR)
+    temp_ax.scatter(protocol_subset[:,0],protocol_subset[:,1],vmin=minn,vmax=maxx,
+                c=lifetime_subset.ravel(),zorder=3,s=bounds_subset/SCALAR)
 
     ## LABELS
-    temp_ax.set_title(chr(k+97),loc='left', weight='bold',fontsize=8)
-    temp_ax.annotate('CC3=' + str(c3) + '\n' + str(len(policy_subset)) + ' protocols',\
-              (3.52, 3.52), fontsize=FS)
+    temp_ax.set_title(chr(k+97), loc='left', fontweight='bold')
+    temp_ax.annotate('CC3=' + str(c3) + '\n' + str(len(protocol_subset)) + ' protocols',\
+              (3.52, 3.52))
     if int(k/3)==1:
-        temp_ax.set_xlabel('CC1',fontsize=FS)
+        temp_ax.set_xlabel('CC1')
     if k%3 == 0:
-        temp_ax.set_ylabel('CC2',fontsize=FS)
-    temp_ax.set_xlim((min_policy_bound-margin, max_policy_bound+margin))
-    temp_ax.set_ylim((min_policy_bound-margin, max_policy_bound+margin))
+        temp_ax.set_ylabel('CC2')
+    temp_ax.set_xlim((min_protocol_bound-margin, max_protocol_bound+margin))
+    temp_ax.set_ylim((min_protocol_bound-margin, max_protocol_bound+margin))
+    
+    temp_ax.set_xticks(np.arange(4,9))
 
 # ADD COLORBAR
 cbar_ax = fig.add_axes([0.85, 0.35, 0.04, 0.5]) # [left, bottom, width, height]
@@ -115,8 +103,8 @@ norm = matplotlib.colors.Normalize(minn, maxx)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
-cbar.ax.tick_params(labelsize=FS,length=0)
-cbar.ax.set_title('CLO-estimated\ncycle life\nafter round 4',fontsize=FS)
+cbar.ax.tick_params(length=0)
+cbar.ax.set_title('CLO-estimated\ncycle life\nafter round 4',fontsize=7)
 
 # ADD LEGEND, based on: 
 # https://blogs.oii.ox.ac.uk/bright/2014/08/12/point-size-legends-in-matplotlib-and-basemap-plots/
@@ -126,14 +114,14 @@ l3 = plt.scatter([],[], c='k', s=200/SCALAR, edgecolors='none')
 l4 = plt.scatter([],[], c='k', s=300/SCALAR, edgecolors='none')
 title = 'Std. dev. of\ncycle life\nafter round 4,\n$\mathit{σ_{4,i}}$'
 labels = ['50','100','200','300']
-leg = plt.legend([l1, l2, l3, l4], labels, frameon=False, fontsize=FS,
+leg = plt.legend([l1, l2, l3, l4], labels, frameon=False,
                  title=title, bbox_to_anchor=(1.38, -0.5, 0.5, 0.5), handletextpad = 1)
 plt.setp(leg.get_title(), multialignment='center')
 
 ## SAVE
 if CROPPED_BOUNDS:
-    plt.savefig('final_sharexy.png', bbox_inches = 'tight')
-    plt.savefig('final_sharexy.pdf', bbox_inches = 'tight',format='pdf')
+    plt.savefig('final_sharexy.png', dpi=300)
+    plt.savefig('final_sharexy.eps', format='eps')
 else:
-    plt.savefig('final_full_sharexy.png', bbox_inches = 'tight')
-    plt.savefig('final_full_sharexy.pdf', bbox_inches = 'tight',format='pdf')
+    plt.savefig('final_full_sharexy.png', dpi=300)
+    plt.savefig('final_full_sharexy.eps', format='eps')
