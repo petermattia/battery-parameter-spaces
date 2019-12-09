@@ -10,7 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib import rcParams
-import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import seaborn as sns
@@ -20,8 +19,7 @@ figsize = (MAX_WIDTH, 3/8 * MAX_WIDTH)
 
 LW = rcParams['lines.linewidth']
 
-fig = plt.subplots(1,2,figsize=figsize)
-ax1 = plt.subplot(121)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize, gridspec_kw={'width_ratios': [1.15, 1]})
 with sns.axes_style('white'):
     ax2 = plt.subplot(122, projection='3d')
 
@@ -66,12 +64,15 @@ ax1.plot([0,20], [c1,c1], color='red', linewidth=1)
 ax1.plot([20,40],[c2,c2], color='red', linewidth=1)
 ax1.plot([40,60],[c3,c3], color='red', linewidth=1)
 ax1.plot([60,80],[c4,c4], color='blue', linewidth=1)
-    
+
 # CC labels
-label_height = 9.2
+label_height = 8.9
 for k in np.arange(4):
-    ax1.text(10+20*k,label_height,'CC'+str(k+1), horizontalalignment='center')
-ax1.text(90,label_height,'CC5-CV1', horizontalalignment='center')
+    independent_str = 'Free' if k != 3 else 'Constrained'
+    labelstr = 'CC{}:\n{}'.format(k+1, independent_str)
+    ax1.text(10+20*k, label_height, labelstr, horizontalalignment='center')
+
+ax1.text(90,label_height,'CC5-CV1:\nFixed', horizontalalignment='center')
 
 # Add 1C charging
 ax1.plot([80,89],[1,1], color='black', linewidth=1)
@@ -81,8 +82,6 @@ ax1.plot(x,y, color='black', linewidth=1)
 
 # Charging time text box
 ct_label_height = 0.5
-#ax1.plot([0.1,0.1],[ct_label_height-0.25,ct_label_height+0.25], color='grey')
-#ax1.plot([80,80],[ct_label_height-0.25,ct_label_height+0.25], color='grey')
 ax1.plot([0,80],[ct_label_height,ct_label_height], color='grey')
 
 textstr = 'Charging time (0-80% SOC) = 10 minutes'
@@ -91,7 +90,7 @@ ax1.text(0.4, ct_label_height/10, textstr,transform=ax1.transAxes,
         verticalalignment='center', horizontalalignment='center',bbox=props)
 
 # Voltage label text box
-v_label_height = 8.4
+v_label_height = 8.1
 v_label_lines = False
 if v_label_lines:
     ax1.plot([1.5,1.5],[v_label_height-0.25,v_label_height+0.25], linewidth=LW+0.25, color='grey')
@@ -110,6 +109,8 @@ colormap = 'viridis'
 el, az = 30, 240
 point_size = 25
 seed = 0
+tickpad = -4
+labelpad = -5
 ##############################################################################
 
 # IMPORT DATA
@@ -129,59 +130,33 @@ max_CC4 = np.max(CC4)
 ## PLOT POLICIES
 with plt.style.context(('classic')):
     plt.set_cmap(colormap)
-    ax2.scatter(CC1,CC2,CC3, s=point_size, c=CC4,
-               vmin=min_CC4, vmax=max_CC4)
+    ax2.scatter(CC1, CC2, CC3, s=point_size, c=CC4, vmin=min_CC4, vmax=max_CC4)
+    ax2.tick_params(pad=tickpad)
     
-    ax2.set_xlabel('CC1'), ax2.set_xlim([3, 8])
-    ax2.set_ylabel('CC2'), ax2.set_ylim([3, 8])
-    ax2.set_zlabel('CC3'), ax2.set_zlim([3, 8])
+    ax2.xaxis.set_rotate_label(False)
+    ax2.yaxis.set_rotate_label(False)
+    ax2.zaxis.set_rotate_label(False)
+    
+    ax2.set_xlabel('CC1\n(C rate)', labelpad=labelpad)
+    ax2.set_ylabel('CC2\n(C rate)', labelpad=labelpad)
+    ax2.set_zlabel('CC3\n(C rate)', labelpad=labelpad)
+    
+    ax2.set_xlim([3, 8])
+    ax2.set_ylim([3, 8])
+    ax2.set_zlim([3, 8])
     
     ax2.view_init(elev=el, azim=az)
     
     # ADD COLORBAR
     #ax2.subplots_adjust(left=0.01,right=0.85,bottom=0.02,top=0.98,wspace=0.000001)
-    cbar_ax = fig[0].add_axes([0.9, 0.15, 0.02, 0.7]) # [left, bottom, width, height]
+    cbar_ax = fig.add_axes([0.9, 0.15, 0.02, 0.7]) # [left, bottom, width, height]
     norm = matplotlib.colors.Normalize(min_CC4, max_CC4)
     m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
     m.set_array([])
     
     cbar = plt.colorbar(m, cax=cbar_ax)
-    cbar.ax.tick_params(labelsize=7,length=0)
-    cbar.ax.set_title('CC4',fontsize=7)
-
-def set_axes_equal(ax):
-    """
-    Adapted from:
-    https://stackoverflow.com/questions/13685386/matplotlib-equal-unit-length-with-equal-aspect-ratio-z-axis-is-not-equal-to
-    
-    Make axes of 3D plot have equal scale so that spheres appear as spheres,
-    cubes as cubes, etc..  This is one possible solution to Matplotlib's
-    ax.set_aspect('equal') and ax.axis('equal') not working for 3D.
-
-    Input
-      ax: a matplotlib axis, e.g., as output from plt.gca().
-    """
-
-    x_limits = ax.get_xlim3d()
-    y_limits = ax.get_ylim3d()
-    z_limits = ax.get_zlim3d()
-
-    x_range = abs(x_limits[1] - x_limits[0])
-    x_middle = np.mean(x_limits)
-    y_range = abs(y_limits[1] - y_limits[0])
-    y_middle = np.mean(y_limits)
-    z_range = abs(z_limits[1] - z_limits[0])
-    z_middle = np.mean(z_limits)
-
-    # The plot bounding box is a sphere in the sense of the infinity
-    # norm, hence I call half the max range the plot radius.
-    plot_radius = 0.5*max([x_range, y_range, z_range])
-
-    ax.set_xlim3d([x_middle - plot_radius, x_middle + plot_radius])
-    ax.set_ylim3d([y_middle - plot_radius, y_middle + plot_radius])
-    ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])
-
-#set_axes_equal(ax2)
+    cbar.ax.tick_params(labelsize=7, length=0)
+    cbar.ax.set_title('CC4\n(C rate)', fontsize=7)
 
 #plt.tight_layout()
 plt.savefig('fig2.png', dpi=300)

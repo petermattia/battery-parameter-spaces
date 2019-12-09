@@ -146,8 +146,8 @@ ax1.set_title('a',loc='left', fontweight='bold')
 init_plot(ax1)
 for k in range(len(pred_means)):
     ax1.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
-ax1.set_xlabel('Mean early-predicted cycle life\n(validation)')
-ax1.set_ylabel('CLO-estimated cycle life')
+ax1.set_xlabel('Mean early-predicted cycle life\nfrom validation (cycles)')
+ax1.set_ylabel('CLO-estimated cycle life (cycles)')
 r = pearsonr(pred_means,oed_means)[0]
 format_lifetimes_plot(r)
 
@@ -159,8 +159,8 @@ for k in range(len(predicted_lifetimes)):
     predicted_lifetimes_vector = predicted_lifetimes[k][~np.isnan(predicted_lifetimes[k])]
     oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(predicted_lifetimes[k])))
     ax2.plot(predicted_lifetimes_vector, oed_value_vector)
-ax2.set_xlabel('Early-predicted cycle life\n(validation)')
-ax2.set_ylabel('CLO-estimated cycle life')
+ax2.set_xlabel('Early-predicted cycle life\nfrom validation (cycles)')
+ax2.set_ylabel('CLO-estimated cycle life (cycles)')
 idx = ~np.isnan(predicted_lifetimes.ravel())
 r = pearsonr(predicted_lifetimes.ravel()[idx],np.repeat(oed_means,5)[idx])[0]
 format_lifetimes_plot(r)
@@ -171,7 +171,7 @@ ax3.set_title('c',loc='left', fontweight='bold')
 init_plot(ax3)
 for k in range(len(pred_ranks)):
     plt.plot(pred_ranks[k],oed_ranks[k])
-ax3.set_xlabel('Mean early-predicted ranking\n(validation)')
+ax3.set_xlabel('Mean early-predicted ranking\nfrom validation')
 ax3.set_ylabel('CLO-estimated ranking')
 tau = kendalltau(pred_ranks,oed_ranks)[0]
 format_rankings_plot(tau)
@@ -183,8 +183,8 @@ ax4.set_title('d',loc='left', fontweight='bold')
 init_plot(ax4)
 for k in range(len(pred_means)):
     plt.errorbar(pred_means[k],final_means[k],xerr=pred_sterr[k],yerr=final_sterr[k])
-ax4.set_xlabel('Mean early-predicted cycle life\n(validation)')
-ax4.set_ylabel('Mean final cycle life (validation)')
+ax4.set_xlabel('Mean early-predicted cycle life\nfrom validation (cycles)')
+ax4.set_ylabel('Mean final cycle life\nfrom validation (cycles)')
 r = pearsonr(pred_means,final_means)[0]
 format_lifetimes_plot(r)
 
@@ -193,8 +193,8 @@ ax5 = plt.subplot(3,3,5)
 ax5.set_title('e',loc='left', fontweight='bold')
 init_plot(ax5)
 ax5.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
-ax5.set_xlabel('Early-predicted cycle life\n(validation)')
-ax5.set_ylabel('Final cycle life validation)')
+ax5.set_xlabel('Early-predicted cycle life\nfrom validation (cycles)')
+ax5.set_ylabel('Final cycle life\nfrom validation (cycles)')
 r = pearsonr(predicted_lifetimes.ravel()[idx],final_lifetimes.ravel()[idx])[0]
 format_lifetimes_plot(r)
 
@@ -204,8 +204,8 @@ ax6.set_title('f',loc='left', fontweight='bold')
 init_plot(ax6)
 for k in range(len(pred_ranks)):
     plt.plot(pred_ranks[k],final_ranks[k])
-ax6.set_xlabel('Mean early-predicted ranking\n(validation)')
-ax6.set_ylabel('Final ranking (validation)')
+ax6.set_xlabel('Mean early-predicted ranking\nfrom validation')
+ax6.set_ylabel('Final ranking from validation')
 tau = kendalltau(pred_ranks,final_ranks)[0]
 format_rankings_plot(tau)
 
@@ -216,8 +216,8 @@ ax7.set_title('g',loc='left', fontweight='bold')
 init_plot(ax7)
 for k in range(len(oed_means)):
     plt.errorbar(oed_means[k],final_means[k],yerr=final_sterr[k])
-ax7.set_xlabel('CLO-estimated cycle life')
-ax7.set_ylabel('Mean final cycle life (validation)')
+ax7.set_xlabel('CLO-estimated cycle life (cycles)')
+ax7.set_ylabel('Mean final cycle life\nfrom validation (cycles)')
 r = pearsonr(oed_means,final_means)[0]
 format_lifetimes_plot(r)
 
@@ -229,8 +229,8 @@ for k in range(len(predicted_lifetimes)):
     final_lifetimes_vector = final_lifetimes[k][~np.isnan(final_lifetimes[k])]
     oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(final_lifetimes[k])))
     ax8.plot(oed_value_vector, final_lifetimes_vector)
-ax8.set_xlabel('CLO-estimated cycle life')
-ax8.set_ylabel('Final cycle life (validation)')
+ax8.set_xlabel('CLO-estimated cycle life (cycles)')
+ax8.set_ylabel('Final cycle life\nfrom validation (cycles)')
 r = pearsonr(np.repeat(oed_means,5),final_lifetimes.ravel())[0]
 format_lifetimes_plot(r)
 
@@ -241,7 +241,7 @@ init_plot(ax9)
 for k in range(len(pred_ranks)):
     plt.plot(oed_ranks[k],final_ranks[k])
 ax9.set_xlabel('CLO-estimated ranking')
-ax9.set_ylabel('Final ranking (validation)')
+ax9.set_ylabel('Final ranking from validation')
 tau = kendalltau(oed_ranks,final_ranks)[0]
 format_rankings_plot(tau)
 

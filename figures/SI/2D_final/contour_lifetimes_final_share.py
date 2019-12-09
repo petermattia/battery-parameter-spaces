@@ -86,8 +86,7 @@ for k, c3 in enumerate(C3list):
 
     ## LABELS
     temp_ax.set_title(chr(k+97), loc='left', fontweight='bold')
-    temp_ax.annotate('CC3=' + str(c3) + '\n' + str(len(protocol_subset)) + ' protocols',\
-              (3.52, 3.52))
+    temp_ax.annotate('CC3=' + str(c3), (3.52, 3.52))
     if int(k/3)==1:
         temp_ax.set_xlabel('CC1')
     if k%3 == 0:

@@ -62,7 +62,7 @@ for k, channels in enumerate(num_channels):
     temp_ax.set_xlabel('Number of rounds of testing')
         
     if k%3 == 0:
-        temp_ax.set_ylabel('True cycle life of current best protocol')
+        temp_ax.set_ylabel('True cycle life of current best protocol (cycles)')
         
 ax[-1, -1].axis('off')
 

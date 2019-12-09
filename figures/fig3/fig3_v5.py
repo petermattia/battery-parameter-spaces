@@ -14,7 +14,6 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patheffects as pe
@@ -40,9 +39,11 @@ batches_to_plot = [0,1,2,3]
 
 colormap = 'winter_r'
 el, az = 30, 240
-point_size = 20
+point_size = 18
 num_policies = 224
 seed = 0
+tickpad = -4
+labelpad = -5
 ##############################################################################
 
 # IMPORT RESULTS
@@ -78,12 +79,15 @@ for k, batch_idx in enumerate(batches_to_plot):
     ax.set_xticks([4,6,8]), ax.set_xticklabels([4,6,8])
     ax.set_yticks([4,6,8]), ax.set_yticklabels([4,6,8])
     ax.set_zticks([4,6,8]), ax.set_zticklabels([4,6,8])
-    ax.tick_params(axis='both', which='major', pad=-1)
+    ax.tick_params(axis='both', which='major', pad=tickpad)
     
     if k==0:
-        ax.set_xlabel('CC1', labelpad=-1) 
-        ax.set_ylabel('CC2', labelpad=-1)
-        ax.set_zlabel('CC3', labelpad=-1, rotation=90)
+        ax.xaxis.set_rotate_label(False)
+        ax.yaxis.set_rotate_label(False)
+        ax.zaxis.set_rotate_label(False)
+        ax.set_xlabel('CC1\n(C rate)', labelpad=labelpad)
+        ax.set_ylabel('CC2\n(C rate)', labelpad=labelpad)
+        ax.set_zlabel('CC3\n(C rate)', labelpad=labelpad)
         ax.set_title('a', loc='left', weight='bold', fontsize=8)
     #ax.set_title('Before batch '+str(batch_idx))
     
@@ -100,7 +104,7 @@ m.set_array([])
 
 cbar = plt.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=7,length=0)
-cbar.ax.set_title('Predicted\ncycle life',fontsize=7)
+cbar.ax.set_title('Predicted\ncycle life\n(cycles)',fontsize=7)
 
 
 ########## 3b ##########
@@ -109,9 +113,6 @@ cbar.ax.set_title('Predicted\ncycle life',fontsize=7)
 batches_to_plot = [0,1,2,3,4]
 
 colormap = 'plasma_r'
-el, az = 30, 240
-point_size = 20
-seed = 0
 ##############################################################################
 
 # IMPORT RESULTS
@@ -149,12 +150,15 @@ for k, batch_idx in enumerate(batches_to_plot):
                vmin=min_lifetime, vmax=max_lifetime)
     
     ax.set_xlim([3, 8]), ax.set_ylim([3, 8]), ax.set_zlim([3, 8])
-    ax.tick_params(axis='both', which='major', pad=-1)
+    ax.tick_params(axis='both', which='major', pad=tickpad)
    
     if k == 0:
-        ax.set_xlabel('CC1', labelpad=-1)
-        ax.set_ylabel('CC2', labelpad=-1)
-        ax.set_zlabel('CC3', labelpad=-1, rotation=90)
+        ax.xaxis.set_rotate_label(False)
+        ax.yaxis.set_rotate_label(False)
+        ax.zaxis.set_rotate_label(False)
+        ax.set_xlabel('CC1\n(C rate)', labelpad=labelpad)
+        ax.set_ylabel('CC2\n(C rate)', labelpad=labelpad)
+        ax.set_zlabel('CC3\n(C rate)', labelpad=labelpad)
     
     ax.view_init(elev=el, azim=az)
 
@@ -166,7 +170,7 @@ m.set_array([])
 
 cbar = plt.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=7,length=0)
-cbar.ax.set_title('CLO-estimated\ncycle life',fontsize=7)
+cbar.ax.set_title('CLO-estimated\ncycle life\n(cycles)',fontsize=7)
 
 ## ADD ARROWS AND TEXT
 def text(x1,x2,y,k):
@@ -183,13 +187,13 @@ def arrow(x1,x2,y):
                                 connectionstyle="arc3,rad=-1",
                                 relpos=(1., 0.),fc="k"))
 
-margin = 0.165
+margin = 0.17
 def arrow_with_text(x1, x2, y, k):
     arrow(x1 - 0.9*margin/2, x1 + 0.9*margin/2, y - 0.075)
-    text(x1, x2, y, k)
+    text(x1, x2, y-0.026, k)
 
 for k in np.arange(4):
-    arrow_with_text(0.225+margin*k, 0.18+0.22*k, 0.675, k)
+    arrow_with_text(0.225+margin*k, 0.18+margin*k, 0.675, k)
 
 
 ########## 3c ##########
@@ -241,7 +245,7 @@ else:
     ax7.text(4, pol_reps[k+1]+2, str(int(pol_reps[k+1])), horizontalalignment='center')
 
 ax7.set_xlabel('Repetitions per protocol')
-ax7.set_ylabel('Count')
+ax7.set_ylabel('Number of protocols')
 
 ########## 3d ##########
 filename = 'predictions.csv'

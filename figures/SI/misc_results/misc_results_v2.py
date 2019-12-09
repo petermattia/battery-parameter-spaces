@@ -136,8 +136,8 @@ ax2.legend(legend,frameon=False)
 ## Histogram
 with plt.style.context(('classic')):
     ax3.hist(data[-1], bins=12, range=(600,1200),color=[0.1,0.4,0.8])
-ax3.set_xlabel('CLO-estimated cycle life\nafter round 4, $\mathit{μ_{4,i}}$')
-ax3.set_ylabel('Count')
+ax3.set_xlabel('CLO-estimated cycle life\nafter round 4, $\mathit{μ_{4,i}}$ (cycles)')
+ax3.set_ylabel('Number of protocols')
 ax3.set_xlim([600,1200])
 
 ## Sum of squares correlation
@@ -153,13 +153,13 @@ policies = np.asarray(policies) # cast to numpy array
 ## MODELS
 values = np.sum(policies**2,axis=1)
 
-xlabel_mod = r'$\mathdefault{sum(I^2)=\Sigma}_{i=1}^{4}\mathdefault{CC}_i^2$'
+xlabel_mod = r'$\mathdefault{sum(}I\mathdefault{^2)=\Sigma}_{i=1}^{4}\mathdefault{CC}_i^2$ (C rate$^2$)'
 rho = pearsonr(values,mean)[0]
 leglabel = r'$\rho$ = {:.2f}'.format(rho)
 
 ax4.plot(values, mean, 'o', label=leglabel, color=[0.1,0.4,0.8])
 ax4.set_xlabel(xlabel_mod)
-ax4.set_ylabel('CLO-estimated cycle life\nafter round 4, $\mathit{μ_{4,i}}$')
+ax4.set_ylabel('CLO-estimated cycle life\nafter round 4, $\mathit{μ_{4,i}}$ (cycles)')
 ax4.legend(loc='best', markerscale=0, frameon=False)
 
 ## Bounds vs mean
@@ -167,11 +167,10 @@ ye = [(mean-lb)/(5*0.5**5),(ub-mean)/(5*0.5**5)]
 rho = pearsonr(mean,ye[0])[0]
 leglabel = r'$\rho$ = {:.2f}'.format(rho)
 
-with plt.style.context(('classic')):
-    ax5.plot(mean,ye[0],'o',label=leglabel,color=[0.1,0.4,0.8])
-ax5.set_xlabel('CLO-estimated cycle life\nafter round 4, $\mathit{μ_{4,i}}$')
-ax5.set_ylabel('Standard deviation of cycle life\nafter round 4, $\mathit{σ_{4,i}}$')
-ax5.set_xlim([600,1200])
+ax5.plot(mean,ye[0],'o',color=[0.1,0.4,0.8],label=leglabel)
+ax5.set_xlabel('CLO-estimated cycle life\nafter round 4, $\mathit{μ_{4,i}}$ (cycles)')
+ax5.set_ylabel('Standard deviation of cycle life\nafter round 4, $\mathit{σ_{4,i}}$ (cycles)')
+ax5.set_xlim([590,1210])
 ax5.legend(loc='best',markerscale=0,frameon=False)
 
 ## Bounds, colored by repetitions
@@ -203,7 +202,7 @@ for k in np.arange(num_batches):
 
 ax6.set_xlim((0,225))
 ax6.set_xlabel('Protocol rank after round 4')
-ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{\mu_{4,i} \pm \sigma_{4,i}}$')
+ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{\mu_{4,i} \pm \sigma_{4,i}}$ (cycles)')
 ax6.legend(frameon=False)
 
 plt.tight_layout()

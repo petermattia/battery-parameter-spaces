@@ -121,13 +121,13 @@ for k, gamma in enumerate(sims.gamma.unique()):
 ax[-1, -1].axis('off')
 
 # ADD COLORBAR
-cbar_ax = fig.add_axes([0.85, 0.15, 0.04, 0.72]) # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.86, 0.13, 0.04, 0.72]) # [left, bottom, width, height]
 norm = matplotlib.colors.Normalize(minn, maxx)
 m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(labelsize=7,length=0)
-cbar.ax.set_title('Cycle life\nof best protocol\n(simulated)',fontsize=7)
+cbar.ax.set_title('Simulated cycle life\nof best protocol\n(cycles)',fontsize=7)
 
 ## SAVE
 plt.savefig('hyperparameter_sensitivity.png', pi=300)

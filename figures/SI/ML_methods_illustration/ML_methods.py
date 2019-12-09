@@ -129,10 +129,10 @@ def plot_GP(X, ax, label_align):
     
     # Plot the function, the prediction and the 95% confidence interval based on
     # the MSE
-    ax.plot(x, f(x), ':', color='tab:red', label=u'$f(x)$')
+    ax.plot(x, f(x), ':', color='tab:red', label='True cycle life')
     ax.errorbar(X.ravel(), y, dy, fmt='.', color='tab:purple', markersize=7,
                 label=u'Observed data')
-    ax.plot(x, y_pred, '-', color='tab:blue', label=u'Prediction')
+    ax.plot(x, y_pred, '-', color='tab:blue', label='Estimated\ncycle life')
     ax.fill(np.concatenate([x, x[::-1]]),
             np.concatenate([y_pred - 1.9600 * std,
                            (y_pred + 1.9600 * std)[::-1]]),
@@ -146,7 +146,7 @@ def plot_GP(X, ax, label_align):
     ax.annotate('max(UCB)', (x[max_acq_idx], ub[max_acq_idx]),
                 xytext=(0, 5),textcoords="offset points",ha=label_align)
     
-    ax.set_xlabel(r'Charging protocol parameter, $x$ (e.g. CC1)')
+    ax.set_xlabel(r'Charging protocol parameter (e.g. CC1)')
     ax.set_ylabel('Cycle life (cycles)')
     ax.set_xlim((0,10))
     ax.set_ylim((1000,1801))

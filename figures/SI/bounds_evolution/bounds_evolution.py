@@ -98,15 +98,15 @@ for k, mean in enumerate(means):
     ax.set_xlabel('Protocol rank after round 4')
     if k==0:
         if plot_bounds_with_beta:
-            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \beta_{0}\sigma_{0,i}$')
+            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \beta_{0}\sigma_{0,i}$ (cycles)')
         else:
-            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \sigma_{0,i}$')
+            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \sigma_{0,i}$ (cycles)')
     else:
         if plot_bounds_with_beta:
-            mathstr = '{\mu_{'+str(k)+',i} \pm \beta_{'+str(k)+'}\sigma_{'+str(k)+',i}}'
+            mathstr = '{\mu_{'+str(k)+',i} \pm \beta_{'+str(k)+'}\sigma_{'+str(k)+',i}} (cycles)'
         else:
             mathstr = '{\mu_{'+str(k)+',i} \pm \sigma_{'+str(k)+',i}}'
-        ax.set_ylabel('CLO-estimated cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$')
+        ax.set_ylabel('CLO-estimated cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$ (cycles)')
     #ax.set_xticks([], [])
     ax.set_title(chr(97+k), loc='left')
     

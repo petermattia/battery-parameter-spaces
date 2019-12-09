@@ -8,13 +8,11 @@ Created on Tue Jan 29 22:09:03 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.legend_handler import HandlerLine2D, HandlerTuple
-import matplotlib.patheffects as pe
+from matplotlib.legend_handler import HandlerTuple
 from matplotlib.legend_handler import HandlerErrorbar
 import glob
 import pickle
 from cycler import cycler
-from scipy.stats import kendalltau
 from scipy.stats import pearsonr
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
@@ -178,8 +176,8 @@ ax2.set_prop_cycle(custom_cycler)
 p = [None]*9
 for k in range(len(pred_means)):
     p[k] = ax2.errorbar(pred_means[k],oed_means[k],xerr=pred_sterr[k])
-ax2.set_xlabel('Mean early-predicted cycle life\n(validation)')
-ax2.set_ylabel('CLO-estimated cycle life')
+ax2.set_xlabel('Mean early-predicted cycle life\nfrom validation (cycles)')
+ax2.set_ylabel('CLO-estimated cycle life (cycles)')
 r = pearsonr(oed_means,pred_means)[0]
 ax2.set_xlim([0,upper_lim])
 ax2.set_ylim([0,upper_lim])
@@ -209,8 +207,8 @@ ax3.set_ylim([0,upper_lim])
 ax3.set_aspect('equal', 'box')
 ax3.set_xticks(np.arange(0,1501,250))
 ax3.set_yticks(np.arange(0,1501,250)) # consistent with x
-ax3.set_xlabel('Early-predicted cycle life (validation)')
-ax3.set_ylabel('Final cycle life (validation)')
+ax3.set_xlabel('Early-predicted cycle life\nfrom validation (cycles)')
+ax3.set_ylabel('Final cycle life from validation (cycles)')
 idx = ~np.isnan(predicted_lifetimes.ravel())
 r = pearsonr(predicted_lifetimes.ravel()[idx],final_lifetimes.ravel()[idx])[0]
 ax3.annotate(r'$r =${:.2}'.format(r),(1450,75),horizontalalignment='right')
@@ -238,10 +236,10 @@ for k,pol in enumerate(validation_policies):
            final_means[k])
     if final_idx[k]==0:
         ax4.annotate(protocol_life_str+" cycles",(10,9-final_idx[k]),
-                     verticalalignment='center')
+                     verticalalignment='center', color='w')
     else:
         ax4.annotate(protocol_life_str,(10,9-final_idx[k]),
-                     verticalalignment='center')
+                     verticalalignment='center', color='w')
 
 ax4.set_prop_cycle(custom_cycler)
 for k, row in enumerate(final_lifetimes):
@@ -249,7 +247,7 @@ for k, row in enumerate(final_lifetimes):
     ax4.plot(row,(9-final_idx[k])*np.ones((5,1)), markersize=6,
              markeredgecolor='k',label='_nolegend_',)
 
-ax4.set_xlabel('Final cycle life (validation)')
+ax4.set_xlabel('Final cycle life from validation (cycles)')
 ax4.set_ylabel('Validation protocol\n(sorted by CLO ranking)')
 ax4.set_xlim([0,1200])
 ax4.get_yaxis().set_ticks([])
@@ -317,7 +315,7 @@ def plot_4c(ax):
     return h
 
 h = plot_4c(ax5)
-ax5.set_xlim((ax5.get_xlim()[0],ax5.get_xlim()[1]-3))
+ax5.set_xlim((ax5.get_xlim()[0], ax5.get_xlim()[1]+1))
 ax5.set_ylim((-1100, 23500))
 xrange = ax5.get_xlim()[1] - ax5.get_xlim()[0]
 yrange = ax5.get_ylim()[1] - ax5.get_ylim()[0]
@@ -326,7 +324,7 @@ ax5.set_aspect(aspect=xrange/yrange)
 ax5.legend(frameon=False,
            handler_map={type(h): HandlerErrorbar(xerr_size=0.6)})
 ax5.set_ylabel('Experimental time (hours)')
-ax5.set_xlabel('True cycle life of current best protocol')
+ax5.set_xlabel('True cycle life of current best protocol\n(cycles)')
 
 # Log inset
 add_inset = False
