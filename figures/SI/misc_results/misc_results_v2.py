@@ -202,7 +202,7 @@ for k in np.arange(num_batches):
 
 ax6.set_xlim((0,225))
 ax6.set_xlabel('Protocol rank after round 4')
-ax6.set_ylabel('Mean ± standard deviation\nof cycle life after round 4, $\mathit{\mu_{4,i} \pm \sigma_{4,i}}$ (cycles)')
+ax6.set_ylabel('Mean ± standard deviation of cycle life\nafter round 4, $\mathit{\mu_{4,i} \pm \sigma_{4,i}}$ (cycles)')
 ax6.legend(frameon=False)
 
 plt.tight_layout()

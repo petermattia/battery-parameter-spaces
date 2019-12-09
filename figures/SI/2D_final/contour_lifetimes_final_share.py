@@ -86,11 +86,11 @@ for k, c3 in enumerate(C3list):
 
     ## LABELS
     temp_ax.set_title(chr(k+97), loc='left', fontweight='bold')
-    temp_ax.annotate('CC3=' + str(c3), (3.52, 3.52))
+    temp_ax.annotate('CC3={}C'.format(c3), (3.52, 3.52))
     if int(k/3)==1:
-        temp_ax.set_xlabel('CC1')
+        temp_ax.set_xlabel('CC1 (C rate)')
     if k%3 == 0:
-        temp_ax.set_ylabel('CC2')
+        temp_ax.set_ylabel('CC2 (C rate)')
     temp_ax.set_xlim((min_protocol_bound-margin, max_protocol_bound+margin))
     temp_ax.set_ylim((min_protocol_bound-margin, max_protocol_bound+margin))
     
@@ -103,7 +103,7 @@ m = plt.cm.ScalarMappable(norm=norm, cmap=colormap)
 m.set_array([])
 cbar = fig.colorbar(m, cax=cbar_ax)
 cbar.ax.tick_params(length=0)
-cbar.ax.set_title('CLO-estimated\ncycle life\nafter round 4',fontsize=7)
+cbar.ax.set_title('CLO-estimated\ncycle life\nafter round 4\n$\mu_{4,i}$ (cycles)',fontsize=7)
 
 # ADD LEGEND, based on: 
 # https://blogs.oii.ox.ac.uk/bright/2014/08/12/point-size-legends-in-matplotlib-and-basemap-plots/
@@ -111,7 +111,7 @@ l1 = plt.scatter([],[], c='k', s=50/SCALAR, edgecolors='none')
 l2 = plt.scatter([],[], c='k', s=100/SCALAR, edgecolors='none')
 l3 = plt.scatter([],[], c='k', s=200/SCALAR, edgecolors='none')
 l4 = plt.scatter([],[], c='k', s=300/SCALAR, edgecolors='none')
-title = 'Std. dev. of\ncycle life\nafter round 4,\n$\mathit{σ_{4,i}}$'
+title = 'Std. dev. of\ncycle life\nafter round 4,\n$\sigma_{4,i}$ (cycles)'
 labels = ['50','100','200','300']
 leg = plt.legend([l1, l2, l3, l4], labels, frameon=False,
                  title=title, bbox_to_anchor=(1.38, -0.5, 0.5, 0.5), handletextpad = 1)

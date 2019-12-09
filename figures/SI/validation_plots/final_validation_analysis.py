@@ -248,6 +248,6 @@ format_rankings_plot(tau)
 # Adjust and add legend
 plt.tight_layout()
 plt.sca(ax5)
-plt.legend(validation_pol_leg,loc=9, bbox_to_anchor=(0.5, -1.7),frameon=True,ncol=3)
+plt.legend(validation_pol_leg,loc=9, bbox_to_anchor=(0.5, -1.8),frameon=True,ncol=3)
 plt.savefig('validation_ablation.png', dpi=300)
 plt.savefig('validation_ablation.eps', format='eps')
