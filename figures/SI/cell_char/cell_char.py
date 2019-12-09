@@ -142,18 +142,18 @@ ax[1][1].set_ylabel('Can temperature (°C)')
 
 ########## e-f ##########
 colors = []
-colors = cm.viridis(np.linspace(0, 1, 4))
+colors = cm.viridis_r(np.linspace(0.15, 1, 4))
 colors = colors[:,0:3]
 
 file_list = sorted(glob.glob('2019*.csv'))
 
 Crates = np.asarray([3.6,4,4.4,4.8,5.2,5.6,6,7,8])
 currents = Crates * 1.1
-SOCs = ['20% SOC','40% SOC','60% SOC','80% SOC']
-SOCs2 = [20,40,60,80]
 
 overpotential = np.zeros((len(file_list),4,9))
 R = np.zeros((2,4,2))
+
+SOCs = ['20% SOC: Data', '40% SOC: Data', '60% SOC: Data', '80% SOC: Data']
 
 for k, file in enumerate(file_list):
     # Extract data
@@ -175,29 +175,31 @@ for k, file in enumerate(file_list):
                 idx = np.insert(idx, 0, idx[0]-1)
                 # Calculate potential change during rest period
                 overpotential[k][k2][k3] = V[idx[0]] - V[idx[-1]]
-
-    # Plotting
-    for k2 in np.arange(4):
-        ax[2][k].plot(Crates,overpotential[k][k2],'.-',c=colors[k2,:])
-    ax[2][k].set_xlabel('C rate')
-    ax[2][k].set_ylabel('Overpotential (V)')
-    ax[2][k].legend(SOCs,loc='upper left',frameon=False)
-    ax[2][k].set_xlim((3.5,8.1))
-    ax[2][k].set_ylim((0.1,0.5))
+                
+    lines = []
     for k2 in np.arange(4):
         # V = I*R + V0
         if k2<2:
             R[k][k2][:] = np.polyfit(currents,overpotential[k][k2],1)
         else:
-            R[k][k2][:] = np.polyfit(currents[1:],overpotential[k][k2][1:],1)
-        ax[2][k].plot(Crates,R[k][k2][0]*currents + R[k][k2][1],'--',c=colors[k2,:])
+            R[k][k2][:] = np.polyfit(currents[1:], overpotential[k][k2][1:], 1)
+        
+        # Plotting
+        label = '{}% SOC: $\eta$ = {:0.3f}$I$ + {:0.3f}'.format(20*(k2+1),R[k][k2][0], R[k][k2][1])
+        lines.append(ax[2][k].scatter(Crates, overpotential[k][k2], c=colors[k2,:]))
+        ax[2][k].plot(Crates,R[k][k2][0]*currents + R[k][k2][1], '--', c=colors[k2,:],
+                      label=label)
+        
+    ax[2][k].set_xlabel('Current (C rate)')
+    ax[2][k].set_ylabel('Overpotential (V)')
+    ax[2][k].set_xlim((3.5,8.1))
+    ax[2][k].set_ylim((0.1,0.45))
+    
+    leg1 = ax[2][k].legend(loc='lower right', labelspacing=0.5)
+    leg2 = ax[2][k].legend(lines, SOCs, loc='upper left', labelspacing=0.5)
+    ax[2][k].add_artist(leg1)
 
-        ## annotate
-        SOC_str = '{}% SOC: η = {:0.3f}I+{:0.3f}'.format(20*(k2+1),R[k][k2][0], R[k][k2][1])
-        ax[2][k].annotate(SOC_str,(8,0.205-0.03*k2),ha='right')
-
-
-# Resistance vs soc
+# Resistance vs SOC
 Rmean = np.mean(R, axis=0)
 Rstd  =  np.std(R, axis=0)
 
