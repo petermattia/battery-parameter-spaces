@@ -153,7 +153,7 @@ policies = np.asarray(policies) # cast to numpy array
 ## MODELS
 values = np.sum(policies**2,axis=1)
 
-xlabel_mod = r'$\mathdefault{sum(}I\mathdefault{^2)=\Sigma}_{i=1}^{4}\mathdefault{CC}_i^2$ (C rate$^2$)'
+xlabel_mod = r'$\mathdefault{sum(}I\mathdefault{^2)=\Sigma}_{k=1}^{4}\mathdefault{CC}_k^2$ (C rate$^2$)'
 rho = pearsonr(values,mean)[0]
 leglabel = r'$\rho$ = {:.2f}'.format(rho)
 
