@@ -44,6 +44,7 @@ num_policies = 224
 seed = 0
 tickpad = -4
 labelpad = -5
+linewidth = 0.25
 ##############################################################################
 
 # IMPORT RESULTS
@@ -71,9 +72,10 @@ for k, batch_idx in enumerate(batches_to_plot):
     if np.size(lifetime_subset):
         with plt.style.context(('classic')):
             plt.set_cmap(colormap)
-            ax.scatter(policy_subset[:,0],policy_subset[:,1],\
-                       policy_subset[:,2],vmin=min_lifetime,vmax=max_lifetime,\
-                       c=lifetime_subset.ravel(),zorder=2,s=point_size)
+            ax.scatter(policy_subset[:,0], policy_subset[:,1],
+                       policy_subset[:,2], vmin=min_lifetime, vmax=max_lifetime,
+                       c=lifetime_subset.ravel(), zorder=2, s=point_size,
+                       linewidths=linewidth)
     
     ax.set_xlim([3, 8]), ax.set_ylim([3, 8]), ax.set_zlim([3, 8])
     ax.set_xticks([4,6,8]), ax.set_xticklabels([4,6,8])
@@ -147,7 +149,7 @@ for k, batch_idx in enumerate(batches_to_plot):
     with plt.style.context(('classic')):
         plt.set_cmap(colormap)
         ax.scatter(CC1,CC2,CC3, s=point_size, c=lifetime.ravel(),
-               vmin=min_lifetime, vmax=max_lifetime)
+               vmin=min_lifetime, vmax=max_lifetime, linewidths=linewidth)
     
     ax.set_xlim([3, 8]), ax.set_ylim([3, 8]), ax.set_zlim([3, 8])
     ax.tick_params(axis='both', which='major', pad=tickpad)

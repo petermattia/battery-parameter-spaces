@@ -111,6 +111,7 @@ point_size = 25
 seed = 0
 tickpad = -4
 labelpad = -5
+linewidth = 0.25
 ##############################################################################
 
 # IMPORT DATA
@@ -130,7 +131,8 @@ max_CC4 = np.max(CC4)
 ## PLOT POLICIES
 with plt.style.context(('classic')):
     plt.set_cmap(colormap)
-    ax2.scatter(CC1, CC2, CC3, s=point_size, c=CC4, vmin=min_CC4, vmax=max_CC4)
+    ax2.scatter(CC1, CC2, CC3, s=point_size, c=CC4, linewidths=linewidth, 
+                vmin=min_CC4, vmax=max_CC4)
     ax2.tick_params(pad=tickpad)
     
     ax2.xaxis.set_rotate_label(False)

@@ -285,31 +285,27 @@ def plot_4c(ax):
     	marker='o', 
     	linestyle=':',
         capsize=cap_size,
-    	#color=[0,112/256,184/256], 
-    	label='CLO w/o early pred\n + random')
+    	label='CLO w/o early prediction\n + random')
     ax.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
                  yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
         alpha=0.8,
     	marker='o', 
     	linestyle=':', 
         capsize=cap_size,
-        #color=[227/256,86/256,0], 
-    	label='CLO w/o early pred\n + MAB')
+    	label='CLO w/o early prediction\n + MAB')
     ax.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
                  xerr=data_dict['no_oed_ep_yerr'],
     	alpha=0.8,
     	marker='o',
     	linestyle=':',
         capsize=cap_size,
-        #color=[0,167/256,119/256], 
-    	label='CLO w/ early pred\n + random')
+    	label='CLO w/ early prediction\n + random')
     ax.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
     	alpha=0.8,
     	marker='o', 
     	linestyle=':',
         capsize=cap_size,
-        #color=[227/256,86/256,0], 
-    	label='CLO w/ early pred\n + MAB')
+    	label='CLO w/ early prediction\n + MAB')
     # plt.xticks(np.arange(max_budget+1))
     
     return h
@@ -321,7 +317,7 @@ xrange = ax5.get_xlim()[1] - ax5.get_xlim()[0]
 yrange = ax5.get_ylim()[1] - ax5.get_ylim()[0]
 ax5.set_aspect(aspect=xrange/yrange)
 
-ax5.legend(frameon=False,
+ax5.legend(frameon=False, loc='upper left', bbox_to_anchor=(-0.035, 1),
            handler_map={type(h): HandlerErrorbar(xerr_size=0.6)})
 ax5.set_ylabel('Experimental time (hours)')
 ax5.set_xlabel('True cycle life of current best protocol\n(cycles)')

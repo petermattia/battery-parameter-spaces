@@ -8,7 +8,7 @@ Created on Sun Oct 14 14:02:51 2018
 import numpy as np
 from matplotlib import rcParams
 
-def plot_policy(CC1, CC2, CC3, ax,life_dict):
+def plot_protocol(CC1, CC2, CC3, ax, life_dict):
     
     tol = 0
     
@@ -59,13 +59,10 @@ def plot_policy(CC1, CC2, CC3, ax,life_dict):
     name = '{0}C-{1}C-{2}C-{3:.3f}C'.format(CC1, CC2, CC3, CC4)
     ax.text(50,9,name,horizontalalignment='center')
     
-    oed_str = 'CLO: {:d}'.format(int(life_dict['oed']))
-    ep_str  = 'Early pred: {:d} ± {:d}'.format(int(life_dict['pred']), int(life_dict['pred_sterr']))
-    final_str  = 'Final: {:d} ± {:d}'.format(int(life_dict['final']), int(life_dict['final_sterr']))
+    oed_str = 'CLO: {:d} ± {:d}'.format(life_dict['oed'], life_dict['oed_bounds'])
+    ep_str  = 'Early prediction: {:d} ± {:d}'.format(life_dict['pred'], life_dict['pred_sterr'])
+    final_str  = 'Final: {:d} ± {:d}'.format(life_dict['final'], life_dict['final_sterr'])
     
-    ax.text(2,2.5,oed_str,horizontalalignment='left')
-    ax.text(2,1.4,ep_str,horizontalalignment='left')
-    ax.text(2,0.3,final_str,horizontalalignment='left')
-    
-    
-    
+    ax.text(2, 2.5, oed_str, horizontalalignment='left')
+    ax.text(2, 1.4, ep_str, horizontalalignment='left')
+    ax.text(2, 0.3, final_str, horizontalalignment='left')

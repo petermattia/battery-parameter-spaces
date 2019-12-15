@@ -128,7 +128,7 @@ for i in range(len(top_K_pols_list)-1):
     ax2.plot(batches[1:],tau[i])
 ax2.plot(batches[1:],tau[i+1],'k')
 ax2.set_xlabel('Batch index\n(change from round $i-1$ to $i$)')
-ax2.set_ylabel('Change in ranking similarity\nfor top $K$ protocols (Kendall\'s tau)')
+ax2.set_ylabel('Change in Kendall rank correlation\ncoefficient for top $K$ protocols')
 ax2.set_ylim((0,1))
 ax2.set_xticks(np.arange(2, 5, step=1))
 ax2.legend(legend,frameon=False)
@@ -153,7 +153,7 @@ policies = np.asarray(policies) # cast to numpy array
 ## MODELS
 values = np.sum(policies**2,axis=1)
 
-xlabel_mod = r'$\mathdefault{sum(}I\mathdefault{^2)=\Sigma}_{k=1}^{4}\mathdefault{CC}_k^2$ (C rate$^2$)'
+xlabel_mod = r'$\mathdefault{sum(}I\mathdefault{^2)=\Sigma}_{j=1}^{4}\mathdefault{CC}_j^2$ (C rate$^2$)'
 rho = pearsonr(values,mean)[0]
 leglabel = r'$\rho$ = {:.2f}'.format(rho)
 
