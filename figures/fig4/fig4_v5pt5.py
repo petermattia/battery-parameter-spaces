@@ -285,27 +285,27 @@ def plot_4c(ax):
     	marker='o', 
     	linestyle=':',
         capsize=cap_size,
-    	label='CLO w/o early prediction\n + random')
+    	label='CLO w/o early prediction\n + random search')
     ax.errorbar(data_dict['oed_no_ep_y'],data_dict['oed_no_ep_x'],
                  yerr=data_dict['oed_no_ep_xerr'],xerr=data_dict['oed_no_ep_yerr'],
         alpha=0.8,
     	marker='o', 
     	linestyle=':', 
         capsize=cap_size,
-    	label='CLO w/o early prediction\n + MAB')
+    	label='CLO w/o early prediction\n + Bayesian optimization')
     ax.errorbar(data_dict['no_oed_ep_y'],data_dict['no_oed_ep_x'], 
                  xerr=data_dict['no_oed_ep_yerr'],
     	alpha=0.8,
     	marker='o',
     	linestyle=':',
         capsize=cap_size,
-    	label='CLO w/ early prediction\n + random')
+    	label='CLO w/ early prediction\n + random search')
     ax.errorbar(data_dict['oed_ep_y'],data_dict['oed_ep_x'],xerr=data_dict['oed_ep_yerr'],
     	alpha=0.8,
     	marker='o', 
     	linestyle=':',
         capsize=cap_size,
-    	label='CLO w/ early prediction\n + MAB')
+    	label='CLO w/ early prediction\n + Bayesian optimization')
     # plt.xticks(np.arange(max_budget+1))
     
     return h

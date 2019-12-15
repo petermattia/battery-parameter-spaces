@@ -35,7 +35,7 @@ for k, channels in enumerate(num_channels):
                  marker='o',
                  linestyle=':',
                  color=u'#7A68A6',
-                 label='CLO w/ random')
+                 label='CLO w/ random search')
     
     temp_ax.errorbar(np.array(num_rounds),
                      oed_performance_means[k][1:],
@@ -44,7 +44,7 @@ for k, channels in enumerate(num_channels):
                      marker='o',
                      linestyle=':',
                      color=u'#467821',
-                     label='CLO w/ MAB')
+                     label='CLO w/ Bayesian optimization')
     
     temp_ax.set_title(chr(k+97), loc='left', weight='bold', fontsize=8)
     #temp_ax.set_xlim((0.5, 4.5))
