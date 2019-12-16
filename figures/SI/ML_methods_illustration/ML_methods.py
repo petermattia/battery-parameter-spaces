@@ -71,16 +71,16 @@ legend_elements = [Line2D([0], [0], marker='o', color='w', label=r'$Q_{d,2}$',
                           markerfacecolor='k', markersize=6)]
 ax0.legend(handles=legend_elements, loc='lower center')
 
-ax0b.text(-0.15, 0.70, 'Capacity features\n(from first 100 cycles)')
-ax0b.text(-0.15, 0.45, '• 2$\mathdefault{ ^{nd}}$-cycle discharge capacity\n  (' +
+ax0b.text(-0.15, 0.70, 'Extract capacity features\nusing data from first 100 cycles')
+ax0b.text(-0.15, 0.45, '1. 2$\mathdefault{ ^{nd}}$-cycle discharge capacity\n  (' +
           r'$Q_{d,2}$)')
-ax0b.text(-0.15, 0.15, '• Max $-$ 2$\mathdefault{ ^{nd}}$-cycle discharge capacity\n  (' +
+ax0b.text(-0.15, 0.15, '2. Max $-$ 2$\mathdefault{ ^{nd}}$-cycle discharge capacity\n  (' +
           'max(' + r'$Q_d$'+ ')' + r'$ - Q_{d,2}$)')
 ax0b.axis('off')
 
 ax0c.annotate('', xy=(0.6, 0.25), xytext=(-0.1, 0.4),
               arrowprops=dict(arrowstyle="->"))
-ax0c.annotate('To early prediction', xy=(0.58, 0.35), xytext=(-0.15, 0.42))
+ax0c.annotate('Features used in\nearly prediction model', xy=(0.55, 0.35), xytext=(-0.23, 0.45))
 ax0c.axis('off')
 
 # Voltage
@@ -125,11 +125,13 @@ legend_elements = [Line2D([0], [0], marker='^', color='w', label='min',
                           markerfacecolor='k', markersize=6)]
 ax2.legend(handles=legend_elements, loc='lower left')
 
-ax2b.text(-0.15, 0.15, '• Skewness (of entire curve)')
-ax2b.text(-0.15, 0.35, '• Variance (of entire curve)')
-ax2b.text(-0.15, 0.55, '• Minimum')
-ax2b.text(-0.15, 0.70, 'Voltage features\n(from cycle 100 $-$ cycle 10)')
+ax2b.text(-0.15, 0.65, 'Extract voltage features\nfrom cycle 100 – cycle 10')
+ax2b.text(-0.15, 0.50, '3. Minimum')
+ax2b.text(-0.15, 0.30, '4. Variance (of entire curve)')
+ax2b.text(-0.15, 0.10, '5. Skewness (of entire curve)')
 ax2b.axis('off')
+
+ax2b.annotate('Features used in\nearly prediction model', xy=(0, 0.8), xytext=(-0.09, 0.93))
 ax2b.annotate("", xy=(0.9, 1.0), xytext=(0.65, 0.8), arrowprops=dict(arrowstyle="->"))
 
 
