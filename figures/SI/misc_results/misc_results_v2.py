@@ -34,41 +34,41 @@ file_list = sorted(glob.glob('./pred/[0-9].csv'))
 for k,file_path in enumerate(file_list):
     pred_data.append(np.genfromtxt(file_path, delimiter=','))
 
-## Find number of batches and policies
+## Find number of batches and protocols
 n_batches  = len(data)
-n_policies = len(param_space)
+n_protocols = len(param_space)
 
 ## find mean change
-change = np.zeros((n_policies, n_batches-1))
+change = np.zeros((n_protocols, n_batches-1))
 for k, batch in enumerate(data[:-1]):
     change[:,k] = data[k+1] - data[k]
 
 mean_change = np.mean(np.abs(change),axis=0)
 
 ## find mean change as a percent
-per_change = np.zeros((n_policies, n_batches-1))
+per_change = np.zeros((n_protocols, n_batches-1))
 for k, batch in enumerate(data[:-1]):
     per_change[:,k] = 100*(data[k+1] - data[k])/data[k+1]
 
 mean_per_change = np.mean(np.abs(per_change),axis=0)
 
-## find mean change for top K policies
-top_K_pols_list = [5,10,50,224]
-mean_change_topk = np.zeros((len(top_K_pols_list),n_batches-1))
-mean_per_change_topk = np.zeros((len(top_K_pols_list),n_batches-1))
+## find mean change for top K protocols
+top_K_protocols_list = [5,10,50,224]
+mean_change_topk = np.zeros((len(top_K_protocols_list),n_batches-1))
+mean_per_change_topk = np.zeros((len(top_K_protocols_list),n_batches-1))
 
-for k, n in enumerate(top_K_pols_list):
-    top_pol_idx = np.argsort(-mean)[0:n]
-    mean_change_topk[k,:] = np.mean(np.abs(change[top_pol_idx]),axis=0)
-    mean_per_change_topk[k,:] = np.mean(np.abs(per_change[top_pol_idx]),axis=0)
+for k, n in enumerate(top_K_protocols_list):
+    top_protocol_idx = np.argsort(-mean)[0:n]
+    mean_change_topk[k,:] = np.mean(np.abs(change[top_protocol_idx]),axis=0)
+    mean_per_change_topk[k,:] = np.mean(np.abs(per_change[top_protocol_idx]),axis=0)
 
 ## find change in rankings per kendall tau
-tau = np.zeros((len(top_K_pols_list),n_batches-2))
-for k1, n in enumerate(top_K_pols_list):
-    top_pol_idx = np.argsort(-mean)[0:n]
+tau = np.zeros((len(top_K_protocols_list),n_batches-2))
+for k1, n in enumerate(top_K_protocols_list):
+    top_protocol_idx = np.argsort(-mean)[0:n]
     for k2 in [1,2,3]: # don't start with 0 - all are tied
-        ranks1 = len(param_space) - rankdata(data[k2])[top_pol_idx]
-        ranks2 = len(param_space) - rankdata(data[k2+1])[top_pol_idx]
+        ranks1 = len(param_space) - rankdata(data[k2])[top_protocol_idx]
+        ranks2 = len(param_space) - rankdata(data[k2+1])[top_protocol_idx]
         #print(k1,k2,ranks1,ranks2)
         tau[k1,k2-1] = kendalltau(ranks1,ranks2)[0]
 
@@ -97,23 +97,23 @@ batches = np.arange(n_batches-1)+1
 
 cm = plt.get_cmap('winter')
 
-legend = ['$K$ = ' + str(k) for k in top_K_pols_list]
+legend = ['$K$ = ' + str(k) for k in top_K_protocols_list]
 
-color_cycler = (cycler(color=[cm(1.*i/len(top_K_pols_list)) for i in range(len(top_K_pols_list))]))
+color_cycler = (cycler(color=[cm(1.*i/len(top_K_protocols_list)) for i in range(len(top_K_protocols_list))]))
 
 ax0.set_prop_cycle(color_cycler)
-for i in range(len(top_K_pols_list)-1):
+for i in range(len(top_K_protocols_list)-1):
     ax0.plot(batches,mean_per_change_topk[i])
 ax0.plot(batches,mean_per_change_topk[i+1],'k')
 ax0.set_xlabel('Batch index\n(change from round $i-1$ to $i$)')
-ax0.set_ylabel('Mean change in estimated\ncycle life for top $K$ policies (%)')
+ax0.set_ylabel('Mean change in estimated\ncycle life for top $K$ protocols (%)')
 ax0.set_ylim((0,14))
 ax0.set_xticks(np.arange(1, 5, step=1))
 ax0.legend(legend,frameon=False)
 
 # Abs. change
 ax1.set_prop_cycle(color_cycler)
-for i in range(len(top_K_pols_list)-1):
+for i in range(len(top_K_protocols_list)-1):
     ax1.plot(batches,mean_change_topk[i])
 ax1.plot(batches,mean_change_topk[i+1],'k')
 ax1.set_xlabel('Batch index\n(change from round $i-1$ to $i$)')
@@ -124,7 +124,7 @@ ax1.legend(legend,frameon=False)
 
 # Tau
 ax2.set_prop_cycle(color_cycler)
-for i in range(len(top_K_pols_list)-1):
+for i in range(len(top_K_protocols_list)-1):
     ax2.plot(batches[1:],tau[i])
 ax2.plot(batches[1:],tau[i+1],'k')
 ax2.set_xlabel('Batch index\n(change from round $i-1$ to $i$)')
@@ -142,16 +142,16 @@ ax3.set_xlim([600,1200])
 
 ## Sum of squares correlation
 
-# add cc4 to policies
-policies = []
-for k, pol in enumerate(param_space):
-    cc4 = 0.2/(1/6 - (0.2/pol[0] + 0.2/pol[1] + 0.2/pol[2])) # analytical expression for cc4
-    policies.append([pol[0],pol[1],pol[2],cc4])
+# add cc4 to protocols
+protocols = []
+for k, prot in enumerate(param_space):
+    cc4 = 0.2/(1/6 - (0.2/prot[0] + 0.2/prot[1] + 0.2/prot[2])) # analytical expression for cc4
+    protocols.append([prot[0], prot[1], prot[2],cc4])
     
-policies = np.asarray(policies) # cast to numpy array
+protocols = np.asarray(protocols) # cast to numpy array
 
 ## MODELS
-values = np.sum(policies**2,axis=1)
+values = np.sum(protocols**2,axis=1)
 
 xlabel_mod = r'$\mathdefault{sum(}I\mathdefault{^2)=\Sigma}_{j=1}^{4}\mathdefault{CC}_j^2$ (C rate$^2$)'
 rho = pearsonr(values,mean)[0]
@@ -176,16 +176,16 @@ ax5.legend(loc='best',markerscale=0,frameon=False)
 ## Bounds, colored by repetitions
 num_batches=5 # 4 batches, plus one
 
-isTested = np.zeros(len(policies))
+isTested = np.zeros(len(protocols))
 
-mean  = mean[top_pol_idx]
-ye[0] = ye[0][top_pol_idx]
-ye[1] = ye[1][top_pol_idx]
+mean  = mean[top_protocol_idx]
+ye[0] = ye[0][top_protocol_idx]
+ye[1] = ye[1][top_protocol_idx]
 
-for k, pol in enumerate(param_space[top_pol_idx]):
+for k, prot in enumerate(param_space[top_protocol_idx]):
     for batch in pred_data:
         for row in batch:
-            if (pol==row[0:3]).all():
+            if (prot==row[0:3]).all():
                 isTested[k] += 1
 
 colors = [cm(1.*i/num_batches) for i in range(num_batches)]
