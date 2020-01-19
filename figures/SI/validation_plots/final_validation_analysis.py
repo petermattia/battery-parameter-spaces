@@ -194,7 +194,7 @@ ax5.set_title('e',loc='left', fontweight='bold')
 init_plot(ax5)
 ax5.plot(np.transpose(predicted_lifetimes), np.transpose(final_lifetimes))
 ax5.set_xlabel('Early-predicted cycle life\nfrom validation (cycles)')
-ax5.set_ylabel('Final cycle life\nfrom validation (cycles)')
+ax5.set_ylabel('Final cycle life from validation (cycles)')
 r = pearsonr(predicted_lifetimes.ravel()[idx],final_lifetimes.ravel()[idx])[0]
 format_lifetimes_plot(r)
 
@@ -230,7 +230,7 @@ for k in range(len(predicted_lifetimes)):
     oed_value_vector = oed_means[k]*np.ones(np.count_nonzero(~np.isnan(final_lifetimes[k])))
     ax8.plot(oed_value_vector, final_lifetimes_vector)
 ax8.set_xlabel('CLO-estimated cycle life (cycles)')
-ax8.set_ylabel('Final cycle life\nfrom validation (cycles)')
+ax8.set_ylabel('Final cycle life from validation (cycles)')
 r = pearsonr(np.repeat(oed_means,5),final_lifetimes.ravel())[0]
 format_lifetimes_plot(r)
 

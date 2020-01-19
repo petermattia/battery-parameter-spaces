@@ -96,18 +96,17 @@ for k, mean in enumerate(means):
     else:
         ax.set_ylim((647,1247))
     ax.set_xlabel('Protocol rank after round 4')
-    if k==0:
-        if plot_bounds_with_beta:
-            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \beta_{0}\sigma_{0,i}$ (cycles)')
-        else:
-            ax.set_ylabel('CLO-estimated cycle life before\nround 1, $\mu_{0,i} \pm \sigma_{0,i}$ (cycles)')
+    
+    # ylabel is tricky
+    before_after = 'before' if k==0 else 'after'
+    ylabel_idx = 1 if k==0 else k
+    
+    if plot_bounds_with_beta:
+        mathstr = '{\mu_{' + str(k) + r',i} \pm \beta_{' + str(k) + '} \sigma_{' + str(k) + ',i}}'
     else:
-        if plot_bounds_with_beta:
-            mathstr = '{\mu_{'+str(k)+',i} \pm \beta_{'+str(k)+'}\sigma_{'+str(k)+',i}} (cycles)'
-        else:
-            mathstr = '{\mu_{'+str(k)+',i} \pm \sigma_{'+str(k)+',i}}'
-        ax.set_ylabel('CLO-estimated cycle life after\n round {}, $\mathit'.format(k)+mathstr+'$ (cycles)')
-    #ax.set_xticks([], [])
+        mathstr = '{\mu_{' + str(k) + ',i} \pm \sigma_{' + str(k) + ',i}}'
+    ax.set_ylabel('CLO-estimated cycle life {}\n round {},'.format(before_after, ylabel_idx)
+                  + ' $\mathit' + mathstr + '$ (cycles)')
     ax.set_title(chr(97+k), loc='left')
     
     if k==4:
